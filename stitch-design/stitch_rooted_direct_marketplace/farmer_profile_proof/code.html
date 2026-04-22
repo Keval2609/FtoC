@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TerraDirect - Farmer Profile</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:wght@400;500;600&amp;family=Work+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-container-lowest": "#ffffff",
+                      "inverse-surface": "#2f3130",
+                      "on-primary-fixed-variant": "#364c3c",
+                      "on-background": "#1a1c1b",
+                      "surface-container": "#efeeec",
+                      "on-tertiary-container": "#b7895b",
+                      "on-secondary-container": "#4e685c",
+                      "on-secondary": "#ffffff",
+                      "surface-container-high": "#e9e8e6",
+                      "secondary-fixed": "#cce9da",
+                      "on-tertiary-fixed-variant": "#623f18",
+                      "tertiary-container": "#422401",
+                      "on-error-container": "#93000a",
+                      "on-secondary-fixed": "#052016",
+                      "error": "#ba1a1a",
+                      "primary-container": "#1b3022",
+                      "on-surface-variant": "#434843",
+                      "inverse-on-surface": "#f1f1ef",
+                      "on-error": "#ffffff",
+                      "on-tertiary": "#ffffff",
+                      "surface-bright": "#faf9f7",
+                      "surface-dim": "#dadad8",
+                      "background": "#faf9f7",
+                      "surface-tint": "#4d6453",
+                      "on-tertiary-fixed": "#2c1600",
+                      "surface-variant": "#e3e2e0",
+                      "surface-container-low": "#f4f3f1",
+                      "primary-fixed-dim": "#b4cdb8",
+                      "on-primary-container": "#819986",
+                      "secondary-fixed-dim": "#b0cdbe",
+                      "outline-variant": "#c3c8c1",
+                      "tertiary-fixed-dim": "#f0bd8b",
+                      "primary": "#061b0e",
+                      "surface-container-highest": "#e3e2e0",
+                      "secondary": "#496458",
+                      "secondary-container": "#c9e7d7",
+                      "inverse-primary": "#b4cdb8",
+                      "outline": "#737973",
+                      "on-surface": "#1a1c1b",
+                      "primary-fixed": "#d0e9d4",
+                      "on-primary": "#ffffff",
+                      "surface": "#faf9f7",
+                      "tertiary-fixed": "#ffdcbd",
+                      "tertiary": "#261200",
+                      "on-primary-fixed": "#0b2013",
+                      "on-secondary-fixed-variant": "#324c41",
+                      "error-container": "#ffdad6"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "gutter": "24px",
+                      "section-padding": "80px",
+                      "stack-sm": "8px",
+                      "margin": "32px",
+                      "container-max": "1280px",
+                      "stack-md": "16px",
+                      "stack-lg": "32px",
+                      "unit": "8px"
+              },
+              "fontFamily": {
+                      "label-sm": [
+                              "Work Sans"
+                      ],
+                      "headline-md": [
+                              "Newsreader"
+                      ],
+                      "button": [
+                              "Work Sans"
+                      ],
+                      "headline-lg": [
+                              "Newsreader"
+                      ],
+                      "body-lg": [
+                              "Work Sans"
+                      ],
+                      "display-xl": [
+                              "Newsreader"
+                      ],
+                      "body-md": [
+                              "Work Sans"
+                      ]
+              },
+              "fontSize": {
+                      "label-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "1.3",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "button": [
+                              "16px",
+                              {
+                                      "lineHeight": "1",
+                                      "letterSpacing": "0.02em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "display-xl": [
+                              "48px",
+                              {
+                                      "lineHeight": "1.1",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.5",
+                                      "fontWeight": "400"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        .verified-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background-color: theme('colors.secondary-fixed');
+            color: theme('colors.primary-container');
+            padding: 4px 8px;
+            border-radius: theme('borderRadius.full');
+            font-family: theme('fontFamily.label-sm');
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+        }
+        .verified-badge .material-symbols-outlined {
+            font-size: 14px;
+        }
+      </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen font-body-md text-body-md flex flex-col">
+<!-- TopAppBar -->
+<header class="bg-[#F5F2ED] dark:bg-stone-950 text-[#1B3022] dark:text-emerald-500 font-serif text-lg tracking-wide docked full-width top-0 border-b border-stone-200 dark:border-stone-800 flat no shadows sticky z-50">
+<div class="flex justify-between items-center w-full px-6 py-4 max-w-screen-xl mx-auto">
+<button aria-label="Menu" class="hover:bg-stone-200/50 dark:hover:bg-stone-800/50 transition-colors rounded-full p-2">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<div class="text-2xl font-bold text-[#1B3022] dark:text-emerald-500 font-serif text-headline-lg font-headline-lg tracking-tight">
+                TerraDirect
+            </div>
+<button aria-label="Search" class="hover:bg-stone-200/50 dark:hover:bg-stone-800/50 transition-colors rounded-full p-2">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+</button>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-grow w-full max-w-container-max mx-auto px-gutter pb-section-padding pt-margin">
+<!-- Hero Section: Farmer Story -->
+<section class="mb-section-padding">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter items-center">
+<div class="md:col-span-5 order-2 md:order-1 space-y-stack-lg">
+<div>
+<div class="verified-badge mb-stack-sm">
+<span class="material-symbols-outlined" data-icon="verified" data-weight="fill">verified</span>
+                            Direct Verifiable Trust
+                        </div>
+<h1 class="font-display-xl text-display-xl text-primary mb-stack-sm">Willow Creek Farm</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Guided by Sarah Jenkins, a third-generation steward of the land.</p>
+</div>
+<div class="space-y-stack-md">
+<h2 class="font-headline-md text-headline-md text-secondary">Our Story</h2>
+<p class="text-on-surface">
+                            Nestled in the rolling hills, Willow Creek Farm has been committed to regenerative agriculture since long before it was a trend. We believe that healthy soil creates healthy plants, which in turn nourish healthy communities. Our approach is hands-on, patient, and deeply respectful of the natural rhythms of the seasons.
+                        </p>
+</div>
+<div class="flex gap-stack-md pt-stack-sm">
+<div class="flex flex-col items-start p-4 bg-surface-container-low rounded-lg w-full">
+<span class="font-label-sm text-label-sm text-outline mb-1 uppercase">Location</span>
+<span class="font-body-md text-body-md font-medium">Portland, Oregon</span>
+</div>
+<div class="flex flex-col items-start p-4 bg-surface-container-low rounded-lg w-full">
+<span class="font-label-sm text-label-sm text-outline mb-1 uppercase">Established</span>
+<span class="font-body-md text-body-md font-medium">1978</span>
+</div>
+</div>
+</div>
+<div class="md:col-span-7 order-1 md:order-2">
+<div class="relative w-full aspect-[4/3] rounded-xl overflow-hidden shadow-[0_4px_12px_rgba(0,0,0,0.04)]">
+<img alt="Farmer standing in a lush green field" class="w-full h-full object-cover" data-alt="Warm portrait of a female farmer in her mid-40s standing in a sunlit, lush green vegetable field, soft natural lighting, earthy tones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAOg4p15VNAU2MEEWHYUTEj7cc9di4MiWGZXjOvNCZXbIp7K1YBLHszaSJTXvD9XW-TkoaGrVWyF69Yb_3bnc61T0-hvD-a7KXKzkxNThJOa592e42uJAmz9fUSHgcwQcuDXUdCrKaExRJgvwMHbvedYGjzvJxkqV_ptxDqAsAIpLL7EoFAiSrI9joYCc_lkA0ocOJ0pnMGOFfpzHXY6daKeUjYM8Loe8MH8tNE2lv_GnL5Am-TjGJN36EJ6kB2cEpPfV8lH8XM5yVs"/>
+</div>
+</div>
+</div>
+</section>
+<!-- Methods & Practices -->
+<section class="mb-section-padding bg-surface-container-low rounded-xl p-margin md:p-12 relative overflow-hidden">
+<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-secondary-fixed to-primary-fixed-dim"></div>
+<div class="max-w-3xl mx-auto text-center mb-margin">
+<h2 class="font-headline-lg text-headline-lg text-primary mb-stack-sm">Methods &amp; Practices</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">We work with nature, not against it, to produce food that is honest and full of vitality.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<!-- Practice 1 -->
+<div class="bg-surface-container-lowest p-6 rounded-lg shadow-[0_4px_12px_rgba(0,0,0,0.04)] border-b border-surface-variant flex flex-col items-center text-center">
+<div class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center text-primary-container mb-stack-md">
+<span class="material-symbols-outlined text-2xl" data-icon="eco">eco</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary mb-stack-sm text-[20px]">No-Till Farming</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Preserving soil structure and promoting complex microbial life beneath the surface.</p>
+</div>
+<!-- Practice 2 -->
+<div class="bg-surface-container-lowest p-6 rounded-lg shadow-[0_4px_12px_rgba(0,0,0,0.04)] border-b border-surface-variant flex flex-col items-center text-center">
+<div class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center text-primary-container mb-stack-md">
+<span class="material-symbols-outlined text-2xl" data-icon="water_drop">water_drop</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary mb-stack-sm text-[20px]">Rainwater Harvesting</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Utilizing natural catchments to minimize our reliance on external water sources.</p>
+</div>
+<!-- Practice 3 -->
+<div class="bg-surface-container-lowest p-6 rounded-lg shadow-[0_4px_12px_rgba(0,0,0,0.04)] border-b border-surface-variant flex flex-col items-center text-center">
+<div class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center text-primary-container mb-stack-md">
+<span class="material-symbols-outlined text-2xl" data-icon="pest_control">pest_control</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary mb-stack-sm text-[20px]">Biological Pest Control</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Encouraging beneficial insects rather than relying on synthetic chemical interventions.</p>
+</div>
+</div>
+</section>
+<!-- Product Listing -->
+<section class="mb-section-padding">
+<div class="flex justify-between items-end mb-margin">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-primary mb-stack-sm">Current Harvest</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Freshly picked and ready for your table.</p>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter">
+<!-- Product Card 1 -->
+<div class="bg-surface-container-lowest rounded-lg overflow-hidden shadow-[0_4px_12px_rgba(0,0,0,0.04)] border-b border-[#b7895b]/20 group hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] transition-shadow">
+<div class="relative aspect-square overflow-hidden bg-surface-container">
+<img alt="Heirloom Tomatoes" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Close up of vibrant, multi-colored heirloom tomatoes in a rustic woven basket, soft daylight, tactile texture" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDEVqElq9iqpvMqHCXk0GK3tHWqRkz1nQjWP3FepCUdv8aIoZ7yukNy3hss3EAbT_BDP3RGWFpdgUhRXesKxpDHIHLNyndTBwUCK6lpeprrYA7iX_BehVp6bdO6vP3ADSn91p1X92w9ltHXO7Q4xKzMPjGdhQ8mT8r8N9VJjNE2phUs6Cpn5ILmmKiXWUKa50ZrW-tEaEvCVxz3cStz4ehD-c5iQH2c7l4st_VYHALktBlmOufKoSbCo-Zbfm4FRmaqgtdDAO9B8YGo"/>
+</div>
+<div class="p-4 flex flex-col h-[160px] justify-between">
+<div>
+<h3 class="font-button text-button text-primary mb-1">Heirloom Tomatoes</h3>
+<p class="font-label-sm text-label-sm text-outline font-normal">Per lb</p>
+</div>
+<div class="flex items-center justify-between mt-auto">
+<span class="font-headline-md text-headline-md text-primary">$4.50</span>
+<button class="bg-primary-container text-on-primary font-button text-button px-4 py-2 rounded-lg hover:bg-opacity-90 transition-opacity">Add</button>
+</div>
+</div>
+</div>
+<!-- Product Card 2 -->
+<div class="bg-surface-container-lowest rounded-lg overflow-hidden shadow-[0_4px_12px_rgba(0,0,0,0.04)] border-b border-[#b7895b]/20 group hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] transition-shadow">
+<div class="relative aspect-square overflow-hidden bg-surface-container">
+<img alt="Organic Carrots" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Bunch of freshly harvested organic carrots with green tops intact lying on a weathered wooden table, earthy colors" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBNc_gzo95ePuLVXTp4vbstY9UKtgttf3eHEzOuZ_3Wmipf61dyxEc3bSD27XlnexHkWyvTraI9Rh44A64CejNkEE9JpxuBoGOw2FCyrXC85psiG-HAQp1jFqDRrO7gd3T90nVTwEN7-Aw51dYVUxxeEYmdpLCb2j8QIG_c0V0lk3746KnDiPUD-e6pdeh2WSwt3jTKSv9sU8OCeZoGoVvF7M5wBZl8nz_v5B0E0OuiIzXx6Nt6y09rKqvTTlndflW6TWxR6CJRyO_x"/>
+</div>
+<div class="p-4 flex flex-col h-[160px] justify-between">
+<div>
+<h3 class="font-button text-button text-primary mb-1">Organic Carrots</h3>
+<p class="font-label-sm text-label-sm text-outline font-normal">Bunch</p>
+</div>
+<div class="flex items-center justify-between mt-auto">
+<span class="font-headline-md text-headline-md text-primary">$3.00</span>
+<button class="bg-primary-container text-on-primary font-button text-button px-4 py-2 rounded-lg hover:bg-opacity-90 transition-opacity">Add</button>
+</div>
+</div>
+</div>
+<!-- Product Card 3 -->
+<div class="bg-surface-container-lowest rounded-lg overflow-hidden shadow-[0_4px_12px_rgba(0,0,0,0.04)] border-b border-[#b7895b]/20 group hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] transition-shadow">
+<div class="relative aspect-square overflow-hidden bg-surface-container">
+<img alt="Mixed Greens" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Crisp, fresh mixed salad greens in a simple white ceramic bowl on a light stone countertop, bright and clean lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBX9azHphcY7uhGyxmg_AOe6xpTN0uMO9nTflDPzPM7vnHktJIVeiDFkhJtsFAq5sZYf6xRCn2Tw683GOLyqp5oqrv6qMgPJjONEQlszwyi2kfM0XLRyh8AK-AH4GtC4Yx809A8agSpHUMPPyZ1FOOT5dbq8stulbiHraBNlBOIRBhZmtpNHfh_QUZGgzUAvBkmrCDRYd-WvY630gaXT9owkeNnBTtDr0jq_o7abDQCp9nldYi5p87bgZOAeUk6rNfTthHavtuMfQXe"/>
+</div>
+<div class="p-4 flex flex-col h-[160px] justify-between">
+<div>
+<h3 class="font-button text-button text-primary mb-1">Spring Mix Greens</h3>
+<p class="font-label-sm text-label-sm text-outline font-normal">8 oz bag</p>
+</div>
+<div class="flex items-center justify-between mt-auto">
+<span class="font-headline-md text-headline-md text-primary">$5.00</span>
+<button class="bg-primary-container text-on-primary font-button text-button px-4 py-2 rounded-lg hover:bg-opacity-90 transition-opacity">Add</button>
+</div>
+</div>
+</div>
+<!-- Product Card 4 -->
+<div class="bg-surface-container-lowest rounded-lg overflow-hidden shadow-[0_4px_12px_rgba(0,0,0,0.04)] border-b border-[#b7895b]/20 group hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] transition-shadow">
+<div class="relative aspect-square overflow-hidden bg-surface-container">
+<img alt="Free Range Eggs" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Dozen multi-colored farm fresh eggs in a cardboard carton resting on straw, warm rustic lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWtHQxmngLJBC3W-wdCS2Wr3IXY2zsck76FKDHwYD0cTNEwxsgoJWpnerypv28jjFS_OFODUk9VVtVh8rxT5MYsJtdt7Wf-qgqE2VcaSbj4-jxD5BxR7WAw-yhYPHoFjSMQC0KcjixSFKbEWrNgOfWQFQbBOZrZAuQAdwfeYTa1v1ht68Ic6CFCO6J4d1v_W8YSDDrtB3XYdRtXU_ibmfGam5aYPReAiZK7RqkjcOa0yT9n4K3bySCSYkJLBx75WAuxR8nxjxwR-xi"/>
+</div>
+<div class="p-4 flex flex-col h-[160px] justify-between">
+<div>
+<h3 class="font-button text-button text-primary mb-1">Pasture-Raised Eggs</h3>
+<p class="font-label-sm text-label-sm text-outline font-normal">Dozen</p>
+</div>
+<div class="flex items-center justify-between mt-auto">
+<span class="font-headline-md text-headline-md text-primary">$6.50</span>
+<button class="bg-primary-container text-on-primary font-button text-button px-4 py-2 rounded-lg hover:bg-opacity-90 transition-opacity">Add</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Verification & Proof -->
+<section class="mb-section-padding">
+<h2 class="font-headline-lg text-headline-lg text-primary mb-margin border-b border-surface-variant pb-stack-sm">Verification &amp; Proof</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+<!-- Cert 1 -->
+<div class="flex items-start gap-stack-md p-6 bg-surface-container-lowest rounded-lg shadow-[0_4px_12px_rgba(0,0,0,0.04)] border border-surface-variant hover:border-secondary-fixed transition-colors">
+<div class="w-16 h-16 rounded-full bg-surface-container-high flex-shrink-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-3xl text-secondary" data-icon="description">description</span>
+</div>
+<div>
+<div class="flex items-center gap-2 mb-1">
+<h3 class="font-button text-button text-primary">USDA Organic Certified</h3>
+<span class="material-symbols-outlined text-secondary-fixed text-sm" data-icon="check_circle" data-weight="fill">check_circle</span>
+</div>
+<p class="font-label-sm text-label-sm text-outline font-normal mb-2">Issued: Jan 2023 • ID: ORG-84729</p>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Full adherence to national organic program standards for soil quality and pest management.</p>
+</div>
+</div>
+<!-- Cert 2 -->
+<div class="flex items-start gap-stack-md p-6 bg-surface-container-lowest rounded-lg shadow-[0_4px_12px_rgba(0,0,0,0.04)] border border-surface-variant hover:border-secondary-fixed transition-colors">
+<div class="w-16 h-16 rounded-full bg-surface-container-high flex-shrink-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-3xl text-secondary" data-icon="science">science</span>
+</div>
+<div>
+<div class="flex items-center gap-2 mb-1">
+<h3 class="font-button text-button text-primary">Soil Health Audit</h3>
+<span class="material-symbols-outlined text-secondary-fixed text-sm" data-icon="check_circle" data-weight="fill">check_circle</span>
+</div>
+<p class="font-label-sm text-label-sm text-outline font-normal mb-2">Conducted: Oct 2023 • Lab: TerraMetrics</p>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Independent lab results confirm high microbial diversity and zero synthetic residues.</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden bg-white dark:bg-stone-900 fixed bottom-0 w-full z-50 border-t border-stone-100 dark:border-stone-800 shadow-[0_-4px_12px_rgba(0,0,0,0.04)] fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pt-3 pb-6 bg-white dark:bg-stone-900">
+<a class="flex flex-col items-center justify-center text-stone-400 dark:text-stone-600 hover:text-[#1B3022] dark:hover:text-emerald-300" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="home">home</span>
+<span class="font-serif text-[11px] font-medium">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#1B3022] dark:text-emerald-400 scale-105 hover:text-[#1B3022] dark:hover:text-emerald-300 Active: scale-95 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="agriculture" data-weight="fill">agriculture</span>
+<span class="font-serif text-[11px] font-medium">Farmers</span>
+</a>
+<a class="flex flex-col items-center justify-center text-stone-400 dark:text-stone-600 hover:text-[#1B3022] dark:hover:text-emerald-300" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="shopping_basket">shopping_basket</span>
+<span class="font-serif text-[11px] font-medium">Cart</span>
+</a>
+<a class="flex flex-col items-center justify-center text-stone-400 dark:text-stone-600 hover:text-[#1B3022] dark:hover:text-emerald-300" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="person">person</span>
+<span class="font-serif text-[11px] font-medium">Profile</span>
+</a>
+</nav>
+</body></html>

@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Checkout - TerraDirect</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&amp;family=Work+Sans:ital,wght@0,100..900;1,100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-surface": "#2f3130",
+                        "on-primary-fixed-variant": "#364c3c",
+                        "on-background": "#1a1c1b",
+                        "surface-container": "#efeeec",
+                        "on-tertiary-container": "#b7895b",
+                        "on-secondary-container": "#4e685c",
+                        "on-secondary": "#ffffff",
+                        "surface-container-high": "#e9e8e6",
+                        "secondary-fixed": "#cce9da",
+                        "on-tertiary-fixed-variant": "#623f18",
+                        "tertiary-container": "#422401",
+                        "on-error-container": "#93000a",
+                        "on-secondary-fixed": "#052016",
+                        "error": "#ba1a1a",
+                        "primary-container": "#1b3022",
+                        "on-surface-variant": "#434843",
+                        "inverse-on-surface": "#f1f1ef",
+                        "on-error": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "surface-bright": "#faf9f7",
+                        "surface-dim": "#dadad8",
+                        "background": "#faf9f7",
+                        "surface-tint": "#4d6453",
+                        "on-tertiary-fixed": "#2c1600",
+                        "surface-variant": "#e3e2e0",
+                        "surface-container-low": "#f4f3f1",
+                        "primary-fixed-dim": "#b4cdb8",
+                        "on-primary-container": "#819986",
+                        "secondary-fixed-dim": "#b0cdbe",
+                        "outline-variant": "#c3c8c1",
+                        "tertiary-fixed-dim": "#f0bd8b",
+                        "primary": "#061b0e",
+                        "surface-container-highest": "#e3e2e0",
+                        "secondary": "#496458",
+                        "secondary-container": "#c9e7d7",
+                        "inverse-primary": "#b4cdb8",
+                        "outline": "#737973",
+                        "on-surface": "#1a1c1b",
+                        "primary-fixed": "#d0e9d4",
+                        "on-primary": "#ffffff",
+                        "surface": "#faf9f7",
+                        "tertiary-fixed": "#ffdcbd",
+                        "tertiary": "#261200",
+                        "on-primary-fixed": "#0b2013",
+                        "on-secondary-fixed-variant": "#324c41",
+                        "error-container": "#ffdad6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "section-padding": "80px",
+                        "stack-sm": "8px",
+                        "margin": "32px",
+                        "container-max": "1280px",
+                        "stack-md": "16px",
+                        "stack-lg": "32px",
+                        "unit": "8px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Work Sans"],
+                        "headline-md": ["Newsreader"],
+                        "button": ["Work Sans"],
+                        "headline-lg": ["Newsreader"],
+                        "body-lg": ["Work Sans"],
+                        "display-xl": ["Newsreader"],
+                        "body-md": ["Work Sans"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["14px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "500" }],
+                        "button": ["16px", { "lineHeight": "1", "letterSpacing": "0.02em", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "fontWeight": "500" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "display-xl": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: theme('colors.background');
+            color: theme('colors.on-background');
+        }
+        
+        .ambient-shadow-sm {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+        }
+
+        .ambient-shadow-md {
+            box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+        }
+        
+        /* Custom form styles referencing theme */
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"] {
+            background-color: theme('colors.surface-container-low');
+            border: none;
+            border-bottom: 1px solid theme('colors.outline-variant');
+            border-radius: theme('borderRadius.DEFAULT') theme('borderRadius.DEFAULT') 0 0;
+            padding: theme('spacing.stack-md');
+            color: theme('colors.on-surface');
+            width: 100%;
+        }
+        
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="tel"]:focus {
+            outline: none;
+            border-bottom: 2px solid theme('colors.primary');
+            background-color: theme('colors.surface-container');
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="antialiased min-h-screen flex flex-col">
+<!-- TopAppBar (Transactional - Hidden Nav/Search per rules) -->
+<header class="bg-[#F5F2ED] dark:bg-stone-950 flex justify-between items-center w-full px-6 py-4 max-w-screen-xl mx-auto border-b border-stone-200 dark:border-stone-800 docked full-width top-0">
+<button aria-label="Go back" class="text-stone-600 dark:text-stone-400 hover:bg-stone-200/50 dark:hover:bg-stone-800/50 transition-colors p-2 rounded-full">
+<span class="material-symbols-outlined" data-icon="arrow_back" style="font-variation-settings: 'FILL' 0;">arrow_back</span>
+</button>
+<h1 class="text-2xl font-bold text-[#1B3022] dark:text-emerald-500 font-serif">TerraDirect</h1>
+<div class="w-10"></div> <!-- Placeholder for balance -->
+</header>
+<main class="flex-grow w-full max-w-container-max mx-auto px-gutter py-section-padding">
+<div class="mb-stack-lg text-center max-w-2xl mx-auto">
+<h2 class="font-headline-lg text-headline-lg text-on-background mb-stack-sm">Secure Checkout</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Complete your purchase to directly support local, sustainable farming.</p>
+</div>
+<!-- Layout Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
+<!-- Left Column: Payment & Shipping -->
+<div class="lg:col-span-7 space-y-stack-lg">
+<!-- Contact Information -->
+<section class="bg-surface-container-lowest ambient-shadow-sm rounded-lg p-margin border-b border-outline-variant/30">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-stack-md flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="person">person</span>
+                        Contact Information
+                    </h3>
+<div class="space-y-stack-md">
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1" for="email">Email Address</label>
+<input class="font-body-md text-body-md" id="email" placeholder="you@example.com" type="email"/>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-stack-md">
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1" for="firstName">First Name</label>
+<input class="font-body-md text-body-md" id="firstName" placeholder="Jane" type="text"/>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1" for="lastName">Last Name</label>
+<input class="font-body-md text-body-md" id="lastName" placeholder="Doe" type="text"/>
+</div>
+</div>
+</div>
+</section>
+<!-- Delivery Details -->
+<section class="bg-surface-container-lowest ambient-shadow-sm rounded-lg p-margin border-b border-outline-variant/30">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-stack-md flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="local_shipping">local_shipping</span>
+                        Delivery Address
+                    </h3>
+<div class="space-y-stack-md">
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1" for="address">Street Address</label>
+<input class="font-body-md text-body-md" id="address" placeholder="123 Farm Road" type="text"/>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-stack-md">
+<div class="md:col-span-2">
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1" for="city">City</label>
+<input class="font-body-md text-body-md" id="city" placeholder="Portland" type="text"/>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1" for="state">State</label>
+<input class="font-body-md text-body-md" id="state" placeholder="OR" type="text"/>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1" for="zip">Zip</label>
+<input class="font-body-md text-body-md" id="zip" placeholder="97204" type="text"/>
+</div>
+</div>
+</div>
+</section>
+<!-- Payment Info -->
+<section class="bg-surface-container-lowest ambient-shadow-sm rounded-lg p-margin border-b border-outline-variant/30 relative overflow-hidden">
+<!-- Subtle pattern or accent for secure payment -->
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary-container opacity-5 rounded-bl-full pointer-events-none"></div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-stack-md flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="credit_card">credit_card</span>
+                        Payment
+                    </h3>
+<div class="bg-surface-container-low p-stack-md rounded mb-stack-md flex items-center gap-3 border border-outline-variant/50">
+<span class="material-symbols-outlined text-primary" data-icon="lock" style="font-variation-settings: 'FILL' 1;">lock</span>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Secure, encrypted transaction. Your data is protected.</p>
+</div>
+<div class="space-y-stack-md">
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1" for="cardNumber">Card Number</label>
+<input class="font-body-md text-body-md" id="cardNumber" placeholder="0000 0000 0000 0000" type="text"/>
+</div>
+<div class="grid grid-cols-2 gap-stack-md">
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1" for="exp">Expiration (MM/YY)</label>
+<input class="font-body-md text-body-md" id="exp" placeholder="MM/YY" type="text"/>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1" for="cvv">CVV</label>
+<input class="font-body-md text-body-md" id="cvv" placeholder="123" type="text"/>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Column: Order Summary (Sticky) -->
+<div class="lg:col-span-5 sticky top-24">
+<div class="bg-surface-container-lowest ambient-shadow-md rounded-lg p-margin border-b border-outline-variant/30 flex flex-col h-full">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-stack-md pb-stack-sm border-b border-outline-variant/30">Order Summary</h3>
+<!-- Direct impact badge -->
+<div class="inline-flex items-center gap-2 bg-secondary-container/50 text-on-secondary-container px-3 py-1.5 rounded-full mb-stack-md w-fit">
+<span class="material-symbols-outlined text-[18px]" data-icon="handshake" style="font-variation-settings: 'FILL' 1;">handshake</span>
+<span class="font-label-sm text-label-sm text-xs">Direct-to-Farmer Purchase</span>
+</div>
+<!-- Items List -->
+<div class="space-y-stack-md mb-stack-lg flex-grow">
+<!-- Item 1 -->
+<div class="flex gap-4 items-start">
+<div class="w-20 h-20 bg-surface-container rounded overflow-hidden flex-shrink-0">
+<img alt="Organic heirloom tomatoes" class="w-full h-full object-cover" data-alt="close up of rustic organic heirloom tomatoes in a wooden crate with natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD_krBbXiOhGCI5nwKDKHOZGtH4Ofm0NOyP8FGznUmNrpHkyJwJARf_f77lJk7x3uO3GkUGj4MAfvbZlQRU04XWgC-mlcGrfrMCJBraTnjiQrlNi8VJxLcEecO4gtYJi-JtmwZBH2RCryQ68DBZacQ8FcH8MIGaHJ_AmjdXgrFm73lI2KD5gP3SXCSDhwQ_TUGM9CCZFm-p1j5FZdlx_MfiOnNO7osZMqsjaXrkh5qxHIR5d1kGL4brutAWFT8BN92ahskHRfC97ISu"/>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-start">
+<h4 class="font-body-lg text-body-lg font-medium text-on-surface">Heirloom Tomato Box</h4>
+<span class="font-body-md text-body-md font-medium text-on-surface">$24.00</span>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-1 text-xs">From: Green Valley Farm</p>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm mt-1">Qty: 1 (5 lbs)</p>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="flex gap-4 items-start">
+<div class="w-20 h-20 bg-surface-container rounded overflow-hidden flex-shrink-0">
+<img alt="Artisan sourdough loaf" class="w-full h-full object-cover" data-alt="artisan sourdough bread loaf on a dark stone surface with dramatic lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBq3aZXxvzctt2iDuiRuZzGOhocCEfFw7n2PbawDgR5TfVFsw-ce-Gk1zQM4P2mbUCrblPZISEnCVXY2Jsw6DluvcdaKcn3SegLVcxKdZRbXJvQd_MKNdQtf40kLgWhFGGv5fGqwzDqloHMD8COmxagDQbDtAbWiQBLv3vYn79F03hAfIiVTIZgAvIrfdsiGUrLXpQWs6mJQCLFdqvTYiH4I6DDGSXo3oGg84vAVQXGXbIecRbbBRlht4XqLtPrMjiD1SxPjVNRv_Oo"/>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-start">
+<h4 class="font-body-lg text-body-lg font-medium text-on-surface">Rustic Sourdough</h4>
+<span class="font-body-md text-body-md font-medium text-on-surface">$9.50</span>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-1 text-xs">From: Mill Creek Bakery</p>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm mt-1">Qty: 1 loaf</p>
+</div>
+</div>
+</div>
+<!-- Totals -->
+<div class="border-t border-outline-variant/30 pt-stack-md space-y-2 mb-stack-lg">
+<div class="flex justify-between font-body-md text-body-md text-on-surface-variant">
+<span>Subtotal</span>
+<span>$33.50</span>
+</div>
+<div class="flex justify-between font-body-md text-body-md text-on-surface-variant">
+<span>Delivery (Carbon Neutral)</span>
+<span>$4.00</span>
+</div>
+<div class="flex justify-between font-body-md text-body-md text-on-surface-variant">
+<span>Platform Fee (Transparent)</span>
+<span>$1.50</span>
+</div>
+<div class="flex justify-between font-headline-md text-headline-md text-on-surface mt-stack-sm pt-stack-sm border-t border-outline-variant/30">
+<span>Total</span>
+<span>$39.00</span>
+</div>
+</div>
+<!-- Checkout Button -->
+<button class="w-full bg-primary text-on-primary font-button text-button py-4 px-6 rounded-lg hover:bg-on-primary-fixed-variant transition-colors flex justify-center items-center gap-2 ambient-shadow-sm">
+<span class="material-symbols-outlined text-[20px]" data-icon="lock" style="font-variation-settings: 'FILL' 1;">lock</span>
+                        Place Order • $39.00
+                    </button>
+<p class="font-label-sm text-label-sm text-on-surface-variant text-center mt-stack-md text-xs">
+                        By placing this order, you agree to our Terms of Service and verifiable direct-sourcing policy.
+                    </p>
+</div>
+</div>
+</div>
+<!-- Optional Confirmation Overlay (Hidden by default, structure provided per requirements) -->
+<!-- 
+        <div class="fixed inset-0 bg-on-background/80 z-50 flex items-center justify-center p-gutter backdrop-blur-sm">
+            <div class="bg-surface-container-lowest rounded-xl p-section-padding max-w-lg w-full text-center ambient-shadow-md border border-outline-variant/20">
+                <div class="w-24 h-24 bg-primary-container text-on-primary-container rounded-full flex items-center justify-center mx-auto mb-stack-lg">
+                    <span class="material-symbols-outlined text-[48px]" data-icon="verified" style="font-variation-settings: 'FILL' 1;">verified</span>
+                </div>
+                <h2 class="font-display-xl text-display-xl text-on-surface mb-stack-md">Thank You</h2>
+                <p class="font-body-lg text-body-lg text-on-surface-variant mb-stack-lg">
+                    Your order is confirmed. You just supported <strong class="text-primary font-semibold">Green Valley Farm</strong> & <strong class="text-primary font-semibold">Mill Creek Bakery</strong>'s natural practices.
+                </p>
+                <div class="bg-surface-container-low p-stack-md rounded-lg mb-stack-lg flex items-center justify-center gap-3">
+                    <span class="material-symbols-outlined text-secondary" data-icon="receipt_long">receipt_long</span>
+                    <span class="font-body-md text-body-md">Order #TD-8492-V</span>
+                </div>
+                <button class="bg-secondary-container text-on-secondary-container font-button text-button py-3 px-8 rounded-lg hover:bg-secondary-fixed transition-colors">
+                    View Impact Report
+                </button>
+            </div>
+        </div> 
+        -->
+</main>
+<!-- BottomNavBar Suppressed per rules for Transactional pages -->
+</body></html>

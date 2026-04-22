@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Consumer Discovery Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600&amp;family=Newsreader:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-surface": "#2f3130",
+                        "on-primary-fixed-variant": "#364c3c",
+                        "on-background": "#1a1c1b",
+                        "surface-container": "#efeeec",
+                        "on-tertiary-container": "#b7895b",
+                        "on-secondary-container": "#4e685c",
+                        "on-secondary": "#ffffff",
+                        "surface-container-high": "#e9e8e6",
+                        "secondary-fixed": "#cce9da",
+                        "on-tertiary-fixed-variant": "#623f18",
+                        "tertiary-container": "#422401",
+                        "on-error-container": "#93000a",
+                        "on-secondary-fixed": "#052016",
+                        "error": "#ba1a1a",
+                        "primary-container": "#1b3022",
+                        "on-surface-variant": "#434843",
+                        "inverse-on-surface": "#f1f1ef",
+                        "on-error": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "surface-bright": "#faf9f7",
+                        "surface-dim": "#dadad8",
+                        "background": "#faf9f7",
+                        "surface-tint": "#4d6453",
+                        "on-tertiary-fixed": "#2c1600",
+                        "surface-variant": "#e3e2e0",
+                        "surface-container-low": "#f4f3f1",
+                        "primary-fixed-dim": "#b4cdb8",
+                        "on-primary-container": "#819986",
+                        "secondary-fixed-dim": "#b0cdbe",
+                        "outline-variant": "#c3c8c1",
+                        "tertiary-fixed-dim": "#f0bd8b",
+                        "primary": "#061b0e",
+                        "surface-container-highest": "#e3e2e0",
+                        "secondary": "#496458",
+                        "secondary-container": "#c9e7d7",
+                        "inverse-primary": "#b4cdb8",
+                        "outline": "#737973",
+                        "on-surface": "#1a1c1b",
+                        "primary-fixed": "#d0e9d4",
+                        "on-primary": "#ffffff",
+                        "surface": "#faf9f7",
+                        "tertiary-fixed": "#ffdcbd",
+                        "tertiary": "#261200",
+                        "on-primary-fixed": "#0b2013",
+                        "on-secondary-fixed-variant": "#324c41",
+                        "error-container": "#ffdad6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "section-padding": "80px",
+                        "stack-sm": "8px",
+                        "margin": "32px",
+                        "container-max": "1280px",
+                        "stack-md": "16px",
+                        "stack-lg": "32px",
+                        "unit": "8px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Work Sans"],
+                        "headline-md": ["Newsreader"],
+                        "button": ["Work Sans"],
+                        "headline-lg": ["Newsreader"],
+                        "body-lg": ["Work Sans"],
+                        "display-xl": ["Newsreader"],
+                        "body-md": ["Work Sans"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["14px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "500" }],
+                        "button": ["16px", { "lineHeight": "1", "letterSpacing": "0.02em", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "fontWeight": "500" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "display-xl": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .ambient-shadow {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+        }
+        .ambient-shadow-hover:hover {
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+            border: 1px solid theme('colors.secondary-fixed');
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-24 md:pb-0">
+<!-- TopAppBar (Hidden on Mobile, Visible on Desktop) -->
+<header class="hidden md:flex justify-between items-center w-full px-6 py-4 max-w-container-max mx-auto bg-surface-container-low text-primary-container font-headline-md border-b border-surface-variant sticky top-0 z-40">
+<div class="flex items-center gap-4">
+<button class="hover:bg-surface-variant transition-colors p-2 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<span class="text-display-xl font-headline-md font-bold text-primary-container tracking-tight">TerraDirect</span>
+</div>
+<nav class="flex gap-8 items-center">
+<a class="font-button text-button text-on-surface-variant hover:text-primary-container hover:bg-surface-variant/50 px-4 py-2 rounded-lg transition-colors" href="#">Home</a>
+<a class="font-button text-button text-primary-container font-bold hover:bg-surface-variant/50 px-4 py-2 rounded-lg transition-colors border-b-2 border-primary-container" href="#">Farmers</a>
+<a class="font-button text-button text-on-surface-variant hover:text-primary-container hover:bg-surface-variant/50 px-4 py-2 rounded-lg transition-colors" href="#">Cart</a>
+<a class="font-button text-button text-on-surface-variant hover:text-primary-container hover:bg-surface-variant/50 px-4 py-2 rounded-lg transition-colors" href="#">Profile</a>
+<button class="hover:bg-surface-variant transition-colors p-2 rounded-full flex items-center justify-center ml-4">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+</button>
+</nav>
+</header>
+<!-- Main Content -->
+<main class="max-w-container-max mx-auto px-6 md:px-gutter py-margin md:py-section-padding">
+<!-- Header Section -->
+<section class="mb-12">
+<h1 class="font-display-xl text-display-xl text-primary-container mb-stack-md">Discover Local Farmers</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">Connect directly with regenerative farms in your area. Verify their practices and source your food with confidence.</p>
+</section>
+<!-- Search and Filter Bar -->
+<section class="mb-16 flex flex-col md:flex-row gap-stack-md items-start md:items-center">
+<!-- Search -->
+<div class="relative w-full md:w-96">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant" data-icon="search">search</span>
+<input class="w-full bg-surface-container-low border-b-2 border-outline-variant focus:border-primary-container focus:ring-0 pl-12 pr-4 py-3 font-body-md text-body-md text-on-background placeholder-on-surface-variant transition-colors rounded-t-lg" placeholder="Search farmers, crops, or regions..." type="text"/>
+</div>
+<!-- Filter Chips -->
+<div class="flex flex-wrap gap-stack-sm w-full md:w-auto">
+<button class="bg-surface-container-lowest border border-outline-variant hover:border-primary-container text-on-background font-label-sm text-label-sm px-4 py-2 rounded-full transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]" data-icon="eco">eco</span>
+                    Regenerative
+                </button>
+<button class="bg-primary-container text-on-primary font-label-sm text-label-sm px-4 py-2 rounded-full transition-colors flex items-center gap-2 shadow-sm">
+<span class="material-symbols-outlined text-[18px]" data-icon="location_on">location_on</span>
+                    Local
+                </button>
+<button class="bg-surface-container-lowest border border-outline-variant hover:border-primary-container text-on-background font-label-sm text-label-sm px-4 py-2 rounded-full transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]" data-icon="verified">verified</span>
+                    Organic
+                </button>
+<button class="bg-surface-container-lowest border border-outline-variant hover:border-primary-container text-on-background font-label-sm text-label-sm px-4 py-2 rounded-full transition-colors flex items-center gap-2">
+                    Filters
+                    <span class="material-symbols-outlined text-[18px]" data-icon="tune">tune</span>
+</button>
+</div>
+</section>
+<!-- Bento Grid / Cards -->
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
+<!-- Farmer Card 1 -->
+<article class="bg-surface-container-lowest rounded-xl overflow-hidden ambient-shadow ambient-shadow-hover transition-all duration-300 border-b border-surface-tint/20 group relative cursor-pointer flex flex-col h-full">
+<!-- Image -->
+<div class="h-64 overflow-hidden relative">
+<img alt="Farmer in field" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 saturate-50 group-hover:saturate-100" data-alt="Wide shot of a farmer standing in a vibrant green row of crops at golden hour, soft warm lighting, earthy and authentic mood" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBoeGa6xV9y4WQ7vnWijJkQ9c-8us0skO0__ShtLaMtRTBikXZ5FaAuhTJmgrL0ccDjHC6aGeLTNaECNnH24FzS3KSbis_Nw0HOzxN4F2oey3o0-KEjP-lRKX_QVL_9Vldbe4Hjfu8M26b0nQASaJILyjYRKvVov9ayO5oYiVSyg9ME7dZpSuA1YGRhLsbVkNMsLwLOXxE7Wn6xObjCcTGQxgYbeDR-iMNmNiHHcrj5tC6gb_ya2-jcmV6JT4inJxtrqA0zgauddBmd"/>
+<!-- Verified Badge Overlay -->
+<div class="absolute top-4 left-4 bg-secondary-container/90 backdrop-blur-sm rounded-full py-1.5 px-3 flex items-center gap-1.5 border border-secondary-fixed shadow-sm group/tooltip relative">
+<span class="material-symbols-outlined text-secondary font-bold text-[16px]" data-icon="verified">verified</span>
+<span class="font-label-sm text-[12px] text-secondary font-bold uppercase tracking-wider">Verified</span>
+<!-- Tooltip -->
+<div class="absolute top-full left-0 mt-2 w-48 bg-inverse-surface text-inverse-on-surface text-[11px] font-body-md p-2 rounded opacity-0 group-hover/tooltip:opacity-100 transition-opacity pointer-events-none z-10">
+                            Practices verified by direct soil sampling on Oct 2023.
+                        </div>
+</div>
+</div>
+<!-- Content -->
+<div class="p-6 flex flex-col flex-grow">
+<div class="flex justify-between items-start mb-2">
+<h2 class="font-headline-lg text-[24px] text-on-background">Sunrise Valley Farm</h2>
+<span class="font-label-sm text-[12px] text-on-surface-variant bg-surface-container-low px-2 py-1 rounded">12 mi</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-4">Sarah Jenkins</p>
+<div class="mt-auto">
+<h3 class="font-label-sm text-[12px] text-outline uppercase tracking-wider mb-2">Primary Products</h3>
+<div class="flex flex-wrap gap-2 mb-6">
+<span class="font-body-md text-[14px] text-on-background bg-surface-container-low px-3 py-1 rounded-full border border-surface-variant">Heirloom Tomatoes</span>
+<span class="font-body-md text-[14px] text-on-background bg-surface-container-low px-3 py-1 rounded-full border border-surface-variant">Leafy Greens</span>
+</div>
+<div class="flex items-center justify-between pt-4 border-t border-surface-variant">
+<div class="flex items-center gap-2">
+<span class="bg-secondary-container text-secondary font-label-sm text-[12px] px-2 py-1 rounded">100% Direct</span>
+</div>
+<button class="font-button text-button text-primary-container bg-surface-container-lowest hover:bg-surface-container-low px-4 py-2 rounded-lg border border-outline-variant transition-colors flex items-center gap-2">
+                                View Profile
+                                <span class="material-symbols-outlined text-[18px]" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</article>
+<!-- Farmer Card 2 -->
+<article class="bg-surface-container-lowest rounded-xl overflow-hidden ambient-shadow ambient-shadow-hover transition-all duration-300 border-b border-surface-tint/20 group relative cursor-pointer flex flex-col h-full">
+<!-- Image -->
+<div class="h-64 overflow-hidden relative">
+<img alt="Orchard view" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 saturate-50 group-hover:saturate-100" data-alt="Close up of an apple tree branch with ripe red apples against a clear blue sky, slightly desaturated tones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAxQGfnOu7t6__-7ti95kzrtd__JJtgFuCTZJS0G7H1P9SIjGox1wqG-E_nQtePcO8JHQ8qG-wbz3yozpqfOTOiTeYz9yzbeLd0NBvpBg3UcmObnBKZwsg6qEHF0nA4HqEhL0VKsaV9YkDXVBRfVeorQ8wDNyQmHnq1KADdsiUx_mgAhSQCMR90J2VKS5Jke-GUsjKzhTKHpzk_gHuNcJAhfUEo86FWqqC5G6pRAZhO3x8M7BPhnRDSq-CA669NssZPeAltRrMHps8G"/>
+<!-- Verified Badge Overlay -->
+<div class="absolute top-4 left-4 bg-secondary-container/90 backdrop-blur-sm rounded-full py-1.5 px-3 flex items-center gap-1.5 border border-secondary-fixed shadow-sm group/tooltip relative">
+<span class="material-symbols-outlined text-secondary font-bold text-[16px]" data-icon="verified">verified</span>
+<span class="font-label-sm text-[12px] text-secondary font-bold uppercase tracking-wider">Verified</span>
+<!-- Tooltip -->
+<div class="absolute top-full left-0 mt-2 w-48 bg-inverse-surface text-inverse-on-surface text-[11px] font-body-md p-2 rounded opacity-0 group-hover/tooltip:opacity-100 transition-opacity pointer-events-none z-10">
+                            Organic certification verified on Aug 2023.
+                        </div>
+</div>
+</div>
+<!-- Content -->
+<div class="p-6 flex flex-col flex-grow">
+<div class="flex justify-between items-start mb-2">
+<h2 class="font-headline-lg text-[24px] text-on-background">Oak Heritage Orchards</h2>
+<span class="font-label-sm text-[12px] text-on-surface-variant bg-surface-container-low px-2 py-1 rounded">24 mi</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-4">The Miller Family</p>
+<div class="mt-auto">
+<h3 class="font-label-sm text-[12px] text-outline uppercase tracking-wider mb-2">Primary Products</h3>
+<div class="flex flex-wrap gap-2 mb-6">
+<span class="font-body-md text-[14px] text-on-background bg-surface-container-low px-3 py-1 rounded-full border border-surface-variant">Heritage Apples</span>
+<span class="font-body-md text-[14px] text-on-background bg-surface-container-low px-3 py-1 rounded-full border border-surface-variant">Stone Fruit</span>
+</div>
+<div class="flex items-center justify-between pt-4 border-t border-surface-variant">
+<div class="flex items-center gap-2">
+<span class="bg-secondary-container text-secondary font-label-sm text-[12px] px-2 py-1 rounded">85% Direct</span>
+</div>
+<button class="font-button text-button text-primary-container bg-surface-container-lowest hover:bg-surface-container-low px-4 py-2 rounded-lg border border-outline-variant transition-colors flex items-center gap-2">
+                                View Profile
+                                <span class="material-symbols-outlined text-[18px]" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</article>
+<!-- Farmer Card 3 -->
+<article class="bg-surface-container-lowest rounded-xl overflow-hidden ambient-shadow ambient-shadow-hover transition-all duration-300 border-b border-surface-tint/20 group relative cursor-pointer flex flex-col h-full">
+<!-- Image -->
+<div class="h-64 overflow-hidden relative">
+<img alt="Root vegetables" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 saturate-50 group-hover:saturate-100" data-alt="Freshly harvested carrots and beets resting on dark loamy soil, natural diffused light, organic texture" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDsxIQlHJlUzp5iSN0UzFjHRwM_QSYa3gmTiyHdnyW-e83dvwzPTyVzk9LMwsHOuoLesebhLWqDSN2W4Op47rpgdoiGtWs_mpC9_vN6tISxSdnkL6aMNgS-fsJxGg8yxfBkzt92UUD24dwKYsVmhz0Vda7a8MQJXNvsc54KlGxpjXVG45NtTFOd_lebunhJoNaVo4LGfycl9zARVMkiBHLDPKDBBEdNurgPi5O8z_U7GFfF6AqxMv4N-DDsVleqYybzBeabwPGvrRQF"/>
+<!-- Pending Badge Overlay -->
+<div class="absolute top-4 left-4 bg-surface-variant/90 backdrop-blur-sm rounded-full py-1.5 px-3 flex items-center gap-1.5 border border-outline-variant shadow-sm group/tooltip relative">
+<span class="material-symbols-outlined text-on-surface-variant font-bold text-[16px]" data-icon="pending">pending</span>
+<span class="font-label-sm text-[12px] text-on-surface-variant font-bold uppercase tracking-wider">Pending</span>
+<!-- Tooltip -->
+<div class="absolute top-full left-0 mt-2 w-48 bg-inverse-surface text-inverse-on-surface text-[11px] font-body-md p-2 rounded opacity-0 group-hover/tooltip:opacity-100 transition-opacity pointer-events-none z-10">
+                            Verification currently under review.
+                        </div>
+</div>
+</div>
+<!-- Content -->
+<div class="p-6 flex flex-col flex-grow">
+<div class="flex justify-between items-start mb-2">
+<h2 class="font-headline-lg text-[24px] text-on-background">Deep Roots Collective</h2>
+<span class="font-label-sm text-[12px] text-on-surface-variant bg-surface-container-low px-2 py-1 rounded">8 mi</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-4">Community Farm Co-op</p>
+<div class="mt-auto">
+<h3 class="font-label-sm text-[12px] text-outline uppercase tracking-wider mb-2">Primary Products</h3>
+<div class="flex flex-wrap gap-2 mb-6">
+<span class="font-body-md text-[14px] text-on-background bg-surface-container-low px-3 py-1 rounded-full border border-surface-variant">Root Vegetables</span>
+<span class="font-body-md text-[14px] text-on-background bg-surface-container-low px-3 py-1 rounded-full border border-surface-variant">Herbs</span>
+</div>
+<div class="flex items-center justify-between pt-4 border-t border-surface-variant">
+<div class="flex items-center gap-2">
+<span class="bg-surface-variant text-on-surface-variant font-label-sm text-[12px] px-2 py-1 rounded">100% Direct</span>
+</div>
+<button class="font-button text-button text-primary-container bg-surface-container-lowest hover:bg-surface-container-low px-4 py-2 rounded-lg border border-outline-variant transition-colors flex items-center gap-2">
+                                View Profile
+                                <span class="material-symbols-outlined text-[18px]" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</article>
+</section>
+<!-- Load More -->
+<div class="flex justify-center mt-12 mb-24 md:mb-12">
+<button class="bg-surface-container-low border border-primary-container text-primary-container font-button text-button px-8 py-3 rounded-lg hover:bg-surface-variant transition-colors flex items-center gap-2">
+                Load More Farms
+                <span class="material-symbols-outlined" data-icon="expand_more">expand_more</span>
+</button>
+</div>
+</main>
+<!-- BottomNavBar (Visible on Mobile, Hidden on Desktop) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pt-3 pb-6 bg-surface-container-lowest border-t border-surface-variant shadow-[0_-4px_12px_rgba(0,0,0,0.04)]">
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary-container" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="home">home</span>
+<span class="font-label-sm text-[11px] font-medium">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary-container scale-105" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="agriculture" style="font-variation-settings: 'FILL' 1;">agriculture</span>
+<span class="font-label-sm text-[11px] font-bold">Farmers</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary-container" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="shopping_basket">shopping_basket</span>
+<span class="font-label-sm text-[11px] font-medium">Cart</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary-container" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="person">person</span>
+<span class="font-label-sm text-[11px] font-medium">Profile</span>
+</a>
+</nav>
+</body></html>
