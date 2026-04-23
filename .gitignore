@@ -23,3 +23,6 @@ Thumbs.db
 # Logs
 *.log
 npm-debug.log*
+
+# Graphify outputs (generated artifacts; do not version-control)
+graphify-out/
