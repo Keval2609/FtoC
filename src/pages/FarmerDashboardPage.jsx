@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import DashboardSidebar from '../components/dashboard/DashboardSidebar';
 import KpiCard from '../components/dashboard/KpiCard';
 import InventoryTable from '../components/dashboard/InventoryTable';
@@ -6,6 +7,7 @@ import AddListingModal from '../components/dashboard/AddListingModal';
 import { mockInventory } from '../lib/mockInventory';
 
 export default function FarmerDashboardPage() {
+  const navigate = useNavigate();
   const [inventory, setInventory] = useState(mockInventory);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -32,8 +34,7 @@ export default function FarmerDashboardPage() {
 
   // ─── Handlers ───
   const handleAdd = () => {
-    setEditItem(null);
-    setModalOpen(true);
+    navigate('/dashboard/add-product');
   };
 
   const handleEdit = (item) => {

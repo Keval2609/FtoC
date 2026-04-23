@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import HeroSection from '../components/profile/HeroSection';
 import MethodsSection from '../components/profile/MethodsSection';
 import ProductGrid from '../components/profile/ProductGrid';
@@ -8,6 +9,8 @@ import { getFarmerById, getProductsByFarmer } from '../lib/firestore';
 
 export default function FarmerProfilePage() {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { user, isFarmer: isCurrentUserFarmer } = useAuth();
   const [farmer, setFarmer] = useState(null);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -66,6 +69,24 @@ export default function FarmerProfilePage() {
       </div>
 
       <HeroSection farmer={farmer} />
+
+      {/* Message Farmer Button */}
+      {user && !isCurrentUserFarmer && (
+        <div className="max-w-container mx-auto px-4 sm:px-6 lg:px-8">
+          <button
+            onClick={() => navigate(`/chat/${id}`)}
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary-container text-on-primary-container font-button text-sm rounded-xl hover:opacity-90 transition-opacity cursor-pointer ambient-shadow"
+          >
+            <span
+              className="material-symbols-outlined"
+              style={{ fontSize: 18, fontVariationSettings: "'FILL' 1" }}
+            >
+              chat
+            </span>
+            Message Farmer
+          </button>
+        </div>
+      )}
 
       <div className="max-w-container mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         <MethodsSection farmer={farmer} />

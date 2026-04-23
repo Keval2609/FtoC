@@ -47,6 +47,7 @@ The conventional food supply chain is opaque. Consumers can't verify farming pra
 - Farming practices grid with Material icons
 - Product catalog with add-to-cart functionality
 - Verification gallery with certification details, issue dates, and cert IDs
+- **"Message Farmer" button** for direct 1-on-1 chat (logged-in customers only)
 
 ### 🛒 Checkout Flow
 - Auth-gated — redirects to login with return URL
@@ -66,6 +67,23 @@ The conventional food supply chain is opaque. Consumers can't verify farming pra
 - **Role-Based Routing**: Automatic redirection post-login (Farmers to Dashboard, Customers to Discovery)
 - **Strict Access Control**: Role-gated routes and Firestore security rules to prevent unauthorized access
 - Mock auth mode for rapid development (bypass Firebase setup)
+
+### 💬 Direct Messaging
+- Real-time 1-on-1 chat between customers and farmers
+- Conversation list with last message preview and relative timestamps
+- Auto-scrolling message thread with time-stamped bubbles
+- Deterministic chat IDs (`uid1_uid2`) for deduplication
+- Firestore real-time `onSnapshot` listener for instant updates
+- Participant-only access enforced by security rules
+
+### 📦 Product Addition (Farmer)
+- Dedicated product creation page with **multi-image upload** (1–5 images)
+- Firebase Storage upload with per-file and total progress tracking
+- Image preview grid with cover indicator and remove buttons
+- **Shelf life** selector (number + hours/days/weeks unit)
+- Pricing unit dropdown (kg, gram, piece, dozen, liter, bunch)
+- File validation: type (JPG/PNG/WebP/GIF) and size (max 5MB each)
+- Success screen with "Add Another" or "Go to Dashboard" options
 
 ### 🌓 Dark Mode
 - System preference detection on first visit
@@ -128,7 +146,16 @@ d:\F2C\
 │   │   ├── LoginPage.jsx        # Email + Google sign-in
 │   │   ├── OnboardingPage.jsx   # Role-specific profile completion
 │   │   ├── RoleSelectPage.jsx   # Google SSO role assignment
-│   │   └── SignupPage.jsx       # Account creation with role toggle
+│   │   ├── SignupPage.jsx       # Account creation with role toggle
+│   │   ├── ChatListPage.jsx     # Conversation inbox
+│   │   ├── ChatPage.jsx         # Real-time 1-on-1 chat room
+│   │   └── AddProductPage.jsx   # Product creation with image upload
+│   ├── lib/
+│   │   ├── auth.js              # Firebase auth helpers
+│   │   ├── firebase.js          # Firebase initialization
+│   │   ├── firestore.js         # Data layer with automatic mock fallback
+│   │   ├── storage.js           # Firebase Storage upload helpers
+│   │   └── mockData.js          # Sample data matching Stitch designs
 │   ├── App.jsx                  # Route definitions
 │   ├── index.css                # Design tokens (light + dark), base styles
 │   └── main.jsx                 # Provider tree entry point
@@ -237,6 +264,9 @@ All 50+ color tokens are defined as CSS custom properties in `src/index.css`, en
 | **Protected routes with redirect** | Checkout and Dashboard require auth; users are redirected based on role and onboarding status |
 | **Role-based security rules** | Firestore rules enforce that only 'farmer' roles can create/edit products or farm data |
 | **Differentiated onboarding** | Tailored data collection paths for Farmers vs. Customers to keep user profiles lean and relevant |
+| **Deterministic chat IDs** | `uid1_uid2` (sorted) ensures each user pair has exactly one chat — no duplicates |
+| **Firebase Storage for images** | Products stored in `products/{userId}/{timestamp}_{fileName}` to prevent collisions |
+| **Farmer gatekeeper (getUserData)** | Security rules read the user's `/users` doc at database level to verify `role == 'farmer'` before allowing product creation |
 
 ---
 
@@ -245,8 +275,10 @@ All 50+ color tokens are defined as CSS custom properties in `src/index.css`, en
 - [x] **Phase 1** — Discovery, Profiles, Checkout
 - [ ] **Phase 2** — Role-Based Auth, Farmer Dashboard, Messaging (In Progress)
   - [x] Step 1: Role-Based Authentication & Onboarding
-  - [ ] Step 2: Real-time Messaging System
-  - [ ] Step 3: Monetization & Transactions
+  - [x] Step 2.1: Firestore Schema (Users Collection)
+  - [x] Step 2.2: Real-time Messaging System
+  - [x] Step 3: Product Addition with Image Upload
+  - [x] Step 4: Farmer Gatekeeper Security Rules
 - [ ] **Phase 3** — Real Payment Integration (Stripe), Order Tracking
 - [ ] **Phase 4** — Community Features (Removed/Deprioritized)
 - [ ] **Phase 5** — Mobile App (React Native), Push Notifications

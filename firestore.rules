@@ -21,9 +21,13 @@ service cloud.firestore {
              get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin";
     }
 
-    // Helper — get the calling user's role from /users
+    // Helper — get the calling user's data from /users
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
     function getUserRole() {
-      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+      return getUserData().role;
     }
 
     function isFarmer() {
@@ -53,15 +57,15 @@ service cloud.firestore {
     }
 
     function isValidProduct(data) {
-      return data.keys().hasAll(['farmerId', 'name', 'price', 'unit', 'isAvailable', 'createdAt']) &&
-             data.farmerId is string && data.farmerId == request.auth.uid &&
+      return data.keys().hasAll(['sellerId', 'name', 'price', 'unit', 'imageUrls']) &&
+             data.sellerId is string && data.sellerId == request.auth.uid &&
              data.name is string && data.name.size() <= 200 &&
              (data.keys().hasAny(['description']) ? (data.description is string && data.description.size() <= 2000) : true) &&
              data.price is number && data.price >= 0 &&
              data.unit is string && data.unit.size() <= 50 &&
-             (data.keys().hasAny(['imageUrl']) ? (data.imageUrl is string && data.imageUrl.size() <= 1000) : true) &&
-             data.isAvailable is bool &&
-             data.createdAt is number;
+             data.imageUrls is list &&
+             data.imageUrls.size() >= 1 &&
+             data.imageUrls.size() <= 5;
     }
 
     function isValidOrder(data) {
@@ -114,21 +118,65 @@ service cloud.firestore {
                     isAdmin();
     }
 
-    // ═══ Products Collection ═══
+    // ═══ Products Collection — Phase 2 Step 3 & 4 (Farmer Gatekeeper) ═══
     match /products/{productId} {
+      // Anyone can view products
       allow get: if true;
       allow list: if true;
       
-      // Only farmers can create products — checked via /users role
-      allow create: if isSignedIn() && isValidId(productId) &&
-                    isValidProduct(incoming()) && 
-                    isFarmer() &&
-                    exists(/databases/$(database)/documents/farmers/$(request.auth.uid));
-      allow update: if isSignedIn() && isValidId(productId) &&
-                    isValidProduct(incoming()) && existing().farmerId == request.auth.uid &&
-                    incoming().farmerId == existing().farmerId && incoming().createdAt == existing().createdAt &&
-                    incoming().diff(existing()).affectedKeys().hasOnly(['name', 'description', 'price', 'unit', 'imageUrl', 'isAvailable']);
-      allow delete: if isSignedIn() && isValidId(productId) && existing().farmerId == request.auth.uid;
+      // Only Farmers can create products — checked via /users role
+      // Validates 1–5 images at the database level
+      allow create: if isSignedIn()
+                    && getUserData().role == 'farmer'
+                    && isValidProduct(incoming())
+                    && exists(/databases/$(database)/documents/farmers/$(request.auth.uid));
+
+      // Only the original farmer can edit their own product
+      allow update: if isSignedIn()
+                    && request.auth.uid == existing().sellerId
+                    && isValidProduct(incoming())
+                    && incoming().sellerId == existing().sellerId;
+
+      // Only the original farmer can delete their own product
+      allow delete: if isSignedIn()
+                    && request.auth.uid == existing().sellerId;
+    }
+
+    // ═══ Chats Collection — Phase 2 Step 2.2 (Messaging) ═══
+    match /chats/{chatId} {
+      // Only participants can read the chat
+      allow get: if isSignedIn()
+                 && request.auth.uid in existing().participants;
+      
+      // List chats where user is a participant (filtered by query)
+      allow list: if isSignedIn()
+                  && request.auth.uid in resource.data.participants;
+
+      // Any authenticated user can create a chat (they must be a participant)
+      allow create: if isSignedIn()
+                    && incoming().participants is list
+                    && incoming().participants.size() == 2
+                    && request.auth.uid in incoming().participants;
+
+      // Only participants can update (e.g. lastMessage, updatedAt)
+      allow update: if isSignedIn()
+                    && request.auth.uid in existing().participants
+                    && incoming().participants == existing().participants;
+
+      // ── Messages sub-collection ──
+      match /messages/{messageId} {
+        // Only chat participants can read messages
+        allow read: if isSignedIn()
+                    && request.auth.uid in get(/databases/$(database)/documents/chats/$(chatId)).data.participants;
+
+        // Only chat participants can send messages (senderId must be self)
+        allow create: if isSignedIn()
+                      && request.auth.uid in get(/databases/$(database)/documents/chats/$(chatId)).data.participants
+                      && incoming().senderId == request.auth.uid
+                      && incoming().text is string
+                      && incoming().text.size() <= 2000
+                      && incoming().timestamp is number;
+      }
     }
 
     // ═══ Orders Collection ═══

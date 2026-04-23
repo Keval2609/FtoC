@@ -9,6 +9,9 @@ import SignupPage from './pages/SignupPage';
 import RoleSelectPage from './pages/RoleSelectPage';
 import OnboardingPage from './pages/OnboardingPage';
 import FarmerDashboardPage from './pages/FarmerDashboardPage';
+import ChatListPage from './pages/ChatListPage';
+import ChatPage from './pages/ChatPage';
+import AddProductPage from './pages/AddProductPage';
 
 export default function App() {
   return (
@@ -43,12 +46,40 @@ export default function App() {
           }
         />
 
+        {/* ─── Messaging (any authenticated user) ─── */}
+        <Route
+          path="/messages"
+          element={
+            <ProtectedRoute>
+              <ChatListPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/chat/:farmerId"
+          element={
+            <ProtectedRoute>
+              <ChatPage />
+            </ProtectedRoute>
+          }
+        />
+
         {/* ─── Farmer Dashboard (farmer-only) ─── */}
         <Route
           path="/dashboard"
           element={
             <ProtectedRoute requiredRole="farmer">
               <FarmerDashboardPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* ─── Add Product (farmer-only) ─── */}
+        <Route
+          path="/dashboard/add-product"
+          element={
+            <ProtectedRoute requiredRole="farmer">
+              <AddProductPage />
             </ProtectedRoute>
           }
         />

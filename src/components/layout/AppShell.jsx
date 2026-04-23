@@ -11,8 +11,11 @@ export default function AppShell({ children }) {
   const navItems = [
     { path: '/', icon: 'explore', label: 'Discover' },
     { path: '/checkout', icon: 'shopping_cart', label: 'Cart' },
-    // Show Dashboard link only when signed in
-    ...(user ? [{ path: '/dashboard', icon: 'dashboard', label: 'Dashboard' }] : []),
+    // Show Messages & Dashboard links only when signed in
+    ...(user ? [
+      { path: '/messages', icon: 'chat', label: 'Messages' },
+      { path: '/dashboard', icon: 'dashboard', label: 'Dashboard' },
+    ] : []),
   ];
 
 
