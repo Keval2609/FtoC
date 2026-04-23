@@ -36,8 +36,11 @@ export default function SignupPage() {
     setLoading(true);
     try {
       await signup(email, password, name, role);
-      // Route to onboarding for profile completion
-      navigate('/onboarding');
+      if (role === 'farmer') {
+        navigate('/farmer-setup');
+      } else {
+        navigate('/onboarding'); // customer route
+      }
     } catch (err) {
       setError(err.message || 'Could not create account. Please try again.');
     } finally {

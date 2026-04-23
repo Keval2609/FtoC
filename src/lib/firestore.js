@@ -29,8 +29,10 @@ const useMock = import.meta.env.VITE_USE_MOCK_DATA === 'true';
  */
 export async function createUserProfile(uid, data) {
   if (useMock) {
-    console.log('[MOCK] User profile created:', { uid, ...data });
-    return { uid, ...data };
+    const mockProfile = { uid, ...data, onboardingComplete: false };
+    localStorage.setItem('mockUserProfile', JSON.stringify(mockProfile));
+    console.log('[MOCK] User profile created:', mockProfile);
+    return mockProfile;
   }
 
   const userRef = doc(db, 'users', uid);
@@ -63,6 +65,9 @@ export async function createUserProfile(uid, data) {
  */
 export async function getUserProfile(uid) {
   if (useMock) {
+    const saved = localStorage.getItem('mockUserProfile');
+    if (saved) return JSON.parse(saved);
+
     return {
       uid,
       email: 'demo@example.com',
@@ -83,7 +88,11 @@ export async function getUserProfile(uid) {
  */
 export async function updateUserProfile(uid, updates) {
   if (useMock) {
-    console.log('[MOCK] User profile updated:', { uid, ...updates });
+    const saved = localStorage.getItem('mockUserProfile');
+    const existing = saved ? JSON.parse(saved) : {};
+    const updated = { ...existing, uid, ...updates };
+    localStorage.setItem('mockUserProfile', JSON.stringify(updated));
+    console.log('[MOCK] User profile updated:', updated);
     return;
   }
 
@@ -96,7 +105,11 @@ export async function updateUserProfile(uid, updates) {
  */
 export async function completeOnboarding(uid, role, profileData) {
   if (useMock) {
-    console.log('[MOCK] Onboarding completed:', { uid, role, ...profileData });
+    const saved = localStorage.getItem('mockUserProfile');
+    const existing = saved ? JSON.parse(saved) : {};
+    const updated = { ...existing, uid, role, ...profileData, onboardingComplete: true };
+    localStorage.setItem('mockUserProfile', JSON.stringify(updated));
+    console.log('[MOCK] Onboarding completed:', updated);
     return;
   }
 

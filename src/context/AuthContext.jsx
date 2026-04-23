@@ -20,11 +20,20 @@ export function AuthProvider({ children }) {
     }
     try {
       const profile = await getUserProfile(firebaseUser.uid);
-      setUserProfile(profile);
+      if (profile) {
+        setUserProfile(profile);
+      } else {
+        // Prevent overwriting an optimistically set profile with null
+        // during the signup race condition.
+        setUserProfile(prev => {
+          if (prev && prev.uid === firebaseUser.uid) return prev;
+          return null;
+        });
+      }
       return profile;
     } catch (err) {
       console.error('Failed to fetch user profile:', err);
-      setUserProfile(null);
+      setUserProfile(prev => (prev && prev.uid === firebaseUser.uid ? prev : null));
       return null;
     }
   }, []);
@@ -80,7 +89,16 @@ export function AuthProvider({ children }) {
       });
       return;
     }
-    await signUpWithEmail(email, password, displayName, role);
+    const newUser = await signUpWithEmail(email, password, displayName, role);
+    // Optimistically set the profile locally so there's no UI flicker or role mismatch
+    // while the Firestore document is propagating.
+    setUserProfile({
+      uid: newUser.uid,
+      email,
+      displayName,
+      role,
+      onboardingComplete: false,
+    });
   };
 
   /**

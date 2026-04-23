@@ -8,6 +8,7 @@ import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import RoleSelectPage from './pages/RoleSelectPage';
 import OnboardingPage from './pages/OnboardingPage';
+import FarmerSetupPage from './pages/FarmerSetupPage';
 import FarmerDashboardPage from './pages/FarmerDashboardPage';
 import ChatListPage from './pages/ChatListPage';
 import ChatPage from './pages/ChatPage';
@@ -48,6 +49,14 @@ export default function App() {
           element={
             <ProtectedRoute>
               <OnboardingPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/farmer-setup"
+          element={
+            <ProtectedRoute>
+              <FarmerSetupPage />
             </ProtectedRoute>
           }
         />
