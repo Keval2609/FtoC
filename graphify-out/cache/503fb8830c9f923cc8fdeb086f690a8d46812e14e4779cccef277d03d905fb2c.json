@@ -1,1 +1,0 @@
-{"nodes": [{"id": "firebase_js", "label": "firebase.js", "file_type": "code", "source_file": "firebase.js", "source_location": "L1"}], "edges": [{"source": "firebase_js", "target": "app", "relation": "imports_from", "confidence": "EXTRACTED", "source_file": "firebase.js", "source_location": "L2", "weight": 1.0}]}
