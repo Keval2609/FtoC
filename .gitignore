@@ -26,3 +26,6 @@ npm-debug.log*
 
 # Graphify outputs (generated artifacts; do not version-control)
 graphify-out/
+
+# Stitch designs
+stitch-design/
