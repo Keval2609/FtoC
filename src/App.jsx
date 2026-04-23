@@ -6,6 +6,7 @@ import FarmerProfilePage from './pages/FarmerProfilePage';
 import CheckoutPage from './pages/CheckoutPage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
+import FarmerDashboardPage from './pages/FarmerDashboardPage';
 
 export default function App() {
   return (
@@ -20,6 +21,15 @@ export default function App() {
           element={
             <ProtectedRoute>
               <CheckoutPage />
+            </ProtectedRoute>
+          }
+        />
+        {/* Farmer Dashboard — protected; renders its own sidebar layout */}
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <FarmerDashboardPage />
             </ProtectedRoute>
           }
         />
