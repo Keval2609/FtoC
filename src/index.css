@@ -1,0 +1,219 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ═══════════════════════════════════════════════════
+   LIGHT MODE — farmer_marketplace_1/DESIGN.md tokens
+   ═══════════════════════════════════════════════════ */
+:root {
+  --color-surface: #faf9f7;
+  --color-surface-dim: #dadad8;
+  --color-surface-bright: #faf9f7;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f4f3f1;
+  --color-surface-container: #efeeec;
+  --color-surface-container-high: #e9e8e6;
+  --color-surface-container-highest: #e3e2e0;
+  --color-on-surface: #1a1c1b;
+  --color-on-surface-variant: #434843;
+  --color-inverse-surface: #2f3130;
+  --color-inverse-on-surface: #f1f1ef;
+  --color-outline: #737973;
+  --color-outline-variant: #c3c8c1;
+  --color-surface-tint: #4d6453;
+  --color-surface-variant: #e3e2e0;
+  --color-background: #faf9f7;
+  --color-on-background: #1a1c1b;
+
+  --color-primary: #061b0e;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #1b3022;
+  --color-on-primary-container: #819986;
+  --color-inverse-primary: #b4cdb8;
+  --color-primary-fixed: #d0e9d4;
+  --color-primary-fixed-dim: #b4cdb8;
+  --color-on-primary-fixed: #0b2013;
+  --color-on-primary-fixed-variant: #364c3c;
+
+  --color-secondary: #496458;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #c9e7d7;
+  --color-on-secondary-container: #4e685c;
+  --color-secondary-fixed: #cce9da;
+  --color-secondary-fixed-dim: #b0cdbe;
+  --color-on-secondary-fixed: #052016;
+  --color-on-secondary-fixed-variant: #324c41;
+
+  --color-tertiary: #261200;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-container: #422401;
+  --color-on-tertiary-container: #b7895b;
+  --color-tertiary-fixed: #ffdcbd;
+  --color-tertiary-fixed-dim: #f0bd8b;
+  --color-on-tertiary-fixed: #2c1600;
+  --color-on-tertiary-fixed-variant: #623f18;
+
+  --color-error: #ba1a1a;
+  --color-on-error: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #93000a;
+}
+
+/* ═══════════════════════════════════════════════════
+   DARK MODE — farmer_marketplace_2/DESIGN.md tokens
+   ═══════════════════════════════════════════════════ */
+.dark {
+  --color-surface: #121412;
+  --color-surface-dim: #121412;
+  --color-surface-bright: #383a37;
+  --color-surface-container-lowest: #0d0f0d;
+  --color-surface-container-low: #1a1c1a;
+  --color-surface-container: #1e201e;
+  --color-surface-container-high: #282a28;
+  --color-surface-container-highest: #333533;
+  --color-on-surface: #e2e3df;
+  --color-on-surface-variant: #c4c8c0;
+  --color-inverse-surface: #e2e3df;
+  --color-inverse-on-surface: #2f312f;
+  --color-outline: #8e928b;
+  --color-outline-variant: #444842;
+  --color-surface-tint: #bccbb9;
+  --color-surface-variant: #333533;
+  --color-background: #121412;
+  --color-on-background: #e2e3df;
+
+  --color-primary: #bccbb9;
+  --color-on-primary: #273427;
+  --color-primary-container: #2d3a2d;
+  --color-on-primary-container: #95a493;
+  --color-inverse-primary: #546253;
+  --color-primary-fixed: #d8e7d4;
+  --color-primary-fixed-dim: #bccbb9;
+  --color-on-primary-fixed: #121e13;
+  --color-on-primary-fixed-variant: #3d4a3c;
+
+  --color-secondary: #b6ccb6;
+  --color-on-secondary: #223525;
+  --color-secondary-container: #3a4e3d;
+  --color-on-secondary-container: #a8bea8;
+  --color-secondary-fixed: #d1e9d1;
+  --color-secondary-fixed-dim: #b6ccb6;
+  --color-on-secondary-fixed: #0d1f11;
+  --color-on-secondary-fixed-variant: #384b3a;
+
+  --color-tertiary: #cec5be;
+  --color-on-tertiary: #352f2b;
+  --color-tertiary-container: #3b3631;
+  --color-on-tertiary-container: #a79e98;
+  --color-tertiary-fixed: #ebe1da;
+  --color-tertiary-fixed-dim: #cec5be;
+  --color-on-tertiary-fixed: #1f1b17;
+  --color-on-tertiary-fixed-variant: #4c4641;
+
+  --color-error: #ffb4ab;
+  --color-on-error: #690005;
+  --color-error-container: #93000a;
+  --color-on-error-container: #ffdad6;
+}
+
+/* ═══════════════════════════════════════════════════
+   BASE STYLES
+   ═══════════════════════════════════════════════════ */
+@layer base {
+  body {
+    font-family: 'Work Sans', system-ui, sans-serif;
+    background-color: var(--color-background);
+    color: var(--color-on-background);
+    transition: background-color 0.3s ease, color 0.3s ease;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: 'Newsreader', Georgia, serif;
+  }
+
+  ::selection {
+    background-color: var(--color-secondary-container);
+    color: var(--color-on-secondary-container);
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   COMPONENT UTILITIES
+   ═══════════════════════════════════════════════════ */
+@layer components {
+  /* Ambient shadows — tactile, matte paper-like feel */
+  .ambient-shadow {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  }
+  .dark .ambient-shadow {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  .ambient-shadow-hover {
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+  }
+  .ambient-shadow-hover:hover {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+    border-color: var(--color-secondary-fixed);
+  }
+  .dark .ambient-shadow-hover:hover {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Verified Badge — Stamp metaphor */
+  .verified-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background-color: var(--color-secondary-fixed);
+    color: var(--color-primary-container);
+    padding: 4px 8px;
+    border-radius: 9999px;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+  .verified-badge .material-symbols-outlined {
+    font-size: 14px;
+  }
+
+  /* Form inputs — Bone/Stone bg with Forest Green focus */
+  .td-input {
+    width: 100%;
+    background-color: var(--color-surface-container-low);
+    border: none;
+    border-bottom: 1px solid var(--color-outline-variant);
+    border-radius: 0.25rem 0.25rem 0 0;
+    padding: 16px;
+    color: var(--color-on-surface);
+    font-family: 'Work Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+  }
+  .td-input:focus {
+    outline: none;
+    border-bottom: 2px solid var(--color-primary);
+    background-color: var(--color-surface-container);
+  }
+  .td-input::placeholder {
+    color: var(--color-on-surface-variant);
+    opacity: 0.7;
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   UTILITY ADDITIONS
+   ═══════════════════════════════════════════════════ */
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
