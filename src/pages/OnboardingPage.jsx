@@ -9,11 +9,12 @@ import Button from '../components/ui/Button';
 function FarmerOnboarding({ onComplete, loading }) {
   const [farmName, setFarmName] = useState('');
   const [bio, setBio] = useState('');
+  const [location, setLocation] = useState('');
   const [payoutMethod, setPayoutMethod] = useState('bank');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onComplete({ farmName, bio, payoutMethod });
+    onComplete({ farmName, bio, location, payoutMethod });
   };
 
   return (
@@ -64,6 +65,21 @@ function FarmerOnboarding({ onComplete, loading }) {
         <p className="text-xs text-on-surface-variant mt-1">
           {bio.length}/500 characters
         </p>
+      </div>
+
+      {/* Location */}
+      <div>
+        <label className="block text-xs font-semibold text-on-surface-variant mb-1 tracking-wide uppercase">
+          Farm Location
+        </label>
+        <input
+          type="text"
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
+          className="td-input"
+          placeholder="e.g. Salinas Valley, CA"
+          required
+        />
       </div>
 
       {/* Payout Method */}

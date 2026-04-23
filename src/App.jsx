@@ -12,13 +12,29 @@ import FarmerDashboardPage from './pages/FarmerDashboardPage';
 import ChatListPage from './pages/ChatListPage';
 import ChatPage from './pages/ChatPage';
 import AddProductPage from './pages/AddProductPage';
+import { useAuth } from './context/AuthContext';
+import { Navigate } from 'react-router-dom';
+
+function RootRoute() {
+  const { user, isFarmer, loading } = useAuth();
+  
+  if (loading) return null;
+  
+  // If user is logged in AND is a farmer, send them to dashboard
+  if (user && isFarmer) {
+    return <Navigate to="/dashboard" replace />;
+  }
+  
+  // Otherwise, default to the public DiscoveryPage
+  return <DiscoveryPage />;
+}
 
 export default function App() {
   return (
     <AppShell>
       <Routes>
         {/* ─── Public Routes ─── */}
-        <Route path="/" element={<DiscoveryPage />} />
+        <Route path="/" element={<RootRoute />} />
         <Route path="/farmer/:id" element={<FarmerProfilePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
