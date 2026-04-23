@@ -1,19 +1,44 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import GoogleSignInButton from '../components/auth/GoogleSignInButton';
 import Button from '../components/ui/Button';
 
 export default function LoginPage() {
-  const { login } = useAuth();
+  const { login, user, userProfile, needsRoleSelection } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const redirect = searchParams.get('redirect') || '/';
+  const redirect = searchParams.get('redirect');
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // After successful login, route based on role
+  useEffect(() => {
+    if (!user || !userProfile) return;
+
+    if (needsRoleSelection) {
+      navigate('/role-select');
+      return;
+    }
+
+    // If a redirect was requested, use it
+    if (redirect) {
+      navigate(redirect);
+      return;
+    }
+
+    // Otherwise, route based on role
+    if (!userProfile.onboardingComplete) {
+      navigate('/onboarding');
+    } else if (userProfile.role === 'farmer') {
+      navigate('/dashboard');
+    } else {
+      navigate('/');
+    }
+  }, [user, userProfile, needsRoleSelection, redirect, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -21,7 +46,7 @@ export default function LoginPage() {
     setLoading(true);
     try {
       await login(email, password);
-      navigate(redirect);
+      // Navigation is handled by the useEffect above
     } catch (err) {
       setError(err.message || 'Invalid credentials. Please try again.');
     } finally {

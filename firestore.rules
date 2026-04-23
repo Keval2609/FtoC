@@ -21,14 +21,24 @@ service cloud.firestore {
              get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin";
     }
 
+    // Helper — get the calling user's role from /users
+    function getUserRole() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+    }
+
+    function isFarmer() {
+      return isSignedIn() && getUserRole() == 'farmer';
+    }
+
     // -- VALIDATION HELPERS --
 
     function isValidUserProfile(data) {
-      return data.keys().hasAll(['email', 'displayName', 'role', 'createdAt']) &&
+      return data.keys().hasAll(['email', 'displayName', 'role', 'createdAt', 'onboardingComplete']) &&
              data.email is string && data.email.size() <= 256 &&
              data.displayName is string && data.displayName.size() <= 200 &&
-             data.role is string && (data.role == "consumer" || data.role == "farmer" || data.role == "admin") &&
-             data.createdAt is number;
+             data.role is string && (data.role == "consumer" || data.role == "customer" || data.role == "farmer" || data.role == "admin") &&
+             data.createdAt is number &&
+             data.onboardingComplete is bool;
     }
 
     function isValidFarmerProfile(data) {
@@ -72,23 +82,31 @@ service cloud.firestore {
 
     // -- RULES --
 
+    // ═══ Users Collection — Phase 2 Step 1 ═══
     match /users/{userId} {
+      // Users can read their own profile; public read for basic discovery (e.g. farmer name lookup)
       allow get: if isSignedIn() && (userId == request.auth.uid || isAdmin());
-      // Users can modify their own non-role fields
-      allow create: if isSignedIn() && isValidId(userId) && userId == request.auth.uid &&
-                    isValidUserProfile(incoming()) && incoming().role != "admin" &&
-                    incoming().keys().size() == 4; // exact fields constraint
-      allow update: if isSignedIn() && isValidId(userId) && userId == request.auth.uid &&
+      
+      // Create own profile on sign-up (exact required fields)
+      allow create: if request.auth != null && userId == request.auth.uid &&
+                    isValidUserProfile(incoming()) && incoming().role != "admin";
+      
+      // Users can update their own profile (restricted fields)
+      allow update: if isSignedIn() && userId == request.auth.uid &&
                     isValidUserProfile(incoming()) &&
-                    incoming().diff(existing()).affectedKeys().hasOnly(['displayName']) &&
-                    incoming().role == existing().role && incoming().createdAt == existing().createdAt;
+                    incoming().role == existing().role && incoming().createdAt == existing().createdAt &&
+                    incoming().diff(existing()).affectedKeys()
+                      .hasOnly(['displayName', 'onboardingComplete', 'farmName', 'bio', 'location', 
+                                'rating', 'savedFarms', 'deliveryAddress', 'phone', 'payoutMethod']);
     }
 
+    // ═══ Farmers Collection ═══
     match /farmers/{farmerId} {
       allow get: if true; // Public profiles
       allow list: if true; // Public list
       allow create: if isSignedIn() && isValidId(farmerId) && farmerId == request.auth.uid &&
-                    isValidFarmerProfile(incoming()) && incoming().verificationStatus == 'pending';
+                    isValidFarmerProfile(incoming()) && incoming().verificationStatus == 'pending' &&
+                    isFarmer(); // Only users with farmer role can create farmer profiles
       allow update: if isSignedIn() && isValidId(farmerId) && farmerId == request.auth.uid &&
                     isValidFarmerProfile(incoming()) &&
                     incoming().diff(existing()).affectedKeys().hasOnly(['farmName', 'story', 'farmingMethods', 'trustBadges']) &&
@@ -96,11 +114,16 @@ service cloud.firestore {
                     isAdmin();
     }
 
+    // ═══ Products Collection ═══
     match /products/{productId} {
       allow get: if true;
       allow list: if true;
+      
+      // Only farmers can create products — checked via /users role
       allow create: if isSignedIn() && isValidId(productId) &&
-                    isValidProduct(incoming()) && exists(/databases/$(database)/documents/farmers/$(request.auth.uid));
+                    isValidProduct(incoming()) && 
+                    isFarmer() &&
+                    exists(/databases/$(database)/documents/farmers/$(request.auth.uid));
       allow update: if isSignedIn() && isValidId(productId) &&
                     isValidProduct(incoming()) && existing().farmerId == request.auth.uid &&
                     incoming().farmerId == existing().farmerId && incoming().createdAt == existing().createdAt &&
@@ -108,6 +131,7 @@ service cloud.firestore {
       allow delete: if isSignedIn() && isValidId(productId) && existing().farmerId == request.auth.uid;
     }
 
+    // ═══ Orders Collection ═══
     match /orders/{orderId} {
       allow get: if isSignedIn() && isValidId(orderId) && (existing().userId == request.auth.uid || existing().farmerId == request.auth.uid);
       allow list: if isSignedIn() && (resource.data.userId == request.auth.uid || resource.data.farmerId == request.auth.uid);

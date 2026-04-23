@@ -4,6 +4,21 @@ import { useAuth } from '../context/AuthContext';
 import GoogleSignInButton from '../components/auth/GoogleSignInButton';
 import Button from '../components/ui/Button';
 
+const ROLES = [
+  {
+    id: 'customer',
+    label: 'Customer',
+    icon: 'shopping_bag',
+    desc: 'Discover and buy fresh produce from local farms',
+  },
+  {
+    id: 'farmer',
+    label: 'Farmer',
+    icon: 'agriculture',
+    desc: 'List your harvest and sell directly to customers',
+  },
+];
+
 export default function SignupPage() {
   const { signup } = useAuth();
   const navigate = useNavigate();
@@ -11,6 +26,7 @@ export default function SignupPage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [role, setRole] = useState('customer');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -19,8 +35,9 @@ export default function SignupPage() {
     setError('');
     setLoading(true);
     try {
-      await signup(email, password, name);
-      navigate('/');
+      await signup(email, password, name, role);
+      // Route to onboarding for profile completion
+      navigate('/onboarding');
     } catch (err) {
       setError(err.message || 'Could not create account. Please try again.');
     } finally {
@@ -38,6 +55,57 @@ export default function SignupPage() {
           </div>
           <h1 className="font-display-xl text-display-xl text-on-surface text-3xl">Join TerraDirect</h1>
           <p className="text-on-surface-variant">Create your account and start sourcing from real farms</p>
+        </div>
+
+        {/* ═══ Role Toggle ═══ */}
+        <div className="space-y-2">
+          <label className="block text-xs font-semibold text-on-surface-variant tracking-wide uppercase">
+            I want to join as
+          </label>
+          <div className="grid grid-cols-2 gap-3">
+            {ROLES.map((r) => {
+              const selected = role === r.id;
+              return (
+                <button
+                  key={r.id}
+                  type="button"
+                  onClick={() => setRole(r.id)}
+                  className={`
+                    relative flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all duration-200 cursor-pointer group
+                    ${selected
+                      ? 'border-primary bg-primary-container/30 shadow-sm'
+                      : 'border-outline-variant/50 bg-surface-container-low hover:border-outline hover:bg-surface-container'
+                    }
+                  `}
+                >
+                  {/* Selection indicator */}
+                  <div className={`
+                    absolute top-2.5 right-2.5 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all
+                    ${selected ? 'border-primary bg-primary' : 'border-outline-variant'}
+                  `}>
+                    {selected && (
+                      <span className="material-symbols-outlined text-on-primary" style={{ fontSize: 14 }}>
+                        check
+                      </span>
+                    )}
+                  </div>
+
+                  <span
+                    className={`material-symbols-outlined text-2xl transition-colors ${selected ? 'text-primary' : 'text-on-surface-variant group-hover:text-on-surface'}`}
+                    style={{ fontVariationSettings: "'FILL' 1" }}
+                  >
+                    {r.icon}
+                  </span>
+                  <span className={`font-button text-sm ${selected ? 'text-primary' : 'text-on-surface'}`}>
+                    {r.label}
+                  </span>
+                  <span className="text-xs text-on-surface-variant text-center leading-tight">
+                    {r.desc}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {/* Google */}
@@ -112,7 +180,7 @@ export default function SignupPage() {
                 Creating account…
               </>
             ) : (
-              'Create Account'
+              `Create ${role === 'farmer' ? 'Farmer' : 'Customer'} Account`
             )}
           </Button>
         </form>

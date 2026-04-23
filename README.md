@@ -57,11 +57,15 @@ The conventional food supply chain is opaque. Consumers can't verify farming pra
 - Free delivery threshold ($35+)
 - Order confirmation screen
 
-### 🔐 Authentication
-- Email/password sign up and sign in
-- Google SSO via Firebase Auth popup
-- Protected routes with loading spinner
-- Mock auth mode for development (no Firebase keys needed)
+### 🔐 Authentication & Roles
+- Email/password sign up with **Role Selection** (Farmer vs. Customer)
+- Google SSO with post-login role assignment for first-time users
+- **Differentiated Onboarding**:
+  - **Farmers**: Professional profile setup (Farm name, story, payout methods)
+  - **Customers**: Delivery preferences (Address, phone, location)
+- **Role-Based Routing**: Automatic redirection post-login (Farmers to Dashboard, Customers to Discovery)
+- **Strict Access Control**: Role-gated routes and Firestore security rules to prevent unauthorized access
+- Mock auth mode for rapid development (bypass Firebase setup)
 
 ### 🌓 Dark Mode
 - System preference detection on first visit
@@ -122,7 +126,9 @@ d:\F2C\
 │   │   ├── DiscoveryPage.jsx    # Search, filter, browse farms
 │   │   ├── FarmerProfilePage.jsx# Farm story, practices, products, certs
 │   │   ├── LoginPage.jsx        # Email + Google sign-in
-│   │   └── SignupPage.jsx       # Account creation
+│   │   ├── OnboardingPage.jsx   # Role-specific profile completion
+│   │   ├── RoleSelectPage.jsx   # Google SSO role assignment
+│   │   └── SignupPage.jsx       # Account creation with role toggle
 │   ├── App.jsx                  # Route definitions
 │   ├── index.css                # Design tokens (light + dark), base styles
 │   └── main.jsx                 # Provider tree entry point
@@ -228,16 +234,21 @@ All 50+ color tokens are defined as CSS custom properties in `src/index.css`, en
 | **Mock data layer** | Enables instant development without Firebase setup; controlled by a single env var |
 | **useReducer for cart** | Predictable state transitions for add/remove/update; persists to localStorage for offline resilience |
 | **IntersectionObserver for images** | Native lazy loading with 200px root margin for smooth scroll; includes skeleton placeholder and error fallback |
-| **Protected routes with redirect** | Checkout requires auth; unauthenticated users are redirected to `/login?redirect=/checkout` and returned post-login |
+| **Protected routes with redirect** | Checkout and Dashboard require auth; users are redirected based on role and onboarding status |
+| **Role-based security rules** | Firestore rules enforce that only 'farmer' roles can create/edit products or farm data |
+| **Differentiated onboarding** | Tailored data collection paths for Farmers vs. Customers to keep user profiles lean and relevant |
 
 ---
 
 ## Roadmap
 
-- [x] **Phase 1** — Discovery, Profiles, Checkout (current)
-- [ ] **Phase 2** — Farmer Dashboard, Product Management, Analytics
+- [x] **Phase 1** — Discovery, Profiles, Checkout
+- [ ] **Phase 2** — Role-Based Auth, Farmer Dashboard, Messaging (In Progress)
+  - [x] Step 1: Role-Based Authentication & Onboarding
+  - [ ] Step 2: Real-time Messaging System
+  - [ ] Step 3: Monetization & Transactions
 - [ ] **Phase 3** — Real Payment Integration (Stripe), Order Tracking
-- [ ] **Phase 4** — Community Features, Reviews, Farm Subscriptions
+- [ ] **Phase 4** — Community Features (Removed/Deprioritized)
 - [ ] **Phase 5** — Mobile App (React Native), Push Notifications
 
 ---
