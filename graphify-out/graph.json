@@ -1,0 +1,1579 @@
+{
+  "directed": false,
+  "multigraph": false,
+  "graph": {},
+  "nodes": [
+    {
+      "label": "firebase.js",
+      "file_type": "code",
+      "source_file": "firebase.js",
+      "source_location": "L1",
+      "id": "firebase_js",
+      "community": 35,
+      "norm_label": "firebase.js"
+    },
+    {
+      "label": "postcss.config.js",
+      "file_type": "code",
+      "source_file": "postcss.config.js",
+      "source_location": "L1",
+      "id": "postcss_config_js",
+      "community": 36,
+      "norm_label": "postcss.config.js"
+    },
+    {
+      "label": "tailwind.config.js",
+      "file_type": "code",
+      "source_file": "tailwind.config.js",
+      "source_location": "L1",
+      "id": "tailwind_config_js",
+      "community": 37,
+      "norm_label": "tailwind.config.js"
+    },
+    {
+      "label": "vite.config.js",
+      "file_type": "code",
+      "source_file": "vite.config.js",
+      "source_location": "L1",
+      "id": "vite_config_js",
+      "community": 38,
+      "norm_label": "vite.config.js"
+    },
+    {
+      "label": "App.jsx",
+      "file_type": "code",
+      "source_file": "src\\App.jsx",
+      "source_location": "L1",
+      "id": "src_app_jsx",
+      "community": 8,
+      "norm_label": "app.jsx"
+    },
+    {
+      "label": "App()",
+      "file_type": "code",
+      "source_file": "src\\App.jsx",
+      "source_location": "L10",
+      "id": "app_app",
+      "community": 8,
+      "norm_label": "app()"
+    },
+    {
+      "label": "main.jsx",
+      "file_type": "code",
+      "source_file": "src\\main.jsx",
+      "source_location": "L1",
+      "id": "src_main_jsx",
+      "community": 39,
+      "norm_label": "main.jsx"
+    },
+    {
+      "label": "GoogleSignInButton.jsx",
+      "file_type": "code",
+      "source_file": "src\\components\\auth\\GoogleSignInButton.jsx",
+      "source_location": "L1",
+      "id": "src_components_auth_googlesigninbutton_jsx",
+      "community": 9,
+      "norm_label": "googlesigninbutton.jsx"
+    },
+    {
+      "label": "GoogleSignInButton()",
+      "file_type": "code",
+      "source_file": "src\\components\\auth\\GoogleSignInButton.jsx",
+      "source_location": "L3",
+      "id": "googlesigninbutton_googlesigninbutton",
+      "community": 9,
+      "norm_label": "googlesigninbutton()"
+    },
+    {
+      "label": "ProtectedRoute.jsx",
+      "file_type": "code",
+      "source_file": "src\\components\\auth\\ProtectedRoute.jsx",
+      "source_location": "L1",
+      "id": "src_components_auth_protectedroute_jsx",
+      "community": 10,
+      "norm_label": "protectedroute.jsx"
+    },
+    {
+      "label": "ProtectedRoute()",
+      "file_type": "code",
+      "source_file": "src\\components\\auth\\ProtectedRoute.jsx",
+      "source_location": "L4",
+      "id": "protectedroute_protectedroute",
+      "community": 10,
+      "norm_label": "protectedroute()"
+    },
+    {
+      "label": "ContactForm.jsx",
+      "file_type": "code",
+      "source_file": "src\\components\\checkout\\ContactForm.jsx",
+      "source_location": "L1",
+      "id": "src_components_checkout_contactform_jsx",
+      "community": 11,
+      "norm_label": "contactform.jsx"
+    },
+    {
+      "label": "ContactForm()",
+      "file_type": "code",
+      "source_file": "src\\components\\checkout\\ContactForm.jsx",
+      "source_location": "L4",
+      "id": "contactform_contactform",
+      "community": 11,
+      "norm_label": "contactform()"
+    },
+    {
+      "label": "DeliveryForm.jsx",
+      "file_type": "code",
+      "source_file": "src\\components\\checkout\\DeliveryForm.jsx",
+      "source_location": "L1",
+      "id": "src_components_checkout_deliveryform_jsx",
+      "community": 12,
+      "norm_label": "deliveryform.jsx"
+    },
+    {
+      "label": "DeliveryForm()",
+      "file_type": "code",
+      "source_file": "src\\components\\checkout\\DeliveryForm.jsx",
+      "source_location": "L1",
+      "id": "deliveryform_deliveryform",
+      "community": 12,
+      "norm_label": "deliveryform()"
+    },
+    {
+      "label": "OrderSummary.jsx",
+      "file_type": "code",
+      "source_file": "src\\components\\checkout\\OrderSummary.jsx",
+      "source_location": "L1",
+      "id": "src_components_checkout_ordersummary_jsx",
+      "community": 13,
+      "norm_label": "ordersummary.jsx"
+    },
+    {
+      "label": "OrderSummary()",
+      "file_type": "code",
+      "source_file": "src\\components\\checkout\\OrderSummary.jsx",
+      "source_location": "L4",
+      "id": "ordersummary_ordersummary",
+      "community": 13,
+      "norm_label": "ordersummary()"
+    },
+    {
+      "label": "PaymentForm.jsx",
+      "file_type": "code",
+      "source_file": "src\\components\\checkout\\PaymentForm.jsx",
+      "source_location": "L1",
+      "id": "src_components_checkout_paymentform_jsx",
+      "community": 14,
+      "norm_label": "paymentform.jsx"
+    },
+    {
+      "label": "PaymentForm()",
+      "file_type": "code",
+      "source_file": "src\\components\\checkout\\PaymentForm.jsx",
+      "source_location": "L1",
+      "id": "paymentform_paymentform",
+      "community": 14,
+      "norm_label": "paymentform()"
+    },
+    {
+      "label": "FarmerCard.jsx",
+      "file_type": "code",
+      "source_file": "src\\components\\discovery\\FarmerCard.jsx",
+      "source_location": "L1",
+      "id": "src_components_discovery_farmercard_jsx",
+      "community": 15,
+      "norm_label": "farmercard.jsx"
+    },
+    {
+      "label": "FarmerCard()",
+      "file_type": "code",
+      "source_file": "src\\components\\discovery\\FarmerCard.jsx",
+      "source_location": "L6",
+      "id": "farmercard_farmercard",
+      "community": 15,
+      "norm_label": "farmercard()"
+    },
+    {
+      "label": "FilterChips.jsx",
+      "file_type": "code",
+      "source_file": "src\\components\\discovery\\FilterChips.jsx",
+      "source_location": "L1",
+      "id": "src_components_discovery_filterchips_jsx",
+      "community": 16,
+      "norm_label": "filterchips.jsx"
+    },
+    {
+      "label": "FilterChips()",
+      "file_type": "code",
+      "source_file": "src\\components\\discovery\\FilterChips.jsx",
+      "source_location": "L8",
+      "id": "filterchips_filterchips",
+      "community": 16,
+      "norm_label": "filterchips()"
+    },
+    {
+      "label": "SearchBar.jsx",
+      "file_type": "code",
+      "source_file": "src\\components\\discovery\\SearchBar.jsx",
+      "source_location": "L1",
+      "id": "src_components_discovery_searchbar_jsx",
+      "community": 17,
+      "norm_label": "searchbar.jsx"
+    },
+    {
+      "label": "SearchBar()",
+      "file_type": "code",
+      "source_file": "src\\components\\discovery\\SearchBar.jsx",
+      "source_location": "L3",
+      "id": "searchbar_searchbar",
+      "community": 17,
+      "norm_label": "searchbar()"
+    },
+    {
+      "label": "AppShell.jsx",
+      "file_type": "code",
+      "source_file": "src\\components\\layout\\AppShell.jsx",
+      "source_location": "L1",
+      "id": "src_components_layout_appshell_jsx",
+      "community": 18,
+      "norm_label": "appshell.jsx"
+    },
+    {
+      "label": "AppShell()",
+      "file_type": "code",
+      "source_file": "src\\components\\layout\\AppShell.jsx",
+      "source_location": "L6",
+      "id": "appshell_appshell",
+      "community": 18,
+      "norm_label": "appshell()"
+    },
+    {
+      "label": "HeroSection.jsx",
+      "file_type": "code",
+      "source_file": "src\\components\\profile\\HeroSection.jsx",
+      "source_location": "L1",
+      "id": "src_components_profile_herosection_jsx",
+      "community": 19,
+      "norm_label": "herosection.jsx"
+    },
+    {
+      "label": "HeroSection()",
+      "file_type": "code",
+      "source_file": "src\\components\\profile\\HeroSection.jsx",
+      "source_location": "L5",
+      "id": "herosection_herosection",
+      "community": 19,
+      "norm_label": "herosection()"
+    },
+    {
+      "label": "MethodsSection.jsx",
+      "file_type": "code",
+      "source_file": "src\\components\\profile\\MethodsSection.jsx",
+      "source_location": "L1",
+      "id": "src_components_profile_methodssection_jsx",
+      "community": 20,
+      "norm_label": "methodssection.jsx"
+    },
+    {
+      "label": "MethodsSection()",
+      "file_type": "code",
+      "source_file": "src\\components\\profile\\MethodsSection.jsx",
+      "source_location": "L1",
+      "id": "methodssection_methodssection",
+      "community": 20,
+      "norm_label": "methodssection()"
+    },
+    {
+      "label": "ProductGrid.jsx",
+      "file_type": "code",
+      "source_file": "src\\components\\profile\\ProductGrid.jsx",
+      "source_location": "L1",
+      "id": "src_components_profile_productgrid_jsx",
+      "community": 21,
+      "norm_label": "productgrid.jsx"
+    },
+    {
+      "label": "ProductGrid()",
+      "file_type": "code",
+      "source_file": "src\\components\\profile\\ProductGrid.jsx",
+      "source_location": "L3",
+      "id": "productgrid_productgrid",
+      "community": 21,
+      "norm_label": "productgrid()"
+    },
+    {
+      "label": "VerificationGallery.jsx",
+      "file_type": "code",
+      "source_file": "src\\components\\profile\\VerificationGallery.jsx",
+      "source_location": "L1",
+      "id": "src_components_profile_verificationgallery_jsx",
+      "community": 22,
+      "norm_label": "verificationgallery.jsx"
+    },
+    {
+      "label": "VerificationGallery()",
+      "file_type": "code",
+      "source_file": "src\\components\\profile\\VerificationGallery.jsx",
+      "source_location": "L1",
+      "id": "verificationgallery_verificationgallery",
+      "community": 22,
+      "norm_label": "verificationgallery()"
+    },
+    {
+      "label": "Button.jsx",
+      "file_type": "code",
+      "source_file": "src\\components\\ui\\Button.jsx",
+      "source_location": "L1",
+      "id": "src_components_ui_button_jsx",
+      "community": 23,
+      "norm_label": "button.jsx"
+    },
+    {
+      "label": "Button()",
+      "file_type": "code",
+      "source_file": "src\\components\\ui\\Button.jsx",
+      "source_location": "L1",
+      "id": "button_button",
+      "community": 23,
+      "norm_label": "button()"
+    },
+    {
+      "label": "LazyImage.jsx",
+      "file_type": "code",
+      "source_file": "src\\components\\ui\\LazyImage.jsx",
+      "source_location": "L1",
+      "id": "src_components_ui_lazyimage_jsx",
+      "community": 24,
+      "norm_label": "lazyimage.jsx"
+    },
+    {
+      "label": "LazyImage()",
+      "file_type": "code",
+      "source_file": "src\\components\\ui\\LazyImage.jsx",
+      "source_location": "L3",
+      "id": "lazyimage_lazyimage",
+      "community": 24,
+      "norm_label": "lazyimage()"
+    },
+    {
+      "label": "ProductCard.jsx",
+      "file_type": "code",
+      "source_file": "src\\components\\ui\\ProductCard.jsx",
+      "source_location": "L1",
+      "id": "src_components_ui_productcard_jsx",
+      "community": 25,
+      "norm_label": "productcard.jsx"
+    },
+    {
+      "label": "ProductCard()",
+      "file_type": "code",
+      "source_file": "src\\components\\ui\\ProductCard.jsx",
+      "source_location": "L5",
+      "id": "productcard_productcard",
+      "community": 25,
+      "norm_label": "productcard()"
+    },
+    {
+      "label": "ThemeToggle.jsx",
+      "file_type": "code",
+      "source_file": "src\\components\\ui\\ThemeToggle.jsx",
+      "source_location": "L1",
+      "id": "src_components_ui_themetoggle_jsx",
+      "community": 26,
+      "norm_label": "themetoggle.jsx"
+    },
+    {
+      "label": "ThemeToggle()",
+      "file_type": "code",
+      "source_file": "src\\components\\ui\\ThemeToggle.jsx",
+      "source_location": "L3",
+      "id": "themetoggle_themetoggle",
+      "community": 26,
+      "norm_label": "themetoggle()"
+    },
+    {
+      "label": "TransparencyIndicator.jsx",
+      "file_type": "code",
+      "source_file": "src\\components\\ui\\TransparencyIndicator.jsx",
+      "source_location": "L1",
+      "id": "src_components_ui_transparencyindicator_jsx",
+      "community": 27,
+      "norm_label": "transparencyindicator.jsx"
+    },
+    {
+      "label": "TransparencyIndicator()",
+      "file_type": "code",
+      "source_file": "src\\components\\ui\\TransparencyIndicator.jsx",
+      "source_location": "L1",
+      "id": "transparencyindicator_transparencyindicator",
+      "community": 27,
+      "norm_label": "transparencyindicator()"
+    },
+    {
+      "label": "VerifiedBadge.jsx",
+      "file_type": "code",
+      "source_file": "src\\components\\ui\\VerifiedBadge.jsx",
+      "source_location": "L1",
+      "id": "src_components_ui_verifiedbadge_jsx",
+      "community": 28,
+      "norm_label": "verifiedbadge.jsx"
+    },
+    {
+      "label": "VerifiedBadge()",
+      "file_type": "code",
+      "source_file": "src\\components\\ui\\VerifiedBadge.jsx",
+      "source_location": "L1",
+      "id": "verifiedbadge_verifiedbadge",
+      "community": 28,
+      "norm_label": "verifiedbadge()"
+    },
+    {
+      "label": "AuthContext.jsx",
+      "file_type": "code",
+      "source_file": "src\\context\\AuthContext.jsx",
+      "source_location": "L1",
+      "id": "src_context_authcontext_jsx",
+      "community": 5,
+      "norm_label": "authcontext.jsx"
+    },
+    {
+      "label": "AuthProvider()",
+      "file_type": "code",
+      "source_file": "src\\context\\AuthContext.jsx",
+      "source_location": "L8",
+      "id": "authcontext_authprovider",
+      "community": 5,
+      "norm_label": "authprovider()"
+    },
+    {
+      "label": "useAuth()",
+      "file_type": "code",
+      "source_file": "src\\context\\AuthContext.jsx",
+      "source_location": "L63",
+      "id": "authcontext_useauth",
+      "community": 5,
+      "norm_label": "useauth()"
+    },
+    {
+      "label": "CartContext.jsx",
+      "file_type": "code",
+      "source_file": "src\\context\\CartContext.jsx",
+      "source_location": "L1",
+      "id": "src_context_cartcontext_jsx",
+      "community": 1,
+      "norm_label": "cartcontext.jsx"
+    },
+    {
+      "label": "loadCart()",
+      "file_type": "code",
+      "source_file": "src\\context\\CartContext.jsx",
+      "source_location": "L7",
+      "id": "cartcontext_loadcart",
+      "community": 1,
+      "norm_label": "loadcart()"
+    },
+    {
+      "label": "saveCart()",
+      "file_type": "code",
+      "source_file": "src\\context\\CartContext.jsx",
+      "source_location": "L16",
+      "id": "cartcontext_savecart",
+      "community": 1,
+      "norm_label": "savecart()"
+    },
+    {
+      "label": "cartReducer()",
+      "file_type": "code",
+      "source_file": "src\\context\\CartContext.jsx",
+      "source_location": "L20",
+      "id": "cartcontext_cartreducer",
+      "community": 1,
+      "norm_label": "cartreducer()"
+    },
+    {
+      "label": "CartProvider()",
+      "file_type": "code",
+      "source_file": "src\\context\\CartContext.jsx",
+      "source_location": "L52",
+      "id": "cartcontext_cartprovider",
+      "community": 1,
+      "norm_label": "cartprovider()"
+    },
+    {
+      "label": "useCart()",
+      "file_type": "code",
+      "source_file": "src\\context\\CartContext.jsx",
+      "source_location": "L83",
+      "id": "cartcontext_usecart",
+      "community": 1,
+      "norm_label": "usecart()"
+    },
+    {
+      "label": "ThemeContext.jsx",
+      "file_type": "code",
+      "source_file": "src\\context\\ThemeContext.jsx",
+      "source_location": "L1",
+      "id": "src_context_themecontext_jsx",
+      "community": 6,
+      "norm_label": "themecontext.jsx"
+    },
+    {
+      "label": "ThemeProvider()",
+      "file_type": "code",
+      "source_file": "src\\context\\ThemeContext.jsx",
+      "source_location": "L5",
+      "id": "themecontext_themeprovider",
+      "community": 6,
+      "norm_label": "themeprovider()"
+    },
+    {
+      "label": "useTheme()",
+      "file_type": "code",
+      "source_file": "src\\context\\ThemeContext.jsx",
+      "source_location": "L34",
+      "id": "themecontext_usetheme",
+      "community": 6,
+      "norm_label": "usetheme()"
+    },
+    {
+      "label": "auth.js",
+      "file_type": "code",
+      "source_file": "src\\lib\\auth.js",
+      "source_location": "L1",
+      "id": "src_lib_auth_js",
+      "community": 2,
+      "norm_label": "auth.js"
+    },
+    {
+      "label": "signUpWithEmail()",
+      "file_type": "code",
+      "source_file": "src\\lib\\auth.js",
+      "source_location": "L14",
+      "id": "auth_signupwithemail",
+      "community": 2,
+      "norm_label": "signupwithemail()"
+    },
+    {
+      "label": "signInWithEmail()",
+      "file_type": "code",
+      "source_file": "src\\lib\\auth.js",
+      "source_location": "L20",
+      "id": "auth_signinwithemail",
+      "community": 2,
+      "norm_label": "signinwithemail()"
+    },
+    {
+      "label": "signInWithGoogle()",
+      "file_type": "code",
+      "source_file": "src\\lib\\auth.js",
+      "source_location": "L25",
+      "id": "auth_signinwithgoogle",
+      "community": 2,
+      "norm_label": "signinwithgoogle()"
+    },
+    {
+      "label": "signOut()",
+      "file_type": "code",
+      "source_file": "src\\lib\\auth.js",
+      "source_location": "L30",
+      "id": "auth_signout",
+      "community": 2,
+      "norm_label": "signout()"
+    },
+    {
+      "label": "onAuthChange()",
+      "file_type": "code",
+      "source_file": "src\\lib\\auth.js",
+      "source_location": "L34",
+      "id": "auth_onauthchange",
+      "community": 2,
+      "norm_label": "onauthchange()"
+    },
+    {
+      "label": "firebase.js",
+      "file_type": "code",
+      "source_file": "src\\lib\\firebase.js",
+      "source_location": "L1",
+      "id": "src_lib_firebase_js",
+      "community": 40,
+      "norm_label": "firebase.js"
+    },
+    {
+      "label": "firestore.js",
+      "file_type": "code",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L1",
+      "id": "src_lib_firestore_js",
+      "community": 3,
+      "norm_label": "firestore.js"
+    },
+    {
+      "label": "getFarmers()",
+      "file_type": "code",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L18",
+      "id": "firestore_getfarmers",
+      "community": 3,
+      "norm_label": "getfarmers()"
+    },
+    {
+      "label": "getFarmerById()",
+      "file_type": "code",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L32",
+      "id": "firestore_getfarmerbyid",
+      "community": 3,
+      "norm_label": "getfarmerbyid()"
+    },
+    {
+      "label": "getProductsByFarmer()",
+      "file_type": "code",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L41",
+      "id": "firestore_getproductsbyfarmer",
+      "community": 3,
+      "norm_label": "getproductsbyfarmer()"
+    },
+    {
+      "label": "createOrder()",
+      "file_type": "code",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L50",
+      "id": "firestore_createorder",
+      "community": 3,
+      "norm_label": "createorder()"
+    },
+    {
+      "label": "mockData.js",
+      "file_type": "code",
+      "source_file": "src\\lib\\mockData.js",
+      "source_location": "L1",
+      "id": "src_lib_mockdata_js",
+      "community": 7,
+      "norm_label": "mockdata.js"
+    },
+    {
+      "label": "getMockFarmerById()",
+      "file_type": "code",
+      "source_file": "src\\lib\\mockData.js",
+      "source_location": "L94",
+      "id": "mockdata_getmockfarmerbyid",
+      "community": 7,
+      "norm_label": "getmockfarmerbyid()"
+    },
+    {
+      "label": "getMockProductsByFarmer()",
+      "file_type": "code",
+      "source_file": "src\\lib\\mockData.js",
+      "source_location": "L98",
+      "id": "mockdata_getmockproductsbyfarmer",
+      "community": 7,
+      "norm_label": "getmockproductsbyfarmer()"
+    },
+    {
+      "label": "CheckoutPage.jsx",
+      "file_type": "code",
+      "source_file": "src\\pages\\CheckoutPage.jsx",
+      "source_location": "L1",
+      "id": "src_pages_checkoutpage_jsx",
+      "community": 29,
+      "norm_label": "checkoutpage.jsx"
+    },
+    {
+      "label": "CheckoutPage()",
+      "file_type": "code",
+      "source_file": "src\\pages\\CheckoutPage.jsx",
+      "source_location": "L12",
+      "id": "checkoutpage_checkoutpage",
+      "community": 29,
+      "norm_label": "checkoutpage()"
+    },
+    {
+      "label": "DiscoveryPage.jsx",
+      "file_type": "code",
+      "source_file": "src\\pages\\DiscoveryPage.jsx",
+      "source_location": "L1",
+      "id": "src_pages_discoverypage_jsx",
+      "community": 30,
+      "norm_label": "discoverypage.jsx"
+    },
+    {
+      "label": "DiscoveryPage()",
+      "file_type": "code",
+      "source_file": "src\\pages\\DiscoveryPage.jsx",
+      "source_location": "L7",
+      "id": "discoverypage_discoverypage",
+      "community": 30,
+      "norm_label": "discoverypage()"
+    },
+    {
+      "label": "FarmerProfilePage.jsx",
+      "file_type": "code",
+      "source_file": "src\\pages\\FarmerProfilePage.jsx",
+      "source_location": "L1",
+      "id": "src_pages_farmerprofilepage_jsx",
+      "community": 31,
+      "norm_label": "farmerprofilepage.jsx"
+    },
+    {
+      "label": "FarmerProfilePage()",
+      "file_type": "code",
+      "source_file": "src\\pages\\FarmerProfilePage.jsx",
+      "source_location": "L9",
+      "id": "farmerprofilepage_farmerprofilepage",
+      "community": 31,
+      "norm_label": "farmerprofilepage()"
+    },
+    {
+      "label": "LoginPage.jsx",
+      "file_type": "code",
+      "source_file": "src\\pages\\LoginPage.jsx",
+      "source_location": "L1",
+      "id": "src_pages_loginpage_jsx",
+      "community": 32,
+      "norm_label": "loginpage.jsx"
+    },
+    {
+      "label": "LoginPage()",
+      "file_type": "code",
+      "source_file": "src\\pages\\LoginPage.jsx",
+      "source_location": "L7",
+      "id": "loginpage_loginpage",
+      "community": 32,
+      "norm_label": "loginpage()"
+    },
+    {
+      "label": "SignupPage.jsx",
+      "file_type": "code",
+      "source_file": "src\\pages\\SignupPage.jsx",
+      "source_location": "L1",
+      "id": "src_pages_signuppage_jsx",
+      "community": 33,
+      "norm_label": "signuppage.jsx"
+    },
+    {
+      "label": "SignupPage()",
+      "file_type": "code",
+      "source_file": "src\\pages\\SignupPage.jsx",
+      "source_location": "L7",
+      "id": "signuppage_signuppage",
+      "community": 33,
+      "norm_label": "signuppage()"
+    },
+    {
+      "label": "TerraDirect",
+      "type": "Project",
+      "properties": {
+        "description": "Farm-to-Consumer Marketplace focused on transparency and regenerative agriculture."
+      },
+      "id": "project_terradirect",
+      "community": 4,
+      "norm_label": "terradirect"
+    },
+    {
+      "label": "Consumer",
+      "type": "Stakeholder",
+      "properties": {
+        "description": "Users who discover and buy from verified farms."
+      },
+      "id": "role_consumer",
+      "community": 0,
+      "norm_label": "consumer"
+    },
+    {
+      "label": "Farmer",
+      "type": "Stakeholder",
+      "properties": {
+        "description": "Producers who sell directly and showcase their practices."
+      },
+      "id": "role_farmer",
+      "community": 34,
+      "norm_label": "farmer"
+    },
+    {
+      "label": "Regenerative Agriculture",
+      "type": "Concept",
+      "properties": {
+        "focus": "Soil health, animal welfare, water management."
+      },
+      "id": "concept_regenerative",
+      "community": 0,
+      "norm_label": "regenerative agriculture"
+    },
+    {
+      "label": "Transparency",
+      "type": "Concept",
+      "properties": {
+        "visual_metaphor": "Transparency Indicator (% direct to farmer)."
+      },
+      "id": "concept_transparency",
+      "community": 0,
+      "norm_label": "transparency"
+    },
+    {
+      "label": "Trust",
+      "type": "Concept",
+      "properties": {
+        "visual_metaphor": "Verified Badge (Stamp)."
+      },
+      "id": "concept_trust",
+      "community": 0,
+      "norm_label": "trust"
+    },
+    {
+      "label": "Discovery Dashboard",
+      "type": "Feature",
+      "properties": {
+        "capabilities": [
+          "Search",
+          "Filtering",
+          "Farm Cards"
+        ]
+      },
+      "id": "feature_discovery",
+      "community": 0,
+      "norm_label": "discovery dashboard"
+    },
+    {
+      "label": "Farmer Profile",
+      "type": "Feature",
+      "properties": {
+        "content": [
+          "Story",
+          "Verification Gallery",
+          "Products"
+        ]
+      },
+      "id": "feature_profile",
+      "community": 0,
+      "norm_label": "farmer profile"
+    },
+    {
+      "label": "Secure Checkout",
+      "type": "Feature",
+      "properties": {
+        "features": [
+          "Direct-to-farmer badge",
+          "Carbon neutral delivery",
+          "Transparent fees"
+        ]
+      },
+      "id": "feature_checkout",
+      "community": 0,
+      "norm_label": "secure checkout"
+    },
+    {
+      "label": "Farmer Dashboard",
+      "type": "Feature",
+      "properties": {
+        "capabilities": [
+          "Inventory management",
+          "Orders",
+          "Feedback"
+        ]
+      },
+      "id": "feature_dashboard",
+      "community": 34,
+      "norm_label": "farmer dashboard"
+    },
+    {
+      "label": "Grounded Transparency (Light)",
+      "type": "DesignPattern",
+      "properties": {
+        "colors": [
+          "Forest Green",
+          "Sage",
+          "Earth Tones"
+        ],
+        "feel": "Tactile, paper-like"
+      },
+      "id": "design_light",
+      "community": 4,
+      "norm_label": "grounded transparency (light)"
+    },
+    {
+      "label": "Editorial Artisanal (Dark)",
+      "type": "DesignPattern",
+      "properties": {
+        "feel": "High contrast, editorial"
+      },
+      "id": "design_dark",
+      "community": 4,
+      "norm_label": "editorial artisanal (dark)"
+    },
+    {
+      "label": "Newsreader",
+      "type": "TechComponent",
+      "properties": {
+        "usage": "Serif, Editorial/Brand"
+      },
+      "id": "font_newsreader",
+      "community": 4,
+      "norm_label": "newsreader"
+    },
+    {
+      "label": "Work Sans",
+      "type": "TechComponent",
+      "properties": {
+        "usage": "Sans, Utility/UI"
+      },
+      "id": "font_worksans",
+      "community": 4,
+      "norm_label": "work sans"
+    }
+  ],
+  "links": [
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\App.jsx",
+      "source_location": "L10",
+      "weight": 1.0,
+      "_src": "src_app_jsx",
+      "_tgt": "app_app",
+      "source": "src_app_jsx",
+      "target": "app_app",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\auth\\GoogleSignInButton.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_src": "src_components_auth_googlesigninbutton_jsx",
+      "_tgt": "googlesigninbutton_googlesigninbutton",
+      "source": "src_components_auth_googlesigninbutton_jsx",
+      "target": "googlesigninbutton_googlesigninbutton",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\auth\\ProtectedRoute.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_src": "src_components_auth_protectedroute_jsx",
+      "_tgt": "protectedroute_protectedroute",
+      "source": "src_components_auth_protectedroute_jsx",
+      "target": "protectedroute_protectedroute",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\checkout\\ContactForm.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_src": "src_components_checkout_contactform_jsx",
+      "_tgt": "contactform_contactform",
+      "source": "src_components_checkout_contactform_jsx",
+      "target": "contactform_contactform",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\checkout\\DeliveryForm.jsx",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_src": "src_components_checkout_deliveryform_jsx",
+      "_tgt": "deliveryform_deliveryform",
+      "source": "src_components_checkout_deliveryform_jsx",
+      "target": "deliveryform_deliveryform",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\checkout\\OrderSummary.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_src": "src_components_checkout_ordersummary_jsx",
+      "_tgt": "ordersummary_ordersummary",
+      "source": "src_components_checkout_ordersummary_jsx",
+      "target": "ordersummary_ordersummary",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\checkout\\PaymentForm.jsx",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_src": "src_components_checkout_paymentform_jsx",
+      "_tgt": "paymentform_paymentform",
+      "source": "src_components_checkout_paymentform_jsx",
+      "target": "paymentform_paymentform",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\discovery\\FarmerCard.jsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "_src": "src_components_discovery_farmercard_jsx",
+      "_tgt": "farmercard_farmercard",
+      "source": "src_components_discovery_farmercard_jsx",
+      "target": "farmercard_farmercard",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\discovery\\FilterChips.jsx",
+      "source_location": "L8",
+      "weight": 1.0,
+      "_src": "src_components_discovery_filterchips_jsx",
+      "_tgt": "filterchips_filterchips",
+      "source": "src_components_discovery_filterchips_jsx",
+      "target": "filterchips_filterchips",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\discovery\\SearchBar.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_src": "src_components_discovery_searchbar_jsx",
+      "_tgt": "searchbar_searchbar",
+      "source": "src_components_discovery_searchbar_jsx",
+      "target": "searchbar_searchbar",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\layout\\AppShell.jsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "_src": "src_components_layout_appshell_jsx",
+      "_tgt": "appshell_appshell",
+      "source": "src_components_layout_appshell_jsx",
+      "target": "appshell_appshell",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\profile\\HeroSection.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_src": "src_components_profile_herosection_jsx",
+      "_tgt": "herosection_herosection",
+      "source": "src_components_profile_herosection_jsx",
+      "target": "herosection_herosection",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\profile\\MethodsSection.jsx",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_src": "src_components_profile_methodssection_jsx",
+      "_tgt": "methodssection_methodssection",
+      "source": "src_components_profile_methodssection_jsx",
+      "target": "methodssection_methodssection",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\profile\\ProductGrid.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_src": "src_components_profile_productgrid_jsx",
+      "_tgt": "productgrid_productgrid",
+      "source": "src_components_profile_productgrid_jsx",
+      "target": "productgrid_productgrid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\profile\\VerificationGallery.jsx",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_src": "src_components_profile_verificationgallery_jsx",
+      "_tgt": "verificationgallery_verificationgallery",
+      "source": "src_components_profile_verificationgallery_jsx",
+      "target": "verificationgallery_verificationgallery",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\ui\\Button.jsx",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_src": "src_components_ui_button_jsx",
+      "_tgt": "button_button",
+      "source": "src_components_ui_button_jsx",
+      "target": "button_button",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\ui\\LazyImage.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_src": "src_components_ui_lazyimage_jsx",
+      "_tgt": "lazyimage_lazyimage",
+      "source": "src_components_ui_lazyimage_jsx",
+      "target": "lazyimage_lazyimage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\ui\\ProductCard.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_src": "src_components_ui_productcard_jsx",
+      "_tgt": "productcard_productcard",
+      "source": "src_components_ui_productcard_jsx",
+      "target": "productcard_productcard",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\ui\\ThemeToggle.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_src": "src_components_ui_themetoggle_jsx",
+      "_tgt": "themetoggle_themetoggle",
+      "source": "src_components_ui_themetoggle_jsx",
+      "target": "themetoggle_themetoggle",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\ui\\TransparencyIndicator.jsx",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_src": "src_components_ui_transparencyindicator_jsx",
+      "_tgt": "transparencyindicator_transparencyindicator",
+      "source": "src_components_ui_transparencyindicator_jsx",
+      "target": "transparencyindicator_transparencyindicator",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\components\\ui\\VerifiedBadge.jsx",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_src": "src_components_ui_verifiedbadge_jsx",
+      "_tgt": "verifiedbadge_verifiedbadge",
+      "source": "src_components_ui_verifiedbadge_jsx",
+      "target": "verifiedbadge_verifiedbadge",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\context\\AuthContext.jsx",
+      "source_location": "L8",
+      "weight": 1.0,
+      "_src": "src_context_authcontext_jsx",
+      "_tgt": "authcontext_authprovider",
+      "source": "src_context_authcontext_jsx",
+      "target": "authcontext_authprovider",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\context\\AuthContext.jsx",
+      "source_location": "L63",
+      "weight": 1.0,
+      "_src": "src_context_authcontext_jsx",
+      "_tgt": "authcontext_useauth",
+      "source": "src_context_authcontext_jsx",
+      "target": "authcontext_useauth",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\context\\CartContext.jsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_src": "src_context_cartcontext_jsx",
+      "_tgt": "cartcontext_loadcart",
+      "source": "src_context_cartcontext_jsx",
+      "target": "cartcontext_loadcart",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\context\\CartContext.jsx",
+      "source_location": "L16",
+      "weight": 1.0,
+      "_src": "src_context_cartcontext_jsx",
+      "_tgt": "cartcontext_savecart",
+      "source": "src_context_cartcontext_jsx",
+      "target": "cartcontext_savecart",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\context\\CartContext.jsx",
+      "source_location": "L20",
+      "weight": 1.0,
+      "_src": "src_context_cartcontext_jsx",
+      "_tgt": "cartcontext_cartreducer",
+      "source": "src_context_cartcontext_jsx",
+      "target": "cartcontext_cartreducer",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\context\\CartContext.jsx",
+      "source_location": "L52",
+      "weight": 1.0,
+      "_src": "src_context_cartcontext_jsx",
+      "_tgt": "cartcontext_cartprovider",
+      "source": "src_context_cartcontext_jsx",
+      "target": "cartcontext_cartprovider",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\context\\CartContext.jsx",
+      "source_location": "L83",
+      "weight": 1.0,
+      "_src": "src_context_cartcontext_jsx",
+      "_tgt": "cartcontext_usecart",
+      "source": "src_context_cartcontext_jsx",
+      "target": "cartcontext_usecart",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\context\\CartContext.jsx",
+      "source_location": "L48",
+      "weight": 1.0,
+      "_src": "cartcontext_cartreducer",
+      "_tgt": "cartcontext_savecart",
+      "source": "cartcontext_savecart",
+      "target": "cartcontext_cartreducer",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\context\\ThemeContext.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_src": "src_context_themecontext_jsx",
+      "_tgt": "themecontext_themeprovider",
+      "source": "src_context_themecontext_jsx",
+      "target": "themecontext_themeprovider",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\context\\ThemeContext.jsx",
+      "source_location": "L34",
+      "weight": 1.0,
+      "_src": "src_context_themecontext_jsx",
+      "_tgt": "themecontext_usetheme",
+      "source": "src_context_themecontext_jsx",
+      "target": "themecontext_usetheme",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\auth.js",
+      "source_location": "L14",
+      "weight": 1.0,
+      "_src": "src_lib_auth_js",
+      "_tgt": "auth_signupwithemail",
+      "source": "src_lib_auth_js",
+      "target": "auth_signupwithemail",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\auth.js",
+      "source_location": "L20",
+      "weight": 1.0,
+      "_src": "src_lib_auth_js",
+      "_tgt": "auth_signinwithemail",
+      "source": "src_lib_auth_js",
+      "target": "auth_signinwithemail",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\auth.js",
+      "source_location": "L25",
+      "weight": 1.0,
+      "_src": "src_lib_auth_js",
+      "_tgt": "auth_signinwithgoogle",
+      "source": "src_lib_auth_js",
+      "target": "auth_signinwithgoogle",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\auth.js",
+      "source_location": "L30",
+      "weight": 1.0,
+      "_src": "src_lib_auth_js",
+      "_tgt": "auth_signout",
+      "source": "src_lib_auth_js",
+      "target": "auth_signout",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\auth.js",
+      "source_location": "L34",
+      "weight": 1.0,
+      "_src": "src_lib_auth_js",
+      "_tgt": "auth_onauthchange",
+      "source": "src_lib_auth_js",
+      "target": "auth_onauthchange",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L18",
+      "weight": 1.0,
+      "_src": "src_lib_firestore_js",
+      "_tgt": "firestore_getfarmers",
+      "source": "src_lib_firestore_js",
+      "target": "firestore_getfarmers",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L32",
+      "weight": 1.0,
+      "_src": "src_lib_firestore_js",
+      "_tgt": "firestore_getfarmerbyid",
+      "source": "src_lib_firestore_js",
+      "target": "firestore_getfarmerbyid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L41",
+      "weight": 1.0,
+      "_src": "src_lib_firestore_js",
+      "_tgt": "firestore_getproductsbyfarmer",
+      "source": "src_lib_firestore_js",
+      "target": "firestore_getproductsbyfarmer",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\firestore.js",
+      "source_location": "L50",
+      "weight": 1.0,
+      "_src": "src_lib_firestore_js",
+      "_tgt": "firestore_createorder",
+      "source": "src_lib_firestore_js",
+      "target": "firestore_createorder",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\mockData.js",
+      "source_location": "L94",
+      "weight": 1.0,
+      "_src": "src_lib_mockdata_js",
+      "_tgt": "mockdata_getmockfarmerbyid",
+      "source": "src_lib_mockdata_js",
+      "target": "mockdata_getmockfarmerbyid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\lib\\mockData.js",
+      "source_location": "L98",
+      "weight": 1.0,
+      "_src": "src_lib_mockdata_js",
+      "_tgt": "mockdata_getmockproductsbyfarmer",
+      "source": "src_lib_mockdata_js",
+      "target": "mockdata_getmockproductsbyfarmer",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\CheckoutPage.jsx",
+      "source_location": "L12",
+      "weight": 1.0,
+      "_src": "src_pages_checkoutpage_jsx",
+      "_tgt": "checkoutpage_checkoutpage",
+      "source": "src_pages_checkoutpage_jsx",
+      "target": "checkoutpage_checkoutpage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\DiscoveryPage.jsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_src": "src_pages_discoverypage_jsx",
+      "_tgt": "discoverypage_discoverypage",
+      "source": "src_pages_discoverypage_jsx",
+      "target": "discoverypage_discoverypage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\FarmerProfilePage.jsx",
+      "source_location": "L9",
+      "weight": 1.0,
+      "_src": "src_pages_farmerprofilepage_jsx",
+      "_tgt": "farmerprofilepage_farmerprofilepage",
+      "source": "src_pages_farmerprofilepage_jsx",
+      "target": "farmerprofilepage_farmerprofilepage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\LoginPage.jsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_src": "src_pages_loginpage_jsx",
+      "_tgt": "loginpage_loginpage",
+      "source": "src_pages_loginpage_jsx",
+      "target": "loginpage_loginpage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\pages\\SignupPage.jsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_src": "src_pages_signuppage_jsx",
+      "_tgt": "signuppage_signuppage",
+      "source": "src_pages_signuppage_jsx",
+      "target": "signuppage_signuppage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "implements",
+      "_src": "project_terradirect",
+      "_tgt": "design_light",
+      "source": "project_terradirect",
+      "target": "design_light",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "implements",
+      "_src": "project_terradirect",
+      "_tgt": "design_dark",
+      "source": "project_terradirect",
+      "target": "design_dark",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "uses",
+      "_src": "role_consumer",
+      "_tgt": "feature_discovery",
+      "source": "role_consumer",
+      "target": "feature_discovery",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "completes",
+      "_src": "role_consumer",
+      "_tgt": "feature_checkout",
+      "source": "role_consumer",
+      "target": "feature_checkout",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "manages",
+      "_src": "role_farmer",
+      "_tgt": "feature_dashboard",
+      "source": "role_farmer",
+      "target": "feature_dashboard",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "filters_by",
+      "_src": "feature_discovery",
+      "_tgt": "concept_regenerative",
+      "source": "concept_regenerative",
+      "target": "feature_discovery",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "demonstrates",
+      "_src": "feature_checkout",
+      "_tgt": "concept_transparency",
+      "source": "concept_transparency",
+      "target": "feature_checkout",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "builds",
+      "_src": "feature_profile",
+      "_tgt": "concept_trust",
+      "source": "concept_trust",
+      "target": "feature_profile",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "linked_from",
+      "_src": "feature_profile",
+      "_tgt": "feature_discovery",
+      "source": "feature_discovery",
+      "target": "feature_profile",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "uses",
+      "_src": "design_light",
+      "_tgt": "font_newsreader",
+      "source": "design_light",
+      "target": "font_newsreader",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "uses",
+      "_src": "design_light",
+      "_tgt": "font_worksans",
+      "source": "design_light",
+      "target": "font_worksans",
+      "confidence_score": 1.0
+    }
+  ],
+  "hyperedges": []
+}

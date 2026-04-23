@@ -1,0 +1,247 @@
+{
+  "communities": {
+    "0": [
+      "concept_regenerative",
+      "concept_transparency",
+      "concept_trust",
+      "feature_checkout",
+      "feature_discovery",
+      "feature_profile",
+      "role_consumer"
+    ],
+    "1": [
+      "cartcontext_cartprovider",
+      "cartcontext_cartreducer",
+      "cartcontext_loadcart",
+      "cartcontext_savecart",
+      "cartcontext_usecart",
+      "src_context_cartcontext_jsx"
+    ],
+    "2": [
+      "auth_onauthchange",
+      "auth_signinwithemail",
+      "auth_signinwithgoogle",
+      "auth_signout",
+      "auth_signupwithemail",
+      "src_lib_auth_js"
+    ],
+    "3": [
+      "firestore_createorder",
+      "firestore_getfarmerbyid",
+      "firestore_getfarmers",
+      "firestore_getproductsbyfarmer",
+      "src_lib_firestore_js"
+    ],
+    "4": [
+      "design_dark",
+      "design_light",
+      "font_newsreader",
+      "font_worksans",
+      "project_terradirect"
+    ],
+    "5": [
+      "authcontext_authprovider",
+      "authcontext_useauth",
+      "src_context_authcontext_jsx"
+    ],
+    "6": [
+      "src_context_themecontext_jsx",
+      "themecontext_themeprovider",
+      "themecontext_usetheme"
+    ],
+    "7": [
+      "mockdata_getmockfarmerbyid",
+      "mockdata_getmockproductsbyfarmer",
+      "src_lib_mockdata_js"
+    ],
+    "8": [
+      "app_app",
+      "src_app_jsx"
+    ],
+    "9": [
+      "googlesigninbutton_googlesigninbutton",
+      "src_components_auth_googlesigninbutton_jsx"
+    ],
+    "10": [
+      "protectedroute_protectedroute",
+      "src_components_auth_protectedroute_jsx"
+    ],
+    "11": [
+      "contactform_contactform",
+      "src_components_checkout_contactform_jsx"
+    ],
+    "12": [
+      "deliveryform_deliveryform",
+      "src_components_checkout_deliveryform_jsx"
+    ],
+    "13": [
+      "ordersummary_ordersummary",
+      "src_components_checkout_ordersummary_jsx"
+    ],
+    "14": [
+      "paymentform_paymentform",
+      "src_components_checkout_paymentform_jsx"
+    ],
+    "15": [
+      "farmercard_farmercard",
+      "src_components_discovery_farmercard_jsx"
+    ],
+    "16": [
+      "filterchips_filterchips",
+      "src_components_discovery_filterchips_jsx"
+    ],
+    "17": [
+      "searchbar_searchbar",
+      "src_components_discovery_searchbar_jsx"
+    ],
+    "18": [
+      "appshell_appshell",
+      "src_components_layout_appshell_jsx"
+    ],
+    "19": [
+      "herosection_herosection",
+      "src_components_profile_herosection_jsx"
+    ],
+    "20": [
+      "methodssection_methodssection",
+      "src_components_profile_methodssection_jsx"
+    ],
+    "21": [
+      "productgrid_productgrid",
+      "src_components_profile_productgrid_jsx"
+    ],
+    "22": [
+      "src_components_profile_verificationgallery_jsx",
+      "verificationgallery_verificationgallery"
+    ],
+    "23": [
+      "button_button",
+      "src_components_ui_button_jsx"
+    ],
+    "24": [
+      "lazyimage_lazyimage",
+      "src_components_ui_lazyimage_jsx"
+    ],
+    "25": [
+      "productcard_productcard",
+      "src_components_ui_productcard_jsx"
+    ],
+    "26": [
+      "src_components_ui_themetoggle_jsx",
+      "themetoggle_themetoggle"
+    ],
+    "27": [
+      "src_components_ui_transparencyindicator_jsx",
+      "transparencyindicator_transparencyindicator"
+    ],
+    "28": [
+      "src_components_ui_verifiedbadge_jsx",
+      "verifiedbadge_verifiedbadge"
+    ],
+    "29": [
+      "checkoutpage_checkoutpage",
+      "src_pages_checkoutpage_jsx"
+    ],
+    "30": [
+      "discoverypage_discoverypage",
+      "src_pages_discoverypage_jsx"
+    ],
+    "31": [
+      "farmerprofilepage_farmerprofilepage",
+      "src_pages_farmerprofilepage_jsx"
+    ],
+    "32": [
+      "loginpage_loginpage",
+      "src_pages_loginpage_jsx"
+    ],
+    "33": [
+      "signuppage_signuppage",
+      "src_pages_signuppage_jsx"
+    ],
+    "34": [
+      "feature_dashboard",
+      "role_farmer"
+    ],
+    "35": [
+      "firebase_js"
+    ],
+    "36": [
+      "postcss_config_js"
+    ],
+    "37": [
+      "tailwind_config_js"
+    ],
+    "38": [
+      "vite_config_js"
+    ],
+    "39": [
+      "src_main_jsx"
+    ],
+    "40": [
+      "src_lib_firebase_js"
+    ]
+  },
+  "cohesion": {
+    "0": 0.29,
+    "1": 0.4,
+    "2": 0.33,
+    "3": 0.4,
+    "4": 0.4,
+    "5": 0.67,
+    "6": 0.67,
+    "7": 0.67,
+    "8": 1.0,
+    "9": 1.0,
+    "10": 1.0,
+    "11": 1.0,
+    "12": 1.0,
+    "13": 1.0,
+    "14": 1.0,
+    "15": 1.0,
+    "16": 1.0,
+    "17": 1.0,
+    "18": 1.0,
+    "19": 1.0,
+    "20": 1.0,
+    "21": 1.0,
+    "22": 1.0,
+    "23": 1.0,
+    "24": 1.0,
+    "25": 1.0,
+    "26": 1.0,
+    "27": 1.0,
+    "28": 1.0,
+    "29": 1.0,
+    "30": 1.0,
+    "31": 1.0,
+    "32": 1.0,
+    "33": 1.0,
+    "34": 1.0,
+    "35": 1.0,
+    "36": 1.0,
+    "37": 1.0,
+    "38": 1.0,
+    "39": 1.0,
+    "40": 1.0
+  },
+  "gods": [
+    {
+      "id": "cartcontext_savecart",
+      "label": "saveCart()",
+      "edges": 2
+    },
+    {
+      "id": "cartcontext_cartreducer",
+      "label": "cartReducer()",
+      "edges": 2
+    }
+  ],
+  "surprises": [],
+  "questions": [
+    {
+      "type": "no_signal",
+      "question": null,
+      "why": "Not enough signal to generate questions. This usually means the corpus has no AMBIGUOUS edges, no bridge nodes, no INFERRED relationships, and all communities are tightly cohesive. Add more files or run with --mode deep to extract richer edges."
+    }
+  ]
+}
