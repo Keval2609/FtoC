@@ -82,12 +82,12 @@ export const mockProducts = {
     { id: 'sv-eggs', name: 'Pasture-Raised Eggs', price: 6.50, unit: 'Dozen', imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCWtHQxmngLJBC3W-wdCS2Wr3IXY2zsck76FKDHwYD0cTNEwxsgoJWpnerypv28jjFS_OFODUk9VVtVh8rxT5MYsJtdt7Wf-qgqE2VcaSbj4-jxD5BxR7WAw-yhYPHoFjSMQC0KcjixSFKbEWrNgOfWQFQbBOZrZAuQAdwfeYTa1v1ht68Ic6CFCO6J4d1v_W8YSDDrtB3XYdRtXU_ibmfGam5aYPReAiZK7RqkjcOa0yT9n4K3bySCSYkJLBx75WAuxR8nxjxwR-xi', inStock: true },
   ],
   'oak-heritage': [
-    { id: 'oh-apples', name: 'Heritage Apples', price: 5.00, unit: 'Per lb', imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAxQGfnOu7t6__-7ti95kzrtd__JJtgFuCTZJS0G7H1P9SIjGox1wqG-E_nQtePcO8JHQ8qG-wbz3yozpqfOTOiTeYz9yzbeLd0NBvpBg3UcmObnBKZwsg6qEHF0nA4HqEhL0VKsaV9YkDXVBRfVeorQ8wDNyQmHnq1KADdsiUx_mgAhSQCMR90J2VKS5Jke-GUsjKzhTKHpzk_gHuNcJAhfUEo86FWqqC5G6pRAZhO3x8M7BPhnRDSq-CA669NssZPeAltRrMHps8G', inStock: true },
-    { id: 'oh-peaches', name: 'Organic Peaches', price: 6.00, unit: 'Per lb', imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAxQGfnOu7t6__-7ti95kzrtd__JJtgFuCTZJS0G7H1P9SIjGox1wqG-E_nQtePcO8JHQ8qG-wbz3yozpqfOTOiTeYz9yzbeLd0NBvpBg3UcmObnBKZwsg6qEHF0nA4HqEhL0VKsaV9YkDXVBRfVeorQ8wDNyQmHnq1KADdsiUx_mgAhSQCMR90J2VKS5Jke-GUsjKzhTKHpzk_gHuNcJAhfUEo86FWqqC5G6pRAZhO3x8M7BPhnRDSq-CA669NssZPeAltRrMHps8G', inStock: true },
+    { id: 'oh-apples', name: 'Heritage Apples', price: 5.00, unit: 'Per lb', imageUrl: '/stock-images/Heritage Apples.jpeg', inStock: true },
+    { id: 'oh-peaches', name: 'Organic Peaches', price: 6.00, unit: 'Per lb', imageUrl: '/stock-images/Organic Peaches.jpg', inStock: true },
   ],
   'deep-roots': [
-    { id: 'dr-beets', name: 'Red Beets', price: 3.50, unit: 'Bunch', imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDsxIQlHJlUzp5iSN0UzFjHRwM_QSYa3gmTiyHdnyW-e83dvwzPTyVzk9LMwsHOuoLesebhLWqDSN2W4Op47rpgdoiGtWs_mpC9_vN6tISxSdnkL6aMNgS-fsJxGg8yxfBkzt92UUD24dwKYsVmhz0Vda7a8MQJXNvsc54KlGxpjXVG45NtTFOd_lebunhJoNaVo4LGfycl9zARVMkiBHLDPKDBBEdNurgPi5O8z_U7GFfF6AqxMv4N-DDsVleqYybzBeabwPGvrRQF', inStock: true },
-    { id: 'dr-basil', name: 'Fresh Basil', price: 2.50, unit: 'Bunch', imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDsxIQlHJlUzp5iSN0UzFjHRwM_QSYa3gmTiyHdnyW-e83dvwzPTyVzk9LMwsHOuoLesebhLWqDSN2W4Op47rpgdoiGtWs_mpC9_vN6tISxSdnkL6aMNgS-fsJxGg8yxfBkzt92UUD24dwKYsVmhz0Vda7a8MQJXNvsc54KlGxpjXVG45NtTFOd_lebunhJoNaVo4LGfycl9zARVMkiBHLDPKDBBEdNurgPi5O8z_U7GFfF6AqxMv4N-DDsVleqYybzBeabwPGvrRQF', inStock: true },
+    { id: 'dr-beets', name: 'Red Beets', price: 3.50, unit: 'Bunch', imageUrl: '/stock-images/red beets.jpg', inStock: true },
+    { id: 'dr-basil', name: 'Fresh Basil', price: 2.50, unit: 'Bunch', imageUrl: '/stock-images/basil.jpg', inStock: true },
   ],
 };
 
