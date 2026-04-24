@@ -1,6 +1,5 @@
 {
   "hosting": {
-    "site": "terradirectmarket",
     "public": "dist",
     "ignore": [
       "firebase.json",
