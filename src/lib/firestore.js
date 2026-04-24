@@ -120,17 +120,26 @@ export async function completeOnboarding(uid, role, profileData) {
     onboardingComplete: true,
   });
 
-  // Create /farmers doc for farmer role
+  // Create or update /farmers doc for farmer role
   if (role === 'farmer') {
-    await setDoc(doc(db, 'farmers', uid), {
-      userId: uid,
-      farmName: profileData.farmName || '',
-      story: profileData.bio || '',
-      farmingMethods: [],
-      trustBadges: [],
-      verificationStatus: 'pending',
-      createdAt: Date.now(),
-    });
+    const farmerRef = doc(db, 'farmers', uid);
+    const snap = await getDoc(farmerRef);
+    if (!snap.exists()) {
+      await setDoc(farmerRef, {
+        userId: uid,
+        farmName: profileData.farmName || '',
+        story: profileData.bio || '',
+        farmingMethods: [],
+        trustBadges: [],
+        verificationStatus: 'pending',
+        createdAt: Date.now(),
+      });
+    } else {
+      await updateDoc(farmerRef, {
+        farmName: profileData.farmName || '',
+        story: profileData.bio || '',
+      });
+    }
   }
 }
 

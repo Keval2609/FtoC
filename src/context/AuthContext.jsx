@@ -1,5 +1,6 @@
-import { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { onAuthChange, signInWithEmail, signUpWithEmail, signInWithGoogle, signOut } from '../lib/auth';
+import { createUserProfile, getUserProfile } from '../lib/firestore';
 
 const AuthContext = createContext();
 
@@ -13,20 +14,26 @@ export function AuthProvider({ children }) {
     const unsub = onAuthChange((firebaseUser) => {
       setUser(firebaseUser);
       if (firebaseUser) {
-        // Since we can't use Firestore, we check localStorage for a saved role
-        const savedRole = localStorage.getItem('userRole') || 'customer';
-        setUserProfile({
-          uid: firebaseUser.uid,
-          email: firebaseUser.email,
-          displayName: firebaseUser.displayName || 'Demo User',
-          role: savedRole,
-          onboardingComplete: true,
-        });
+        getUserProfile(firebaseUser.uid)
+          .then((profile) => {
+            if (profile) {
+              setUserProfile(profile);
+              setNeedsRoleSelection(false);
+            } else {
+              setNeedsRoleSelection(true);
+            }
+          })
+          .catch((err) => {
+            console.error('Failed to load user profile', err);
+          })
+          .finally(() => {
+            setLoading(false);
+          });
       } else {
         setUserProfile(null);
+        setNeedsRoleSelection(false);
+        setLoading(false);
       }
-      setNeedsRoleSelection(false);
-      setLoading(false);
     });
     return unsub;
   }, []);
@@ -36,14 +43,12 @@ export function AuthProvider({ children }) {
    */
   const login = async (email, password) => {
     const firebaseUser = await signInWithEmail(email, password);
-    const savedRole = localStorage.getItem('userRole') || 'customer';
-    setUserProfile({
-      uid: firebaseUser.uid,
-      email: firebaseUser.email,
-      displayName: firebaseUser.displayName || 'Demo User',
-      role: savedRole,
-      onboardingComplete: true,
-    });
+    const profile = await getUserProfile(firebaseUser.uid);
+    if (profile) {
+      setUserProfile(profile);
+    } else {
+      setNeedsRoleSelection(true);
+    }
   };
 
   /**
@@ -53,13 +58,13 @@ export function AuthProvider({ children }) {
     localStorage.setItem('userRole', role);
     const newUser = await signUpWithEmail(email, password, displayName, role);
     
-    setUserProfile({
-      uid: newUser.uid,
+    const profile = await createUserProfile(newUser.uid, {
       email,
       displayName,
-      role,
-      onboardingComplete: true,
+      role
     });
+    
+    setUserProfile(profile);
   };
 
   /**
@@ -70,14 +75,12 @@ export function AuthProvider({ children }) {
     if (isNewUser) {
       setNeedsRoleSelection(true);
     } else {
-      const savedRole = localStorage.getItem('userRole') || 'customer';
-      setUserProfile({
-        uid: googleUser.uid,
-        email: googleUser.email,
-        displayName: googleUser.displayName || 'Demo User',
-        role: savedRole,
-        onboardingComplete: true,
-      });
+      const profile = await getUserProfile(googleUser.uid);
+      if (profile) {
+        setUserProfile(profile);
+      } else {
+        setNeedsRoleSelection(true);
+      }
     }
   };
 
@@ -87,13 +90,12 @@ export function AuthProvider({ children }) {
   const assignRole = async (role) => {
     if (!user) return;
     localStorage.setItem('userRole', role);
-    setUserProfile({
-      uid: user.uid,
+    const profile = await createUserProfile(user.uid, {
       email: user.email,
       displayName: user.displayName || user.email,
-      role,
-      onboardingComplete: true,
+      role
     });
+    setUserProfile(profile);
     setNeedsRoleSelection(false);
   };
 
@@ -101,7 +103,10 @@ export function AuthProvider({ children }) {
    * Refresh the profile.
    */
   const refreshProfile = async () => {
-    // No-op for now since we don't have Firestore
+    if (user) {
+      const profile = await getUserProfile(user.uid);
+      if (profile) setUserProfile(profile);
+    }
   };
 
   const logout = async () => {
