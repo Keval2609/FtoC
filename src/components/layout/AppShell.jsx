@@ -42,11 +42,10 @@ export default function AppShell({ children }) {
               <Link
                 key={item.path}
                 to={item.path}
-                className={`relative flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                  isActive(item.path)
+                className={`relative flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${isActive(item.path)
                     ? 'bg-secondary-container text-on-secondary-container'
                     : 'text-on-surface-variant hover:bg-surface-container'
-                }`}
+                  }`}
               >
                 <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
                   {item.icon}
@@ -95,9 +94,8 @@ export default function AppShell({ children }) {
             <Link
               key={item.path}
               to={item.path}
-              className={`relative flex flex-col items-center gap-0.5 px-4 py-1 transition-colors ${
-                isActive(item.path) ? 'text-primary' : 'text-on-surface-variant'
-              }`}
+              className={`relative flex flex-col items-center gap-0.5 px-4 py-1 transition-colors ${isActive(item.path) ? 'text-primary' : 'text-on-surface-variant'
+                }`}
             >
               <span className="material-symbols-outlined" style={{ fontSize: 24 }}>
                 {item.icon}
