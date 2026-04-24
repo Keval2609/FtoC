@@ -1,5 +1,15 @@
 {
   "projects": {
     "default": "terradirect-80536"
-  }
+  },
+  "targets": {
+    "terradirect-80536": {
+      "hosting": {
+        "marketplace": [
+          "terradirectmarket"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }
