@@ -1,8 +1,8 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { addProduct } from '../lib/firestore';
-import { uploadProductImages } from '../lib/storage';
+import { addProduct, getProductById, updateProduct, deleteProduct } from '../lib/firestore';
+import { uploadProductImages } from '../lib/cloudinary';
 import Button from '../components/ui/Button';
 
 const UNITS = [
@@ -23,6 +23,8 @@ const SHELF_UNITS = [
 export default function AddProductPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { id } = useParams();
+  const isEditMode = Boolean(id);
 
   const [form, setForm] = useState({
     name: '',
@@ -31,14 +33,57 @@ export default function AddProductPage() {
     unit: 'kg',
     shelfValue: '',
     shelfUnit: 'days',
+    stock: '',
   });
 
-  const [images, setImages] = useState([]); // File objects
-  const [previews, setPreviews] = useState([]); // Data URLs
+  // Array of objects { isExisting: boolean, file: File|null, url: string }
+  const [images, setImages] = useState([]);
+  
+  const [loadingInitial, setLoadingInitial] = useState(isEditMode);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    async function loadProduct() {
+      if (!isEditMode) return;
+      try {
+        const product = await getProductById(id);
+        if (!product || product.sellerId !== user.uid) {
+          setError('Product not found or access denied.');
+          setLoadingInitial(false);
+          return;
+        }
+
+        setForm({
+          name: product.name || '',
+          description: product.description || '',
+          price: product.price ? product.price.toString() : '',
+          unit: product.unit || 'kg',
+          shelfValue: product.shelfLife?.value ? product.shelfLife.value.toString() : '',
+          shelfUnit: product.shelfLife?.unit || 'days',
+          stock: product.stock !== undefined ? product.stock.toString() : '',
+        });
+
+        if (product.imageUrls && Array.isArray(product.imageUrls)) {
+          setImages(
+            product.imageUrls.map(url => ({
+              isExisting: true,
+              file: null,
+              url,
+            }))
+          );
+        }
+      } catch (err) {
+        console.error(err);
+        setError('Failed to load product details.');
+      } finally {
+        setLoadingInitial(false);
+      }
+    }
+    loadProduct();
+  }, [id, isEditMode, user.uid]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -53,10 +98,10 @@ export default function AddProductPage() {
     }
 
     // Validate types and sizes
-    const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+    const validTypes = ['image/jpeg', 'image/png'];
     for (const file of files) {
       if (!validTypes.includes(file.type)) {
-        setError(`Invalid file type: ${file.name}. Use JPG, PNG, WebP, or GIF.`);
+        setError(`Invalid file type: ${file.name}. Use JPG or PNG only.`);
         return;
       }
       if (file.size > 5 * 1024 * 1024) {
@@ -66,26 +111,27 @@ export default function AddProductPage() {
     }
 
     setError('');
-    const newImages = [...images, ...files];
-    setImages(newImages);
+    
+    // Create new image objects with local preview URLs
+    const newImageObjects = files.map(file => ({
+      isExisting: false,
+      file,
+      url: URL.createObjectURL(file),
+    }));
 
-    // Generate previews
-    const newPreviews = [];
-    files.forEach((file) => {
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        newPreviews.push(ev.target.result);
-        if (newPreviews.length === files.length) {
-          setPreviews((prev) => [...prev, ...newPreviews]);
-        }
-      };
-      reader.readAsDataURL(file);
-    });
+    setImages(prev => [...prev, ...newImageObjects]);
   };
 
   const removeImage = (index) => {
-    setImages((prev) => prev.filter((_, i) => i !== index));
-    setPreviews((prev) => prev.filter((_, i) => i !== index));
+    setImages((prev) => {
+      const newImages = [...prev];
+      const removed = newImages.splice(index, 1)[0];
+      // Clean up local object URL if it was a newly added file
+      if (!removed.isExisting && removed.url) {
+        URL.revokeObjectURL(removed.url);
+      }
+      return newImages;
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -106,16 +152,21 @@ export default function AddProductPage() {
     setUploadProgress(0);
 
     try {
-      // Upload images to Firebase Storage
-      const imageUrls = await uploadProductImages(
-        user.uid,
-        images,
-        (progress) => setUploadProgress(progress)
-      );
+      const existingUrls = images.filter(img => img.isExisting).map(img => img.url);
+      const newFiles = images.filter(img => !img.isExisting).map(img => img.file);
+      let newUrls = [];
 
-      // Save product document to Firestore
-      await addProduct({
-        sellerId: user.uid,
+      if (newFiles.length > 0) {
+        newUrls = await uploadProductImages(
+          user.uid,
+          newFiles,
+          (progress) => setUploadProgress(progress)
+        );
+      }
+
+      const finalUrls = [...existingUrls, ...newUrls];
+
+      const productData = {
         name: form.name.trim(),
         description: form.description.trim(),
         price: parseFloat(form.price),
@@ -123,16 +174,47 @@ export default function AddProductPage() {
         shelfLife: form.shelfValue
           ? { value: parseInt(form.shelfValue), unit: form.shelfUnit }
           : null,
-        imageUrls,
-      });
+        stock: form.stock === '' ? 0 : parseFloat(form.stock),
+        imageUrls: finalUrls,
+      };
+
+      if (isEditMode) {
+        await updateProduct(id, productData);
+      } else {
+        await addProduct({
+          ...productData,
+          sellerId: user.uid,
+        });
+      }
 
       setSuccess(true);
     } catch (err) {
-      setError(err.message || 'Failed to create product. Please try again.');
+      setError(err.message || 'Failed to save product. Please try again.');
     } finally {
       setUploading(false);
     }
   };
+
+  const handleDeleteProduct = async () => {
+    if (confirm('Are you sure you want to completely delete this product? This action cannot be undone.')) {
+      try {
+        setUploading(true);
+        await deleteProduct(id);
+        navigate('/dashboard');
+      } catch (err) {
+        setError('Failed to delete product.');
+        setUploading(false);
+      }
+    }
+  };
+
+  if (loadingInitial) {
+    return (
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   // ─── Success Screen ───
   if (success) {
@@ -141,23 +223,26 @@ export default function AddProductPage() {
         <div className="w-20 h-20 bg-secondary-container rounded-full flex items-center justify-center mx-auto">
           <span className="material-symbols-outlined text-4xl text-on-secondary-container">check_circle</span>
         </div>
-        <h1 className="font-display-xl text-3xl text-on-surface">Product Listed!</h1>
+        <h1 className="font-display-xl text-3xl text-on-surface">
+          {isEditMode ? 'Product Updated!' : 'Product Listed!'}
+        </h1>
         <p className="text-on-surface-variant max-w-md mx-auto">
           Your product is now live on the marketplace. Customers can find and order it immediately.
         </p>
         <div className="flex gap-3 justify-center">
-          <Button
-            variant="outline"
-            onClick={() => {
-              setSuccess(false);
-              setForm({ name: '', description: '', price: '', unit: 'kg', shelfValue: '', shelfUnit: 'days' });
-              setImages([]);
-              setPreviews([]);
-            }}
-          >
-            <span className="material-symbols-outlined" style={{ fontSize: 18 }}>add</span>
-            Add Another
-          </Button>
+          {!isEditMode && (
+            <Button
+              variant="outline"
+              onClick={() => {
+                setSuccess(false);
+                setForm({ name: '', description: '', price: '', unit: 'kg', shelfValue: '', shelfUnit: 'days', stock: '' });
+                setImages([]);
+              }}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 18 }}>add</span>
+              Add Another
+            </Button>
+          )}
           <Button variant="primary" onClick={() => navigate('/dashboard')}>
             <span className="material-symbols-outlined" style={{ fontSize: 18 }}>dashboard</span>
             Go to Dashboard
@@ -187,7 +272,7 @@ export default function AddProductPage() {
             Farmer Dashboard
           </p>
           <h1 className="font-display-xl text-2xl text-primary leading-none">
-            Add New Product
+            {isEditMode ? 'Edit Product' : 'Add New Product'}
           </h1>
         </div>
       </div>
@@ -201,15 +286,15 @@ export default function AddProductPage() {
 
           <div className="grid grid-cols-3 sm:grid-cols-5 gap-3">
             {/* Existing previews */}
-            {previews.map((src, i) => (
+            {images.map((img, i) => (
               <div key={i} className="relative aspect-square rounded-xl overflow-hidden group">
-                <img src={src} alt="" className="w-full h-full object-cover" />
+                <img src={img.url} alt="" className="w-full h-full object-cover" />
                 <button
                   type="button"
                   onClick={() => removeImage(i)}
-                  className="absolute top-1 right-1 w-6 h-6 bg-error text-on-error rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                  className="absolute top-1 right-1 w-6 h-6 bg-error text-on-error rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer shadow-sm"
                 >
-                  <span className="material-symbols-outlined" style={{ fontSize: 14 }}>close</span>
+                  <span className="material-symbols-outlined" style={{ fontSize: 14 }}>delete</span>
                 </button>
                 {i === 0 && (
                   <span className="absolute bottom-1 left-1 text-[10px] bg-primary/80 text-on-primary px-2 py-0.5 rounded-full">
@@ -229,7 +314,7 @@ export default function AddProductPage() {
                 <input
                   type="file"
                   multiple
-                  accept="image/jpeg,image/png,image/webp,image/gif"
+                  accept="image/jpeg,image/png"
                   onChange={handleImageSelect}
                   className="hidden"
                 />
@@ -237,7 +322,7 @@ export default function AddProductPage() {
             )}
           </div>
           <p className="text-xs text-on-surface-variant mt-2">
-            JPG, PNG, WebP or GIF · Max 5MB each · First image is the cover
+            JPG or PNG · Max 5MB each · First image is the cover
           </p>
         </div>
 
@@ -306,6 +391,26 @@ export default function AddProductPage() {
           </div>
         </div>
 
+        {/* ─── Stock ─── */}
+        <div>
+          <label className="block text-xs font-semibold text-on-surface-variant mb-1.5 tracking-wide uppercase">
+            Available Stock
+          </label>
+          <input
+            name="stock"
+            type="number"
+            min="0"
+            step="any"
+            value={form.stock}
+            onChange={handleChange}
+            placeholder={`e.g. 50 (in ${form.unit})`}
+            className={inputClass}
+          />
+          <p className="text-xs text-on-surface-variant mt-1">
+            Leave blank or 0 if currently out of stock.
+          </p>
+        </div>
+
         {/* ─── Shelf Life ─── */}
         <div>
           <label className="block text-xs font-semibold text-on-surface-variant mb-1.5 tracking-wide uppercase">
@@ -344,7 +449,7 @@ export default function AddProductPage() {
         )}
 
         {/* ─── Upload Progress ─── */}
-        {uploading && (
+        {uploading && uploadProgress > 0 && uploadProgress < 100 && (
           <div className="space-y-2">
             <div className="flex items-center justify-between text-xs text-on-surface-variant">
               <span>Uploading images…</span>
@@ -359,20 +464,36 @@ export default function AddProductPage() {
           </div>
         )}
 
-        {/* ─── Submit ─── */}
-        <Button type="submit" variant="primary" size="lg" className="w-full" disabled={uploading}>
-          {uploading ? (
-            <>
-              <div className="w-4 h-4 border-2 border-on-primary border-t-transparent rounded-full animate-spin" />
-              Creating Listing…
-            </>
-          ) : (
-            <>
-              <span className="material-symbols-outlined" style={{ fontSize: 18 }}>publish</span>
-              List Product on Marketplace
-            </>
+        {/* ─── Submit & Actions ─── */}
+        <div className="pt-4 flex flex-col gap-3">
+          <Button type="submit" variant="primary" size="lg" className="w-full" disabled={uploading}>
+            {uploading ? (
+              <>
+                <div className="w-4 h-4 border-2 border-on-primary border-t-transparent rounded-full animate-spin" />
+                {isEditMode ? 'Saving Changes…' : 'Creating Listing…'}
+              </>
+            ) : (
+              <>
+                <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+                  {isEditMode ? 'save' : 'publish'}
+                </span>
+                {isEditMode ? 'Save Changes' : 'List Product on Marketplace'}
+              </>
+            )}
+          </Button>
+
+          {isEditMode && (
+            <button
+              type="button"
+              onClick={handleDeleteProduct}
+              disabled={uploading}
+              className="w-full py-3 px-4 flex items-center justify-center gap-2 text-error font-semibold hover:bg-error-container/30 rounded-xl transition-colors cursor-pointer"
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 18 }}>delete_forever</span>
+              Delete Product Completely
+            </button>
           )}
-        </Button>
+        </div>
       </form>
     </div>
   );

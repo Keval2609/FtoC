@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { completeOnboarding } from '../lib/firestore';
+import { uploadToCloudinary } from '../lib/cloudinary';
 import Button from '../components/ui/Button';
 
 export default function OnboardingPage() {
@@ -12,13 +13,20 @@ export default function OnboardingPage() {
 
   const [deliveryAddress, setDeliveryAddress] = useState('');
   const [phone, setPhone] = useState('');
+  const [file, setFile] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
     try {
-      await completeOnboarding(user.uid, 'customer', { deliveryAddress, phone });
+      let imageUrl = '';
+      if (file) {
+        imageUrl = await uploadToCloudinary(file, 'customer');
+      }
+
+      await completeOnboarding(user.uid, 'customer', { deliveryAddress, phone, profileImage: imageUrl });
+      
       await refreshProfile();
       navigate('/');
     } catch (err) {
@@ -80,6 +88,16 @@ export default function OnboardingPage() {
             <label className="block text-xs font-semibold text-on-surface-variant mb-1 tracking-wide uppercase">Phone Number (optional)</label>
             <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} className="td-input" placeholder="+1 (555) 123-4567" />
             <p className="text-xs text-on-surface-variant mt-1">We'll only share this with farmers for delivery coordination.</p>
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-on-surface-variant mb-1 tracking-wide uppercase">Profile Photo</label>
+            <input 
+              type="file" 
+              accept="image/*"
+              onChange={(e) => setFile(e.target.files[0])} 
+              className="td-input" 
+            />
           </div>
 
           <Button type="submit" variant="primary" size="lg" className="w-full" disabled={loading}>

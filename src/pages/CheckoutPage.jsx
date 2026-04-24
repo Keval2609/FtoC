@@ -25,20 +25,14 @@ export default function CheckoutPage() {
     setSubmitting(true);
 
     try {
-      await createOrder({
-        userId: user?.uid || 'anonymous',
-        items: items.map((i) => ({
-          productId: i.id,
-          name: i.name,
-          qty: i.qty,
-          price: i.price,
-          farmerId: i.farmerId,
-        })),
-        contact,
-        delivery,
-        total: cartTotal,
-        status: 'pending',
-      });
+      await createOrder(
+        {
+          userId: user?.uid,
+          contact,
+          delivery,
+        },
+        items
+      );
       clearCart();
       setSuccess(true);
     } catch (err) {

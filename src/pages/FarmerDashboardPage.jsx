@@ -1,19 +1,47 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DashboardSidebar from '../components/dashboard/DashboardSidebar';
 import KpiCard from '../components/dashboard/KpiCard';
 import InventoryTable from '../components/dashboard/InventoryTable';
-import AddListingModal from '../components/dashboard/AddListingModal';
-import { mockInventory } from '../lib/mockInventory';
+import { useAuth } from '../context/AuthContext';
+import { getMyProducts, deleteProduct } from '../lib/firestore';
 
 export default function FarmerDashboardPage() {
   const navigate = useNavigate();
-  const [inventory, setInventory] = useState(mockInventory);
+  const { user } = useAuth();
+  const [inventory, setInventory] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
-  const [modalOpen, setModalOpen] = useState(false);
-  const [editItem, setEditItem] = useState(null);
   const [lastSynced, setLastSynced] = useState('Just now');
+
+  useEffect(() => {
+    fetchProducts();
+  }, [user]);
+
+  const fetchProducts = async () => {
+    if (!user) return;
+    setLoading(true);
+    try {
+      const products = await getMyProducts(user.uid);
+      setInventory(products.map(p => ({
+        id: p.id,
+        name: p.name,
+        subtitle: p.description ? p.description.substring(0, 50) + '...' : '',
+        stock: p.stock || 0,
+        unit: p.unit,
+        price: p.price,
+        priceUnit: p.unit,
+        status: p.stock > 10 ? 'in-stock' : (p.stock > 0 ? 'low-stock' : 'out-of-stock'), // Simple status logic
+        imageUrl: p.imageUrls && p.imageUrls.length > 0 ? p.imageUrls[0] : ''
+      })));
+      setLastSynced(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+    } catch (error) {
+      console.error('Failed to fetch products', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // ─── Derived stats ───
   const totalSales = 42850;
@@ -38,25 +66,22 @@ export default function FarmerDashboardPage() {
   };
 
   const handleEdit = (item) => {
-    setEditItem(item);
-    setModalOpen(true);
+    navigate(`/dashboard/edit-product/${item.id}`);
   };
 
-  const handleDelete = (id) => {
-    setInventory((prev) => prev.filter((i) => i.id !== id));
-  };
-
-  const handleSave = (savedItem) => {
-    setInventory((prev) => {
-      const exists = prev.find((i) => i.id === savedItem.id);
-      return exists
-        ? prev.map((i) => (i.id === savedItem.id ? savedItem : i))
-        : [savedItem, ...prev];
-    });
+  const handleDelete = async (id) => {
+    if (confirm('Are you sure you want to delete this product?')) {
+      try {
+        await deleteProduct(id);
+        setInventory((prev) => prev.filter((i) => i.id !== id));
+      } catch (err) {
+        console.error('Failed to delete product', err);
+      }
+    }
   };
 
   const handleRefresh = () => {
-    setLastSynced(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+    fetchProducts();
   };
 
   return (
@@ -167,11 +192,17 @@ export default function FarmerDashboardPage() {
           </div>
 
           {/* Table */}
-          <InventoryTable
-            items={filtered}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-          />
+          {loading ? (
+            <div className="flex justify-center p-8">
+              <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+            </div>
+          ) : (
+            <InventoryTable
+              items={filtered}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
+          )}
 
           {/* Footer hint */}
           {filtered.length > 0 && (
@@ -181,14 +212,6 @@ export default function FarmerDashboardPage() {
           )}
         </section>
       </main>
-
-      {/* ─── Modal ─── */}
-      <AddListingModal
-        open={modalOpen}
-        onClose={() => { setModalOpen(false); setEditItem(null); }}
-        onSave={handleSave}
-        editItem={editItem}
-      />
     </div>
   );
 }

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { completeOnboarding } from '../lib/firestore';
+import { uploadToCloudinary } from '../lib/cloudinary';
 import Button from '../components/ui/Button';
 
 export default function FarmerSetupPage() {
@@ -14,13 +15,21 @@ export default function FarmerSetupPage() {
   const [bio, setBio] = useState('');
   const [location, setLocation] = useState('');
   const [payoutMethod, setPayoutMethod] = useState('bank');
+  const [file, setFile] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
     try {
-      await completeOnboarding(user.uid, 'farmer', { farmName, bio, location, payoutMethod });
+      let imageUrl = '';
+      if (file) {
+        imageUrl = await uploadToCloudinary(file, 'farmer');
+      }
+      
+      // Complete onboarding to keep farmer collection synced
+      await completeOnboarding(user.uid, 'farmer', { farmName, bio, location, payoutMethod, farmPhoto: imageUrl });
+      
       await refreshProfile();
       navigate('/dashboard');
     } catch (err) {
@@ -99,6 +108,16 @@ export default function FarmerSetupPage() {
                 </button>
               ))}
             </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-on-surface-variant mb-1 tracking-wide uppercase">Farm Photo</label>
+            <input 
+              type="file" 
+              accept="image/*"
+              onChange={(e) => setFile(e.target.files[0])} 
+              className="td-input" 
+            />
           </div>
 
           <Button type="submit" variant="primary" size="lg" className="w-full" disabled={loading}>

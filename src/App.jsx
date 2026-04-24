@@ -108,6 +108,14 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/dashboard/edit-product/:id"
+          element={
+            <ProtectedRoute requiredRole="farmer">
+              <AddProductPage />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </AppShell>
   );

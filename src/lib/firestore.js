@@ -12,7 +12,7 @@ import {
   orderBy,
   limit,
   onSnapshot,
-  serverTimestamp,
+  writeBatch,
 } from 'firebase/firestore';
 import { db } from './firebase';
 import { mockFarmers, getMockFarmerById, getMockProductsByFarmer } from './mockData';
@@ -20,32 +20,33 @@ import { mockFarmers, getMockFarmerById, getMockProductsByFarmer } from './mockD
 const useMock = import.meta.env.VITE_USE_MOCK_DATA === 'true';
 
 // ═══════════════════════════════════════════════════
-//  USER PROFILE (Phase 2 — Step 1)
+//  USER PROFILE
 // ═══════════════════════════════════════════════════
 
 /**
- * Create a user profile document linked to Firebase Auth uid.
- * Called once during sign-up after the role is selected.
+ * Create user profile document linked to Firebase Auth uid.
+ * Called once during sign-up after role is selected.
+ * Supports profileImage (Cloudinary URL) from db.js merge.
  */
 export async function createUserProfile(uid, data) {
   if (useMock) {
     const mockProfile = { uid, ...data, onboardingComplete: false };
     localStorage.setItem('mockUserProfile', JSON.stringify(mockProfile));
-    console.log('[MOCK] User profile created:', mockProfile);
     return mockProfile;
   }
 
   const userRef = doc(db, 'users', uid);
   const profileData = {
-    email: data.email,
-    displayName: data.displayName,
-    role: data.role, // "farmer" or "customer"
+    email: data.email || '',
+    displayName: data.displayName || '',
+    role: data.role, // 'farmer' or 'customer'
     createdAt: Date.now(),
     onboardingComplete: false,
-    // Role-specific defaults
+    profileImage: data.profileImage || '',  // Cloudinary URL (from db.js merge)
     ...(data.role === 'farmer' && {
       farmName: '',
       bio: '',
+      farmPhoto: '',   // Cloudinary URL
       location: null,
       rating: 0,
     }),
@@ -61,13 +62,11 @@ export async function createUserProfile(uid, data) {
 
 /**
  * Fetch a user profile by uid.
- * Returns null if the document does not exist.
  */
 export async function getUserProfile(uid) {
   if (useMock) {
     const saved = localStorage.getItem('mockUserProfile');
     if (saved) return JSON.parse(saved);
-
     return {
       uid,
       email: 'demo@example.com',
@@ -85,6 +84,10 @@ export async function getUserProfile(uid) {
 
 /**
  * Update user profile fields (partial merge).
+ * Only these fields allowed by firestore.rules:
+ * displayName, onboardingComplete, farmName, bio, location,
+ * rating, savedFarms, deliveryAddress, phone, payoutMethod,
+ * profileImage, farmPhoto
  */
 export async function updateUserProfile(uid, updates) {
   if (useMock) {
@@ -92,16 +95,15 @@ export async function updateUserProfile(uid, updates) {
     const existing = saved ? JSON.parse(saved) : {};
     const updated = { ...existing, uid, ...updates };
     localStorage.setItem('mockUserProfile', JSON.stringify(updated));
-    console.log('[MOCK] User profile updated:', updated);
     return;
   }
 
-  const userRef = doc(db, 'users', uid);
-  await updateDoc(userRef, updates);
+  await updateDoc(doc(db, 'users', uid), updates);
 }
 
 /**
- * Complete onboarding for a user — saves role-specific profile data.
+ * Complete onboarding — saves role-specific profile + creates /farmers doc.
+ * profileImage and farmPhoto are Cloudinary URLs.
  */
 export async function completeOnboarding(uid, role, profileData) {
   if (useMock) {
@@ -109,20 +111,18 @@ export async function completeOnboarding(uid, role, profileData) {
     const existing = saved ? JSON.parse(saved) : {};
     const updated = { ...existing, uid, role, ...profileData, onboardingComplete: true };
     localStorage.setItem('mockUserProfile', JSON.stringify(updated));
-    console.log('[MOCK] Onboarding completed:', updated);
     return;
   }
 
-  const userRef = doc(db, 'users', uid);
-  await updateDoc(userRef, {
+  // Update /users doc
+  await updateDoc(doc(db, 'users', uid), {
     ...profileData,
     onboardingComplete: true,
   });
 
-  // If farmer, also create the farmer profile document
+  // Create /farmers doc for farmer role
   if (role === 'farmer') {
-    const farmerRef = doc(db, 'farmers', uid);
-    await setDoc(farmerRef, {
+    await setDoc(doc(db, 'farmers', uid), {
       userId: uid,
       farmName: profileData.farmName || '',
       story: profileData.bio || '',
@@ -135,10 +135,9 @@ export async function completeOnboarding(uid, role, profileData) {
 }
 
 // ═══════════════════════════════════════════════════
-//  EXISTING — Farmers / Products / Orders
+//  FARMERS
 // ═══════════════════════════════════════════════════
 
-/** Get all farmers */
 export async function getFarmers(filters = {}) {
   if (useMock) return mockFarmers;
 
@@ -152,7 +151,6 @@ export async function getFarmers(filters = {}) {
   return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
 }
 
-/** Get single farmer by ID */
 export async function getFarmerById(id) {
   if (useMock) return getMockFarmerById(id);
 
@@ -161,46 +159,293 @@ export async function getFarmerById(id) {
   return { id: snap.id, ...snap.data() };
 }
 
-/** Get products for a farmer */
-export async function getProductsByFarmer(farmerId) {
-  if (useMock) return getMockProductsByFarmer(farmerId);
-
-  const ref = collection(db, 'farmers', farmerId, 'products');
-  const snap = await getDocs(ref);
-  return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
-}
-
-/** Create a new order */
-export async function createOrder(orderData) {
-  if (useMock) {
-    console.log('[MOCK] Order created:', orderData);
-    return { id: 'mock-order-' + Date.now(), ...orderData };
-  }
-
-  const ref = collection(db, 'orders');
-  const docRef = await addDoc(ref, {
-    ...orderData,
-    createdAt: serverTimestamp(),
-  });
-  return { id: docRef.id, ...orderData };
-}
-
 // ═══════════════════════════════════════════════════
-//  MESSAGING (Phase 2 — Step 2.2)
+//  PRODUCTS
 // ═══════════════════════════════════════════════════
 
 /**
- * Generate a deterministic chat ID from two user IDs.
- * Sorts alphabetically so uid1_uid2 === uid2_uid1.
+ * Add product to global /products collection.
+ * imageUrls MUST be Cloudinary URLs (1–5 required by firestore.rules).
+ * sellerId must equal request.auth.uid.
  */
+export async function addProduct(productData) {
+  if (useMock) {
+    const mockId = 'prod-' + Date.now();
+    console.log('[MOCK] Product created:', { id: mockId, ...productData });
+    return { id: mockId, ...productData, createdAt: Date.now() };
+  }
+
+  const ref = collection(db, 'products');
+  const docRef = await addDoc(ref, {
+    ...productData,
+    createdAt: Date.now(),  // number — not serverTimestamp (rules validate as number)
+  });
+  return { id: docRef.id, ...productData };
+}
+
+/**
+ * Get all products (marketplace).
+ */
+export async function getAllProducts() {
+  if (useMock) {
+    return mockFarmers.flatMap((farmer) =>
+      getMockProductsByFarmer(farmer.id).map((p) => ({
+        ...p,
+        sellerId: farmer.id,
+        sellerName: farmer.farmName || farmer.name,
+      }))
+    );
+  }
+
+  const ref = collection(db, 'products');
+  const q = query(ref, orderBy('createdAt', 'desc'));
+  const snap = await getDocs(q);
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+}
+
+/**
+ * FIXED: was querying /farmers/{id}/products subcollection (wrong).
+ * Now queries global /products with sellerId filter (correct).
+ */
+export async function getProductsByFarmer(farmerId) {
+  if (useMock) return getMockProductsByFarmer(farmerId);
+
+  const ref = collection(db, 'products');
+  const q = query(
+    ref,
+    where('sellerId', '==', farmerId),
+    orderBy('createdAt', 'desc')
+  );
+  const snap = await getDocs(q);
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+}
+
+// Alias for dashboard usage
+export const getMyProducts = getProductsByFarmer;
+
+/**
+ * Real-time listener for farmer's products (dashboard inventory).
+ * Returns unsubscribe function — call in useEffect cleanup.
+ */
+export function onMyProductsSnapshot(farmerId, callback) {
+  if (useMock) {
+    const products = getMockProductsByFarmer(farmerId).map((p) => ({
+      ...p,
+      stock: 50,
+      status: 'in-stock',
+    }));
+    callback(products);
+    return () => {};
+  }
+
+  const ref = collection(db, 'products');
+  const q = query(
+    ref,
+    where('sellerId', '==', farmerId),
+    orderBy('createdAt', 'desc')
+  );
+
+  return onSnapshot(q, (snap) => {
+    const products = snap.docs.map((d) => {
+      const data = d.data();
+      return {
+        id: d.id,
+        ...data,
+        // Normalize for InventoryTable component
+        subtitle: data.description ? data.description.slice(0, 60) : '',
+        imageUrl: data.imageUrls?.[0] || '',
+        priceUnit: data.unit,
+        status:
+          (data.stock ?? 0) > 10
+            ? 'in-stock'
+            : (data.stock ?? 0) > 0
+            ? 'low-stock'
+            : 'out-of-stock',
+      };
+    });
+    callback(products);
+  });
+}
+
+export async function getProductById(id) {
+  if (useMock) {
+    return { id, name: 'Mock Product', price: 10, unit: 'kg', imageUrls: [] };
+  }
+
+  const snap = await getDoc(doc(db, 'products', id));
+  if (!snap.exists()) return null;
+  return { id: snap.id, ...snap.data() };
+}
+
+export async function updateProduct(productId, updates) {
+  if (useMock) {
+    console.log('[MOCK] Product updated:', { productId, ...updates });
+    return;
+  }
+  await updateDoc(doc(db, 'products', productId), updates);
+}
+
+export async function deleteProduct(productId) {
+  if (useMock) {
+    console.log('[MOCK] Product deleted:', productId);
+    return;
+  }
+  await deleteDoc(doc(db, 'products', productId));
+}
+
+// ═══════════════════════════════════════════════════
+//  ORDERS
+// ═══════════════════════════════════════════════════
+
+/**
+ * Create order(s) from cart items.
+ * Groups items by farmerId — one order doc per farmer.
+ * Writes items as /orders/{id}/items subcollection.
+ *
+ * FIXED: uses Date.now() not serverTimestamp() — rules require createdAt is number.
+ *
+ * @param {object} orderData - { userId, contact, delivery }
+ * @param {array}  cartItems - [{ id, farmerId, name, price, qty, imageUrls }]
+ */
+export async function createOrder(orderData, cartItems = []) {
+  if (useMock) {
+    const mockOrder = { id: 'mock-order-' + Date.now(), ...orderData, status: 'pending' };
+    console.log('[MOCK] Order created:', mockOrder);
+    return mockOrder;
+  }
+
+  // Group items by farmerId
+  const farmerGroups = {};
+  cartItems.forEach((item) => {
+    const fid = item.farmerId || item.sellerId || 'unknown';
+    if (!farmerGroups[fid]) farmerGroups[fid] = [];
+    farmerGroups[fid].push(item);
+  });
+
+  const createdOrders = [];
+
+  for (const [farmerId, items] of Object.entries(farmerGroups)) {
+    const subtotal = items.reduce(
+      (s, i) => s + i.price * (i.qty || i.quantity || 1),
+      0
+    );
+
+    // Create order doc with auto-ID
+    const orderRef = doc(collection(db, 'orders'));
+    const orderDoc = {
+      userId: orderData.userId,
+      farmerId,
+      totalAmount: subtotal,
+      status: 'pending',
+      contactInfo: orderData.contact || orderData.contactInfo || {},
+      shippingAddress: orderData.delivery || orderData.shippingAddress || {},
+      createdAt: Date.now(),  // MUST be number — rules: data.createdAt is number
+    };
+
+    // Write order + items atomically
+    const batch = writeBatch(db);
+    batch.set(orderRef, orderDoc);
+
+    for (const item of items) {
+      const itemRef = doc(collection(db, 'orders', orderRef.id, 'items'));
+      batch.set(itemRef, {
+        productId: item.id || item.productId,
+        name: item.name || '',
+        quantity: item.qty || item.quantity || 1,
+        priceAtPurchase: item.price,
+        imageUrl: item.imageUrls?.[0] || item.imageUrl || '',
+      });
+    }
+
+    await batch.commit();
+    createdOrders.push({ id: orderRef.id, ...orderDoc });
+  }
+
+  return createdOrders[0]; // Return first for single-farmer compat
+}
+
+/**
+ * Get all orders for a farmer (dashboard).
+ */
+export async function getFarmerOrders(farmerId) {
+  if (useMock) {
+    return [
+      {
+        id: 'mo-1',
+        userId: 'u1',
+        farmerId,
+        totalAmount: 24.5,
+        status: 'pending',
+        createdAt: Date.now() - 3600000,
+        contactInfo: { firstName: 'Alice', lastName: 'Smith' },
+        shippingAddress: { city: 'Portland' },
+      },
+      {
+        id: 'mo-2',
+        userId: 'u2',
+        farmerId,
+        totalAmount: 18.0,
+        status: 'shipped',
+        createdAt: Date.now() - 86400000,
+        contactInfo: { firstName: 'Bob', lastName: 'Jones' },
+        shippingAddress: { city: 'Beaverton' },
+      },
+    ];
+  }
+
+  const ref = collection(db, 'orders');
+  const q = query(
+    ref,
+    where('farmerId', '==', farmerId),
+    orderBy('createdAt', 'desc')
+  );
+  const snap = await getDocs(q);
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+}
+
+/**
+ * Get all orders for a customer.
+ */
+export async function getUserOrders(userId) {
+  if (useMock) {
+    return [];
+  }
+
+  const ref = collection(db, 'orders');
+  const q = query(
+    ref,
+    where('userId', '==', userId),
+    orderBy('createdAt', 'desc')
+  );
+  const snap = await getDocs(q);
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+}
+
+/**
+ * Update order status (farmer only — enforced by rules).
+ * Rules only allow changing 'status' field.
+ * Allowed transitions: pending → shipped → delivered | cancelled
+ */
+export async function updateOrderStatus(orderId, newStatus) {
+  const allowed = ['pending', 'shipped', 'delivered', 'cancelled'];
+  if (!allowed.includes(newStatus)) throw new Error('Invalid status: ' + newStatus);
+
+  if (useMock) {
+    console.log('[MOCK] Order status updated:', orderId, newStatus);
+    return;
+  }
+
+  await updateDoc(doc(db, 'orders', orderId), { status: newStatus });
+}
+
+// ═══════════════════════════════════════════════════
+//  MESSAGING (Firestore)
+// ═══════════════════════════════════════════════════
+
 function getChatId(uid1, uid2) {
   return [uid1, uid2].sort().join('_');
 }
 
-/**
- * Get or create a chat document between two users.
- * Returns the chat document data with its ID.
- */
 export async function getOrCreateChat(currentUid, otherUid) {
   if (useMock) {
     return {
@@ -215,11 +460,8 @@ export async function getOrCreateChat(currentUid, otherUid) {
   const chatRef = doc(db, 'chats', chatId);
   const snap = await getDoc(chatRef);
 
-  if (snap.exists()) {
-    return { id: snap.id, ...snap.data() };
-  }
+  if (snap.exists()) return { id: snap.id, ...snap.data() };
 
-  // Create a new chat
   const chatData = {
     participants: [currentUid, otherUid],
     lastMessage: '',
@@ -229,16 +471,11 @@ export async function getOrCreateChat(currentUid, otherUid) {
   return { id: chatId, ...chatData };
 }
 
-/**
- * Send a message in a chat.
- */
 export async function sendMessage(chatId, senderId, text) {
   if (useMock) {
-    console.log('[MOCK] Message sent:', { chatId, senderId, text });
     return { id: 'mock-msg-' + Date.now(), senderId, text, timestamp: Date.now() };
   }
 
-  // Add to messages sub-collection
   const msgRef = collection(db, 'chats', chatId, 'messages');
   const docRef = await addDoc(msgRef, {
     senderId,
@@ -246,9 +483,7 @@ export async function sendMessage(chatId, senderId, text) {
     timestamp: Date.now(),
   });
 
-  // Update the chat's lastMessage and timestamp
-  const chatRef = doc(db, 'chats', chatId);
-  await updateDoc(chatRef, {
+  await updateDoc(doc(db, 'chats', chatId), {
     lastMessage: text.length > 80 ? text.substring(0, 80) + '…' : text,
     updatedAt: Date.now(),
   });
@@ -256,51 +491,23 @@ export async function sendMessage(chatId, senderId, text) {
   return { id: docRef.id, senderId, text, timestamp: Date.now() };
 }
 
-/**
- * Subscribe to real-time messages in a chat.
- * Returns an unsubscribe function.
- */
 export function onMessagesSnapshot(chatId, callback) {
   if (useMock) {
-    // Return mock messages once
     callback([
-      {
-        id: 'msg-1',
-        senderId: 'mock-farmer',
-        text: 'Hi! Thanks for your interest in our organic produce.',
-        timestamp: Date.now() - 120000,
-      },
-      {
-        id: 'msg-2',
-        senderId: 'mock-user',
-        text: 'Are the tomatoes available for pickup tomorrow?',
-        timestamp: Date.now() - 60000,
-      },
-      {
-        id: 'msg-3',
-        senderId: 'mock-farmer',
-        text: 'Absolutely! We harvest fresh every morning. Come by after 9 AM.',
-        timestamp: Date.now(),
-      },
+      { id: 'msg-1', senderId: 'mock-farmer', text: 'Hi! Thanks for your interest.', timestamp: Date.now() - 120000 },
+      { id: 'msg-2', senderId: 'mock-user', text: 'Are the tomatoes available tomorrow?', timestamp: Date.now() - 60000 },
+      { id: 'msg-3', senderId: 'mock-farmer', text: 'Yes! Come by after 9 AM.', timestamp: Date.now() },
     ]);
-    return () => {}; // noop unsubscribe
+    return () => {};
   }
 
   const msgsRef = collection(db, 'chats', chatId, 'messages');
   const q = query(msgsRef, orderBy('timestamp', 'asc'), limit(200));
-
   return onSnapshot(q, (snapshot) => {
-    const messages = snapshot.docs.map((d) => ({
-      id: d.id,
-      ...d.data(),
-    }));
-    callback(messages);
+    callback(snapshot.docs.map((d) => ({ id: d.id, ...d.data() })));
   });
 }
 
-/**
- * Get all chats for a given user (where they are a participant).
- */
 export async function getUserChats(uid) {
   if (useMock) {
     return [
@@ -309,11 +516,7 @@ export async function getUserChats(uid) {
         participants: [uid, 'mock-farmer'],
         lastMessage: 'See you tomorrow at the farm!',
         updatedAt: Date.now() - 3600000,
-        otherUser: {
-          uid: 'mock-farmer',
-          displayName: 'Green Valley Farm',
-          role: 'farmer',
-        },
+        otherUser: { uid: 'mock-farmer', displayName: 'Green Valley Farm', role: 'farmer' },
       },
     ];
   }
@@ -330,13 +533,12 @@ export async function getUserChats(uid) {
   for (const d of snap.docs) {
     const data = d.data();
     const otherUid = data.participants.find((p) => p !== uid);
-    // Fetch the other user's profile for display
     let otherUser = { uid: otherUid, displayName: 'User' };
     try {
       const profile = await getUserProfile(otherUid);
       if (profile) otherUser = profile;
     } catch {
-      // fallback to default
+      // fallback
     }
     chats.push({ id: d.id, ...data, otherUser });
   }
@@ -345,128 +547,26 @@ export async function getUserChats(uid) {
 }
 
 // ═══════════════════════════════════════════════════
-//  PRODUCTS — Global Collection (Phase 2 — Step 3)
-// ═══════════════════════════════════════════════════
-
-/**
- * Add a new product to the global /products collection.
- * Only callable by farmers (enforced by Firestore rules).
- */
-export async function addProduct(productData) {
-  if (useMock) {
-    const mockId = 'prod-' + Date.now();
-    console.log('[MOCK] Product created:', { id: mockId, ...productData });
-    return { id: mockId, ...productData, createdAt: Date.now() };
-  }
-
-  const ref = collection(db, 'products');
-  const docRef = await addDoc(ref, {
-    ...productData,
-    createdAt: serverTimestamp(),
-  });
-  return { id: docRef.id, ...productData };
-}
-
-/**
- * Get all products (marketplace view).
- */
-export async function getAllProducts() {
-  if (useMock) {
-    return mockFarmers.flatMap((farmer) =>
-      getMockProductsByFarmer(farmer.id).map((p) => ({
-        ...p,
-        sellerId: farmer.id,
-        sellerName: farmer.name,
-      }))
-    );
-  }
-
-  const ref = collection(db, 'products');
-  const q = query(ref, orderBy('createdAt', 'desc'));
-  const snap = await getDocs(q);
-  return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
-}
-
-/**
- * Get all products for a specific farmer (by sellerId).
- */
-export async function getMyProducts(sellerId) {
-  if (useMock) {
-    return getMockProductsByFarmer(sellerId);
-  }
-
-  const ref = collection(db, 'products');
-  const q = query(ref, where('sellerId', '==', sellerId), orderBy('createdAt', 'desc'));
-  const snap = await getDocs(q);
-  return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
-}
-
-/**
- * Update an existing product (owner only — enforced by rules).
- */
-export async function updateProduct(productId, updates) {
-  if (useMock) {
-    console.log('[MOCK] Product updated:', { productId, ...updates });
-    return;
-  }
-  const productRef = doc(db, 'products', productId);
-  await updateDoc(productRef, updates);
-}
-
-/**
- * Delete a product (owner only — enforced by rules).
- */
-export async function deleteProduct(productId) {
-  if (useMock) {
-    console.log('[MOCK] Product deleted:', productId);
-    return;
-  }
-  await deleteDoc(doc(db, 'products', productId));
-}
-
-// ═══════════════════════════════════════════════════
 //  REVIEWS
 // ═══════════════════════════════════════════════════
 
-/**
- * Add a new review to the global /reviews collection.
- */
 export async function createReview(productId, userId, rating, comment) {
   if (useMock) {
-    const mockId = 'review-' + Date.now();
-    console.log('[MOCK] Review created:', { id: mockId, productId, userId, rating, comment });
-    return { success: true, id: mockId };
+    return { success: true, id: 'review-' + Date.now() };
   }
 
   try {
-    const reviewData = {
+    const ref = collection(db, 'reviews');
+    const docRef = await addDoc(ref, {
       productId,
       userId,
       rating: Number(rating),
       comment,
       createdAt: Date.now(),
-    };
-
-    const ref = collection(db, 'reviews');
-    const docRef = await addDoc(ref, reviewData);
+    });
     return { success: true, id: docRef.id };
   } catch (error) {
-    console.error("Error creating review:", error);
+    console.error('Error creating review:', error);
     return { success: false, error: error.message };
   }
 }
-
-/**
- * Get all reviews for a specific product.
- */
-export async function getProductReviews(productId) {
-  if (useMock) {
-    return []; // Return empty mock reviews for now
-  }
-
-  const ref = collection(db, 'reviews');
-  const q = query(ref, where('productId', '==', productId), orderBy('createdAt', 'desc'));
-  const snap = await getDocs(q);
-  return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
-}
-

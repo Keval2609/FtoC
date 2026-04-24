@@ -1,18 +1,217 @@
-rules_version='2'
-
+rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     match /{document=**} {
-      // This rule allows anyone with your database reference to view, edit,
-      // and delete all data in your database. It is useful for getting
-      // started, but it is configured to expire after 30 days because it
-      // leaves your app open to attackers. At that time, all client
-      // requests to your database will be denied.
-      //
-      // Make sure to write security rules for your app before that time, or
-      // else all client requests to your database will be denied until you
-      // update your rules.
-      allow read, write: if request.time < timestamp.date(2026, 5, 24);
+      allow read, write: if false;
+    }
+
+    function isSignedIn() {
+      // Removed email_verified requirement since the app uses basic email/password auth without verification steps
+      return request.auth != null;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
+
+    function isAdmin() {
+      return isSignedIn() && exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin";
+    }
+
+    // Helper — get the calling user's data from /users
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function getUserRole() {
+      return getUserData().role;
+    }
+
+    function isFarmer() {
+      return isSignedIn() && getUserRole() == 'farmer';
+    }
+
+    // -- VALIDATION HELPERS --
+
+    function isValidUserProfile(data) {
+      return data.keys().hasAll(['email', 'displayName', 'role', 'createdAt', 'onboardingComplete']) &&
+             data.email is string && data.email.size() <= 256 &&
+             data.displayName is string && data.displayName.size() <= 200 &&
+             data.role is string && (data.role == "consumer" || data.role == "customer" || data.role == "farmer" || data.role == "admin") &&
+             data.createdAt is number &&
+             data.onboardingComplete is bool;
+    }
+
+    function isValidFarmerProfile(data) {
+      return data.keys().hasAll(['userId', 'farmName', 'story', 'verificationStatus', 'createdAt']) &&
+             data.userId is string && data.userId == request.auth.uid &&
+             data.farmName is string && data.farmName.size() <= 200 &&
+             data.story is string && data.story.size() <= 5000 &&
+             (data.keys().hasAny(['farmingMethods']) ? (data.farmingMethods is list && data.farmingMethods.size() <= 50) : true) &&
+             (data.keys().hasAny(['trustBadges']) ? (data.trustBadges is list && data.trustBadges.size() <= 20) : true) &&
+             data.verificationStatus is string && (data.verificationStatus == "pending" || data.verificationStatus == "verified" || data.verificationStatus == "rejected") &&
+             data.createdAt is number;
+    }
+
+    function isValidProduct(data) {
+      return data.keys().hasAll(['sellerId', 'name', 'price', 'unit', 'imageUrls']) &&
+             data.sellerId is string && data.sellerId == request.auth.uid &&
+             data.name is string && data.name.size() <= 200 &&
+             (data.keys().hasAny(['description']) ? (data.description is string && data.description.size() <= 2000) : true) &&
+             data.price is number && data.price >= 0 &&
+             (data.keys().hasAny(['stock']) ? (data.stock is number && data.stock >= 0) : true) &&
+             (data.keys().hasAny(['shelfLife']) ? (data.shelfLife == null || data.shelfLife is map) : true) &&
+             data.unit is string && data.unit.size() <= 50 &&
+             data.imageUrls is list &&
+             data.imageUrls.size() >= 1 &&
+             data.imageUrls.size() <= 5;
+    }
+
+    function isValidOrder(data) {
+      return data.keys().hasAll(['userId', 'farmerId', 'totalAmount', 'status', 'createdAt']) &&
+             data.userId is string && data.userId == request.auth.uid &&
+             data.farmerId is string && data.farmerId.size() <= 128 &&
+             data.totalAmount is number && data.totalAmount >= 0 &&
+             data.status is string && (data.status == "pending" || data.status == "shipped" || data.status == "delivered" || data.status == "cancelled") &&
+             data.createdAt is number;
+    }
+
+    function isValidOrderItem(data) {
+       return data.keys().hasAll(['productId', 'quantity', 'priceAtPurchase']) &&
+              data.productId is string && data.productId.size() <= 128 &&
+              data.quantity is number && data.quantity > 0 &&
+              data.priceAtPurchase is number && data.priceAtPurchase >= 0;
+    }
+
+    // -- RULES --
+
+    // ═══ Users Collection — Phase 2 Step 1 ═══
+    match /users/{userId} {
+      // Users can read their own profile; public read for basic discovery (e.g. farmer name lookup)
+      allow get: if isSignedIn() && (userId == request.auth.uid || isAdmin());
+      
+      // Create own profile on sign-up (exact required fields)
+      allow create: if request.auth != null && userId == request.auth.uid &&
+                    isValidUserProfile(incoming()) && incoming().role != "admin";
+      
+      // Users can update their own profile (restricted fields)
+      // Added profileImage and farmPhoto to support onboarding image uploads
+      allow update: if isSignedIn() && userId == request.auth.uid &&
+                    isValidUserProfile(incoming()) &&
+                    incoming().role == existing().role && incoming().createdAt == existing().createdAt &&
+                    incoming().diff(existing()).affectedKeys()
+                      .hasOnly(['displayName', 'onboardingComplete', 'farmName', 'bio', 'location', 
+                                'rating', 'savedFarms', 'deliveryAddress', 'phone', 'payoutMethod',
+                                'profileImage', 'farmPhoto']);
+    }
+
+    // ═══ Farmers Collection ═══
+    match /farmers/{farmerId} {
+      allow get: if true; // Public profiles
+      allow list: if true; // Public list
+      allow create: if isSignedIn() && isValidId(farmerId) && farmerId == request.auth.uid &&
+                    isValidFarmerProfile(incoming()) && incoming().verificationStatus == 'pending' &&
+                    isFarmer(); // Only users with farmer role can create farmer profiles
+      allow update: if isSignedIn() && isValidId(farmerId) && farmerId == request.auth.uid &&
+                    isValidFarmerProfile(incoming()) &&
+                    incoming().diff(existing()).affectedKeys().hasOnly(['farmName', 'story', 'farmingMethods', 'trustBadges']) &&
+                    incoming().userId == existing().userId && incoming().createdAt == existing().createdAt && incoming().verificationStatus == existing().verificationStatus ||
+                    isAdmin();
+    }
+
+    // ═══ Products Collection — Phase 2 Step 3 & 4 (Farmer Gatekeeper) ═══
+    match /products/{productId} {
+      // Anyone can view products
+      allow get: if true;
+      allow list: if true;
+      
+      // Only Farmers can create products — checked via /users role
+      // Validates 1–5 images at the database level
+      allow create: if isSignedIn()
+                    && getUserData().role == 'farmer'
+                    && isValidProduct(incoming())
+                    && exists(/databases/$(database)/documents/farmers/$(request.auth.uid));
+
+      // Only the original farmer can edit their own product
+      allow update: if isSignedIn()
+                    && request.auth.uid == existing().sellerId
+                    && isValidProduct(incoming())
+                    && incoming().sellerId == existing().sellerId;
+
+      // Only the original farmer can delete their own product
+      allow delete: if isSignedIn()
+                    && request.auth.uid == existing().sellerId;
+    }
+
+    // ═══ Chats Collection — Phase 2 Step 2.2 (Messaging) ═══
+    match /chats/{chatId} {
+      // Only participants can read the chat
+      allow get: if isSignedIn()
+                 && request.auth.uid in existing().participants;
+      
+      // List chats where user is a participant (filtered by query)
+      allow list: if isSignedIn()
+                  && request.auth.uid in resource.data.participants;
+
+      // Any authenticated user can create a chat (they must be a participant)
+      allow create: if isSignedIn()
+                    && incoming().participants is list
+                    && incoming().participants.size() == 2
+                    && request.auth.uid in incoming().participants;
+
+      // Only participants can update (e.g. lastMessage, updatedAt)
+      allow update: if isSignedIn()
+                    && request.auth.uid in existing().participants
+                    && incoming().participants == existing().participants;
+
+      // ── Messages sub-collection ──
+      match /messages/{messageId} {
+        // Only chat participants can read messages
+        allow read: if isSignedIn()
+                    && request.auth.uid in get(/databases/$(database)/documents/chats/$(chatId)).data.participants;
+
+        // Only chat participants can send messages (senderId must be self)
+        allow create: if isSignedIn()
+                      && request.auth.uid in get(/databases/$(database)/documents/chats/$(chatId)).data.participants
+                      && incoming().senderId == request.auth.uid
+                      && incoming().text is string
+                      && incoming().text.size() <= 2000
+                      && incoming().timestamp is number;
+      }
+    }
+
+    // ═══ Orders Collection ═══
+    match /orders/{orderId} {
+      allow get: if isSignedIn() && isValidId(orderId) && (existing().userId == request.auth.uid || existing().farmerId == request.auth.uid);
+      allow list: if isSignedIn() && (resource.data.userId == request.auth.uid || resource.data.farmerId == request.auth.uid);
+      
+      allow create: if isSignedIn() && isValidId(orderId) && isValidOrder(incoming()) &&
+                    exists(/databases/$(database)/documents/farmers/$(incoming().farmerId));
+                    
+      // Only the farmer can change status
+      allow update: if isSignedIn() && isValidId(orderId) && isValidOrder(incoming()) &&
+                    existing().farmerId == request.auth.uid &&
+                    existing().status != 'delivered' && existing().status != 'cancelled' &&
+                    incoming().userId == existing().userId &&
+                    incoming().farmerId == existing().farmerId &&
+                    incoming().totalAmount == existing().totalAmount &&
+                    incoming().createdAt == existing().createdAt &&
+                    incoming().diff(existing()).affectedKeys().hasOnly(['status']);
+    }
+
+    match /orders/{orderId}/items/{itemId} {
+      allow get: if isSignedIn() && isValidId(orderId) && isValidId(itemId) && 
+                   (get(/databases/$(database)/documents/orders/$(orderId)).data.userId == request.auth.uid || get(/databases/$(database)/documents/orders/$(orderId)).data.farmerId == request.auth.uid);
+      allow list: if isSignedIn() && isValidId(orderId) && 
+                   (get(/databases/$(database)/documents/orders/$(orderId)).data.userId == request.auth.uid || get(/databases/$(database)/documents/orders/$(orderId)).data.farmerId == request.auth.uid);
+      
+      allow create: if isSignedIn() && isValidId(orderId) && isValidId(itemId) &&
+                    isValidOrderItem(incoming()) &&
+                    get(/databases/$(database)/documents/orders/$(orderId)).data.userId == request.auth.uid;
     }
   }
 }
