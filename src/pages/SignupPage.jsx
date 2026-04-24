@@ -37,9 +37,9 @@ export default function SignupPage() {
     try {
       await signup(email, password, name, role);
       if (role === 'farmer') {
-        navigate('/dashboard');
+        navigate('/farmer-setup');
       } else {
-        navigate('/'); // customer route
+        navigate('/onboarding'); // customer route
       }
     } catch (err) {
       setError(err.message || 'Could not create account. Please try again.');
