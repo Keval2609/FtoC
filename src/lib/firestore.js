@@ -424,3 +424,49 @@ export async function deleteProduct(productId) {
   await deleteDoc(doc(db, 'products', productId));
 }
 
+// ═══════════════════════════════════════════════════
+//  REVIEWS
+// ═══════════════════════════════════════════════════
+
+/**
+ * Add a new review to the global /reviews collection.
+ */
+export async function createReview(productId, userId, rating, comment) {
+  if (useMock) {
+    const mockId = 'review-' + Date.now();
+    console.log('[MOCK] Review created:', { id: mockId, productId, userId, rating, comment });
+    return { success: true, id: mockId };
+  }
+
+  try {
+    const reviewData = {
+      productId,
+      userId,
+      rating: Number(rating),
+      comment,
+      createdAt: Date.now(),
+    };
+
+    const ref = collection(db, 'reviews');
+    const docRef = await addDoc(ref, reviewData);
+    return { success: true, id: docRef.id };
+  } catch (error) {
+    console.error("Error creating review:", error);
+    return { success: false, error: error.message };
+  }
+}
+
+/**
+ * Get all reviews for a specific product.
+ */
+export async function getProductReviews(productId) {
+  if (useMock) {
+    return []; // Return empty mock reviews for now
+  }
+
+  const ref = collection(db, 'reviews');
+  const q = query(ref, where('productId', '==', productId), orderBy('createdAt', 'desc'));
+  const snap = await getDocs(q);
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+}
+
