@@ -1,6 +1,7 @@
 {
   "projects": {
-    "default": "terradirect-80536"
+    "default": "terradirect-80536",
+    "staging": "terradirect-3a4f6"
   },
   "targets": {
     "terradirect-80536": {

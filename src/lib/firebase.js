@@ -5,14 +5,13 @@ import { getFirestore } from 'firebase/firestore';
 
 
 const firebaseConfig = {
-  apiKey: "AIzaSyB7kFZdfEAirn9303k2dgv1M4SgKtmAhAc",
-  authDomain: "terradirect-80536.firebaseapp.com",
-  databaseURL: "https://terradirect-80536-default-rtdb.firebaseio.com",
-  projectId: "terradirect-80536",
-  storageBucket: "terradirect-80536.firebasestorage.app",
-  messagingSenderId: "861139612520",
-  appId: "1:861139612520:web:4009fd2ab42b893e681cdd",
-  measurementId: "G-2LHM3TSTVQ",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
 const app = initializeApp(firebaseConfig);
