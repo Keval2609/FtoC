@@ -36,7 +36,7 @@ export default function FarmerCard({ farmer }) {
 
         {/* Product Tags */}
         <div className="flex flex-wrap gap-1.5">
-          {farmer.primaryProducts.map((product) => (
+          {(farmer.primaryProducts || []).map((product) => (
             <span
               key={product}
               className="px-2.5 py-1 bg-surface-container text-on-surface-variant text-xs font-medium rounded-md"

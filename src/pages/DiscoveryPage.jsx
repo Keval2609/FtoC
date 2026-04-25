@@ -37,7 +37,7 @@ export default function DiscoveryPage() {
         (f) =>
           f.name.toLowerCase().includes(q) ||
           f.ownerName.toLowerCase().includes(q) ||
-          f.primaryProducts.some((p) => p.toLowerCase().includes(q)) ||
+          (f.primaryProducts || []).some((p) => p.toLowerCase().includes(q)) ||
           f.location.toLowerCase().includes(q)
       );
     }

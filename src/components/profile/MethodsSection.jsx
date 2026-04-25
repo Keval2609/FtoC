@@ -1,4 +1,8 @@
 export default function MethodsSection({ farmer }) {
+  if (!farmer || !farmer.methods || farmer.methods.length === 0) {
+    return null;
+  }
+
   return (
     <section className="space-y-6">
       {/* Story */}
