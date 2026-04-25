@@ -1,0 +1,96 @@
+{
+  "rules": {
+    // ──────────────────────────────────────────────────────────────────────
+    // TerraDirect — Firebase Realtime Database Rules
+    //
+    // NOTE: Your app (firestore.js) uses Cloud Firestore for all primary
+    // data (users, farmers, products, orders, chats, reviews).
+    // The Realtime Database is initialized in firebase.js but currently
+    // unused. These rules lock it down by default and add paths for any
+    // future real-time features (e.g. presence, typing indicators).
+    // ──────────────────────────────────────────────────────────────────────
+
+    // ── Default: deny everything ──────────────────────────────────────────
+    ".read":  false,
+    ".write": false,
+
+    // ── Helper functions (not natively supported in RTDB like Firestore,
+    //    so we inline the auth checks directly) ───────────────────────────
+
+    // ── Presence system ───────────────────────────────────────────────────
+    // Tracks which users are currently online.
+    // Each user can only read/write their own presence node.
+    "presence": {
+      "$uid": {
+        // Only the authenticated user matching $uid can read/write
+        ".read":  "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid",
+
+        // Validate the shape of a presence record
+        ".validate": "newData.hasChildren(['online', 'lastSeen'])",
+
+        "online": {
+          ".validate": "newData.isBoolean()"
+        },
+        "lastSeen": {
+          // Must be a server timestamp (number in ms)
+          ".validate": "newData.isNumber()"
+        },
+
+        // No other fields allowed
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+
+    // ── Typing indicators ─────────────────────────────────────────────────
+    // Used in chat: /typing/{chatId}/{uid} = true/false
+    // chatId format is uid1_uid2 (sorted) — same as your Firestore chats.
+    // Any participant of a chat can read indicators in that chat.
+    // Only the authenticated user can write their own indicator.
+    "typing": {
+      "$chatId": {
+        // Any signed-in user can read typing indicators in a chat room
+        // (you could tighten this to participants only via a Firestore
+        //  lookup, but RTDB rules can't cross-reference Firestore)
+        ".read": "auth != null",
+
+        "$uid": {
+          // Only write your own indicator
+          ".write": "auth != null && auth.uid === $uid",
+
+          // Must be a boolean (true = typing, false = stopped)
+          ".validate": "newData.isBoolean()"
+        }
+      }
+    },
+
+    // ── Connection metadata (optional) ────────────────────────────────────
+    // Stores per-user connection info. Useful for onDisconnect() hooks.
+    "connections": {
+      "$uid": {
+        ".read":  "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid",
+
+        ".validate": "newData.hasChildren(['connectedAt'])",
+
+        "connectedAt": {
+          ".validate": "newData.isNumber()"
+        },
+        "deviceInfo": {
+          ".validate": "newData.isString() && newData.val().length <= 200"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+
+    // ── Catch-all: deny any other path ────────────────────────────────────
+    "$other": {
+      ".read":  false,
+      ".write": false
+    }
+  }
+}
