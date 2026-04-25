@@ -1,6 +1,6 @@
 {
   "projects": {
-    "default": "terradirect-80536",
+    "default": "terradirect-3a4f6",
     "staging": "terradirect-3a4f6"
   },
   "targets": {
@@ -8,6 +8,13 @@
       "hosting": {
         "marketplace": [
           "terradirectmarket"
+        ]
+      }
+    },
+    "terradirect-3a4f6": {
+      "hosting": {
+        "marketplace": [
+          "terradirectf2c"
         ]
       }
     }

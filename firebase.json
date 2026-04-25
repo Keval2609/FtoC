@@ -34,5 +34,17 @@
       "enabled": true
     },
     "singleProjectMode": true
+  },
+  "database": {
+    "rules": "database.rules.json"
+  },
+  "auth": {
+    "providers": {
+      "emailPassword": true,
+      "googleSignIn": {
+        "oAuthBrandDisplayName": "My App",
+        "supportEmail": "noreply@terradirect-3a4f6.firebaseapp.com"
+      }
+    }
   }
 }
