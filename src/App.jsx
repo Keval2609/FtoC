@@ -1,32 +1,36 @@
-import { Routes, Route } from 'react-router-dom';
+// src/App.jsx
+// Key Google Sign-In routes:
+//   /role-select  — shown to NEW Google users (needsRoleSelection === true)
+//   /farmer-setup — farmer onboarding (profile + payout)
+//   /onboarding   — customer onboarding (delivery address)
+//
+// AuthContext.loginWithGoogle sets needsRoleSelection = true for new Google users,
+// which makes ProtectedRoute redirect them to /role-select automatically.
+
+import { Routes, Route, Navigate } from 'react-router-dom';
 import AppShell from './components/layout/AppShell';
 import ProtectedRoute from './components/auth/ProtectedRoute';
+
 import DiscoveryPage from './pages/DiscoveryPage';
 import FarmerProfilePage from './pages/FarmerProfilePage';
 import CheckoutPage from './pages/CheckoutPage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
-import RoleSelectPage from './pages/RoleSelectPage';
+import RoleSelectPage from './pages/RoleSelectPage';   // ← Google new-user flow
 import OnboardingPage from './pages/OnboardingPage';
 import FarmerSetupPage from './pages/FarmerSetupPage';
 import FarmerDashboardPage from './pages/FarmerDashboardPage';
 import ChatListPage from './pages/ChatListPage';
 import ChatPage from './pages/ChatPage';
 import AddProductPage from './pages/AddProductPage';
-import { useAuth } from './context/AuthContext';
-import { Navigate } from 'react-router-dom';
 
+import { useAuth } from './context/AuthContext';
+
+// ── Root route: farmers → dashboard, everyone else → discovery ────────────
 function RootRoute() {
   const { user, isFarmer, loading } = useAuth();
-  
   if (loading) return null;
-  
-  // If user is logged in AND is a farmer, send them to dashboard
-  if (user && isFarmer) {
-    return <Navigate to="/dashboard" replace />;
-  }
-  
-  // Otherwise, default to the public DiscoveryPage
+  if (user && isFarmer) return <Navigate to="/dashboard" replace />;
   return <DiscoveryPage />;
 }
 
@@ -34,16 +38,18 @@ export default function App() {
   return (
     <AppShell>
       <Routes>
-        {/* ─── Public Routes ─── */}
+
+        {/* ── Public ─────────────────────────────────────────────────── */}
         <Route path="/" element={<RootRoute />} />
         <Route path="/farmer/:id" element={<FarmerProfilePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
 
-        {/* ─── Google Sign-In Role Selection ─── */}
+        {/* ── Google Sign-In: role selection for brand-new Google users ─ */}
+        {/* needsRoleSelection flag (set in AuthContext) drives users here  */}
         <Route path="/role-select" element={<RoleSelectPage />} />
 
-        {/* ─── Onboarding (any authenticated user) ─── */}
+        {/* ── Onboarding (any authenticated user) ─────────────────────── */}
         <Route
           path="/onboarding"
           element={
@@ -61,7 +67,7 @@ export default function App() {
           }
         />
 
-        {/* ─── Checkout (any authenticated user) ─── */}
+        {/* ── Checkout (any authenticated user) ───────────────────────── */}
         <Route
           path="/checkout"
           element={
@@ -71,7 +77,7 @@ export default function App() {
           }
         />
 
-        {/* ─── Messaging (any authenticated user) ─── */}
+        {/* ── Messaging (any authenticated user) ──────────────────────── */}
         <Route
           path="/messages"
           element={
@@ -89,7 +95,7 @@ export default function App() {
           }
         />
 
-        {/* ─── Farmer Dashboard (farmer-only) ─── */}
+        {/* ── Farmer Dashboard (farmer-only) ──────────────────────────── */}
         <Route
           path="/dashboard"
           element={
@@ -99,7 +105,7 @@ export default function App() {
           }
         />
 
-        {/* ─── Add Product (farmer-only) ─── */}
+        {/* ── Product management (farmer-only) ────────────────────────── */}
         <Route
           path="/dashboard/add-product"
           element={
@@ -116,6 +122,7 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+
       </Routes>
     </AppShell>
   );

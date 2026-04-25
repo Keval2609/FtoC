@@ -1,3 +1,7 @@
+// src/pages/SignupPage.jsx
+// Google Sign-In: new Google users → /role-select (via AuthContext.loginWithGoogle)
+// Email signup:   goes through role toggle → farmer-setup or onboarding
+
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -21,14 +25,14 @@ const ROLES = [
 
 export default function SignupPage() {
   const { signup } = useAuth();
-  const navigate = useNavigate();
+  const navigate   = useNavigate();
 
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+  const [name,     setName]     = useState('');
+  const [email,    setEmail]    = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState('customer');
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [role,     setRole]     = useState('customer');
+  const [error,    setError]    = useState('');
+  const [loading,  setLoading]  = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -36,11 +40,8 @@ export default function SignupPage() {
     setLoading(true);
     try {
       await signup(email, password, name, role);
-      if (role === 'farmer') {
-        navigate('/farmer-setup');
-      } else {
-        navigate('/onboarding'); // customer route
-      }
+      // Route new email users to role-specific onboarding
+      navigate(role === 'farmer' ? '/farmer-setup' : '/onboarding');
     } catch (err) {
       setError(err.message || 'Could not create account. Please try again.');
     } finally {
@@ -51,16 +52,23 @@ export default function SignupPage() {
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md space-y-8">
-        {/* Header */}
+
+        {/* ── Header ── */}
         <div className="text-center space-y-2">
           <div className="w-14 h-14 bg-secondary-container rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <span className="material-symbols-outlined text-on-secondary-container text-2xl">person_add</span>
+            <span className="material-symbols-outlined text-on-secondary-container text-2xl">
+              person_add
+            </span>
           </div>
-          <h1 className="font-display-xl text-display-xl text-on-surface text-3xl">Join TerraDirect</h1>
-          <p className="text-on-surface-variant">Create your account and start sourcing from real farms</p>
+          <h1 className="font-display-xl text-display-xl text-on-surface text-3xl">
+            Join TerraDirect
+          </h1>
+          <p className="text-on-surface-variant">
+            Create your account and start sourcing from real farms
+          </p>
         </div>
 
-        {/* ═══ Role Toggle ═══ */}
+        {/* ── Role Toggle ── */}
         <div className="space-y-2">
           <label className="block text-xs font-semibold text-on-surface-variant tracking-wide uppercase">
             I want to join as
@@ -74,7 +82,8 @@ export default function SignupPage() {
                   type="button"
                   onClick={() => setRole(r.id)}
                   className={`
-                    relative flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all duration-200 cursor-pointer group
+                    relative flex flex-col items-center gap-2 p-4 rounded-xl
+                    border-2 transition-all duration-200 cursor-pointer group
                     ${selected
                       ? 'border-primary bg-primary-container/30 shadow-sm'
                       : 'border-outline-variant/50 bg-surface-container-low hover:border-outline hover:bg-surface-container'
@@ -82,24 +91,38 @@ export default function SignupPage() {
                   `}
                 >
                   {/* Selection indicator */}
-                  <div className={`
-                    absolute top-2.5 right-2.5 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all
-                    ${selected ? 'border-primary bg-primary' : 'border-outline-variant'}
-                  `}>
+                  <div
+                    className={`
+                      absolute top-2.5 right-2.5 w-5 h-5 rounded-full border-2
+                      flex items-center justify-center transition-all
+                      ${selected ? 'border-primary bg-primary' : 'border-outline-variant'}
+                    `}
+                  >
                     {selected && (
-                      <span className="material-symbols-outlined text-on-primary" style={{ fontSize: 14 }}>
+                      <span
+                        className="material-symbols-outlined text-on-primary"
+                        style={{ fontSize: 14 }}
+                      >
                         check
                       </span>
                     )}
                   </div>
 
                   <span
-                    className={`material-symbols-outlined text-2xl transition-colors ${selected ? 'text-primary' : 'text-on-surface-variant group-hover:text-on-surface'}`}
+                    className={`material-symbols-outlined text-2xl transition-colors ${
+                      selected
+                        ? 'text-primary'
+                        : 'text-on-surface-variant group-hover:text-on-surface'
+                    }`}
                     style={{ fontVariationSettings: "'FILL' 1" }}
                   >
                     {r.icon}
                   </span>
-                  <span className={`font-button text-sm ${selected ? 'text-primary' : 'text-on-surface'}`}>
+                  <span
+                    className={`font-button text-sm ${
+                      selected ? 'text-primary' : 'text-on-surface'
+                    }`}
+                  >
                     {r.label}
                   </span>
                   <span className="text-xs text-on-surface-variant text-center leading-tight">
@@ -111,30 +134,42 @@ export default function SignupPage() {
           </div>
         </div>
 
-        {/* Google */}
-        <GoogleSignInButton />
+        {/* ── Google Sign-In ── */}
+        {/* New Google users skip email form entirely → /role-select */}
+        <div className="space-y-2">
+          <GoogleSignInButton />
+          <p className="text-center text-xs text-on-surface-variant">
+            Signing in with Google? You'll pick your role on the next screen.
+          </p>
+        </div>
 
-        {/* Divider */}
+        {/* ── Divider ── */}
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t border-outline-variant/50" />
           </div>
           <div className="relative flex justify-center">
-            <span className="bg-background px-3 text-sm text-on-surface-variant">or sign up with email</span>
+            <span className="bg-background px-3 text-sm text-on-surface-variant">
+              or sign up with email
+            </span>
           </div>
         </div>
 
-        {/* Form */}
+        {/* ── Email / Password Form ── */}
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
             <div className="p-3 bg-error-container text-on-error-container text-sm rounded-lg flex items-center gap-2">
-              <span className="material-symbols-outlined" style={{ fontSize: 18 }}>error</span>
+              <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+                error
+              </span>
               {error}
             </div>
           )}
 
           <div>
-            <label className="block text-xs font-semibold text-on-surface-variant mb-1 tracking-wide uppercase">Full Name</label>
+            <label className="block text-xs font-semibold text-on-surface-variant mb-1 tracking-wide uppercase">
+              Full Name
+            </label>
             <input
               type="text"
               value={name}
@@ -146,7 +181,9 @@ export default function SignupPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-on-surface-variant mb-1 tracking-wide uppercase">Email</label>
+            <label className="block text-xs font-semibold text-on-surface-variant mb-1 tracking-wide uppercase">
+              Email
+            </label>
             <input
               type="email"
               value={email}
@@ -158,7 +195,9 @@ export default function SignupPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-on-surface-variant mb-1 tracking-wide uppercase">Password</label>
+            <label className="block text-xs font-semibold text-on-surface-variant mb-1 tracking-wide uppercase">
+              Password
+            </label>
             <input
               type="password"
               value={password}
@@ -188,7 +227,7 @@ export default function SignupPage() {
           </Button>
         </form>
 
-        {/* Footer */}
+        {/* ── Footer ── */}
         <p className="text-center text-sm text-on-surface-variant">
           Already have an account?{' '}
           <Link to="/login" className="text-primary font-medium hover:underline">
