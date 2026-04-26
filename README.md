@@ -109,62 +109,91 @@ The conventional food supply chain is opaque. Consumers can't verify farming pra
 
 ---
 
+## Dual-Environment Architecture
+
+TerraDirect runs two isolated environments from a **single codebase**:
+
+| | Demo | Production |
+|---|---|---|
+| **URL** | `terradirectf2c-demo.web.app` | `terradirectf2c.web.app` |
+| **Authentication** | Pre-logged mock user (Alex Demo) | Real Firebase Auth |
+| **Data Source** | In-memory `mockData.js` | Firestore real-time |
+| **Image Upload** | Simulated (placeholder URLs) | Cloudinary |
+| **Persistence** | None (resets on reload) | Permanent |
+| **Use Case** | Demos, testing, future features | Live users, real transactions |
+
+### How It Works
+
+- `VITE_ENVIRONMENT` is set at build-time via Vite's `--mode` flag
+- `EnvironmentContext` provides `'demo'` or `'production'` to the tree
+- `AuthContext` branches: demo returns a pre-logged user, production uses Firebase Auth
+- `ServiceContext` lazy-imports `mock.service.js` or `firebase.service.js`
+- Demo builds include a fixed green banner: *"Demo Mode — All data is simulated"*
+
+---
+
 ## Project Structure
 
 ```
 d:\F2C\
 ├── public/
-│   ├── favicon.svg              # Brand favicon
+│   ├── favicon.svg                # Brand favicon
 ├── src/
 │   ├── components/
-│   │   ├── auth/                # GoogleSignInButton, ProtectedRoute
-│   │   ├── checkout/            # ContactForm, DeliveryForm, PaymentForm, OrderSummary
-│   │   ├── discovery/           # SearchBar, FilterChips, FarmerCard
-│   │   ├── layout/              # AppShell (header + mobile nav)
-│   │   ├── profile/             # HeroSection, MethodsSection, ProductGrid, VerificationGallery
-│   │   └── ui/                  # Button, LazyImage, ThemeToggle, ProductCard, VerifiedBadge, TransparencyIndicator
+│   │   ├── auth/                  # GoogleSignInButton, ProtectedRoute
+│   │   ├── checkout/              # ContactForm, DeliveryForm, PaymentForm, OrderSummary
+│   │   ├── discovery/             # SearchBar, FilterChips, FarmerCard
+│   │   ├── layout/                # AppShell (header + mobile nav)
+│   │   ├── profile/               # HeroSection, MethodsSection, ProductGrid, VerificationGallery
+│   │   └── ui/                    # Button, LazyImage, ThemeToggle, ProductCard, etc.
 │   ├── hooks/
-│   │   └── usePresence.js       # Presence & typing indicator hooks
+│   │   └── usePresence.js         # Presence & typing indicator hooks
 │   ├── context/
-│   │   ├── AuthContext.jsx      # Firebase auth state + mock support
-│   │   ├── CartContext.jsx      # useReducer cart with localStorage persistence
-│   │   └── ThemeContext.jsx     # Dark/light mode with system preference detection
+│   │   ├── AuthContext.jsx        # Dual-mode: DemoAuth vs ProductionAuth
+│   │   ├── CartContext.jsx        # useReducer cart with localStorage persistence
+│   │   ├── EnvironmentContext.jsx # Provides 'demo' or 'production' to tree
+│   │   ├── ServiceContext.jsx     # Provides mock or firebase service layer
+│   │   └── ThemeContext.jsx       # Dark/light mode with system preference detection
 │   ├── lib/
-│   │   ├── auth.js              # Firebase auth helpers
-│   │   ├── firebase.js          # Firebase initialization
-│   │   ├── firestore.js         # Data layer with automatic mock fallback
-│   │   └── mockData.js          # Sample data matching Stitch designs
+│   │   ├── auth.js                # Firebase auth helpers (production only)
+│   │   ├── cloudinary.js          # Cloudinary image upload (production only)
+│   │   ├── firebase.js            # Firebase SDK initialization
+│   │   ├── firestore.js           # Firestore data operations
+│   │   ├── mockData.js            # Mock farmers, products, certifications
+│   │   ├── mockInventory.js       # Mock inventory for dashboard
+│   │   └── services/
+│   │       ├── firebase.service.js # Production: re-exports real Firebase ops
+│   │       └── mock.service.js     # Demo: in-memory implementations
 │   ├── pages/
-│   │   ├── CheckoutPage.jsx     # Protected checkout with order submission
-│   │   ├── DiscoveryPage.jsx    # Search, filter, browse farms
-│   │   ├── FarmerProfilePage.jsx# Farm story, practices, products, certs
-│   │   ├── LoginPage.jsx        # Email + Google sign-in
-│   │   ├── OnboardingPage.jsx   # Role-specific profile completion
-│   │   ├── RoleSelectPage.jsx   # Google SSO role assignment
-│   │   ├── SignupPage.jsx       # Account creation with role toggle
-│   │   ├── ChatListPage.jsx     # Conversation inbox
-│   │   ├── ChatPage.jsx         # Real-time 1-on-1 chat room
-│   │   └── AddProductPage.jsx   # Product creation with image upload
-│   ├── lib/
-│   │   ├── auth.js              # Firebase auth helpers
-│   │   ├── firebase.js          # Firebase initialization
-│   │   ├── firestore.js         # Data layer with automatic mock fallback
-│   │   ├── storage.js           # Firebase Storage upload helpers
-│   │   └── mockData.js          # Sample data matching Stitch designs
-│   ├── App.jsx                  # Route definitions
-│   ├── index.css                # Design tokens (light + dark), base styles
-│   └── main.jsx                 # Provider tree entry point
-├── .env                         # Local config (mock data enabled)
-├── .env.example                 # Template for Firebase credentials
-├── database.rules.json      # Realtime DB security rules
-├── firebase.json            # Firebase configuration
-├── firestore.rules          # Firestore security rules
-├── firestore.indexes.json   # Firestore indexes
-├── index.html               # HTML entry with font preconnects
-├── package.json
+│   │   ├── AddProductPage.jsx     # Product creation with image upload
+│   │   ├── ChatListPage.jsx       # Conversation inbox
+│   │   ├── ChatPage.jsx           # Real-time 1-on-1 chat room
+│   │   ├── CheckoutPage.jsx       # Protected checkout with order submission
+│   │   ├── DiscoveryPage.jsx      # Search, filter, browse farms
+│   │   ├── FarmerDashboardPage.jsx# Inventory, orders, stats
+│   │   ├── FarmerProfilePage.jsx  # Farm story, practices, products, certs
+│   │   ├── FarmerSetupPage.jsx    # Farmer onboarding
+│   │   ├── LoginPage.jsx          # Email + Google sign-in
+│   │   ├── OnboardingPage.jsx     # Customer onboarding
+│   │   ├── RoleSelectPage.jsx     # Google SSO role assignment
+│   │   └── SignupPage.jsx         # Account creation with role toggle
+│   ├── App.jsx                    # Route definitions
+│   ├── index.css                  # Design tokens (light + dark), base styles
+│   ├── main.jsx                   # Universal entry point (reads VITE_ENVIRONMENT)
+│   ├── main-demo.jsx              # Standalone demo entry (alternative)
+│   └── main-production.jsx        # Standalone production entry (alternative)
+├── .env                           # Local config (dev defaults)
+├── .env.demo                      # Demo build env vars
+├── .env.production                # Production build env vars (gitignored)
+├── database.rules.json            # Realtime DB security rules
+├── firebase.json                  # Firebase hosting (dual targets)
+├── firestore.rules                # Firestore security rules
+├── firestore.indexes.json         # Firestore indexes
+├── index.html                     # HTML entry with font preconnects
+├── package.json                   # Dual-environment build scripts
 ├── postcss.config.js
-├── tailwind.config.js           # 50+ semantic color tokens
-└── vite.config.js               # Aliases, dev server config
+├── tailwind.config.js             # 50+ semantic color tokens
+└── vite.config.js                 # Mode-based output dirs + env injection
 ```
 
 ---
@@ -186,36 +215,45 @@ cd terradirect
 # Install dependencies
 npm install
 
-# Start development server
+# Start development server (production mode — real Firebase)
 npm run dev
+
+# Start development server (demo mode — mock data, no Firebase)
+npm run dev:demo
 ```
 
-The app opens at **http://localhost:3000** with mock data — no Firebase setup required.
+### Build Commands
+
+| Command | Output Dir | Description |
+|---------|-----------|-------------|
+| `npm run build:demo` | `dist-demo/` | Demo build (mock data, no Firebase) |
+| `npm run build:production` | `dist-prod/` | Production build (real Firebase) |
+| `npm run preview:demo` | — | Preview demo build locally |
+| `npm run preview:production` | — | Preview production build locally |
+| `npm run deploy:demo` | — | Build + deploy to `terradirectf2c-demo.web.app` |
+| `npm run deploy:production` | — | Build + deploy to `terradirectf2c.web.app` |
 
 ### Environment Variables
 
-Copy `.env.example` to `.env` and fill in your Firebase project credentials to connect to a live backend:
+The project uses mode-specific `.env` files:
 
-```bash
-cp .env.example .env
-```
+| File | Mode | Description |
+|------|------|-------------|
+| `.env` | Default dev | Local development defaults |
+| `.env.demo` | `--mode demo` | Demo build (no Firebase credentials) |
+| `.env.production` | `--mode production` | Production build (real credentials, gitignored) |
 
 | Variable | Description |
 |----------|-------------|
+| `VITE_ENVIRONMENT` | `demo` or `production` — determines provider tree |
 | `VITE_FIREBASE_API_KEY` | Firebase Web API key |
 | `VITE_FIREBASE_AUTH_DOMAIN` | Auth domain (`project.firebaseapp.com`) |
+| `VITE_FIREBASE_DATABASE_URL` | Realtime Database URL |
 | `VITE_FIREBASE_PROJECT_ID` | Firestore project ID |
-| `VITE_FIREBASE_STORAGE_BUCKET` | Storage bucket URL |
 | `VITE_FIREBASE_MESSAGING_SENDER_ID` | Cloud Messaging sender ID |
 | `VITE_FIREBASE_APP_ID` | Firebase app ID |
-| `VITE_USE_MOCK_DATA` | Set to `true` for demo mode (no Firebase needed) |
-
-### Build for Production
-
-```bash
-npm run build
-npm run preview   # Preview the production build locally
-```
+| `VITE_CLOUDINARY_CLOUD_NAME` | Cloudinary cloud name for image uploads |
+| `VITE_CLOUDINARY_UPLOAD_PRESET` | Cloudinary unsigned upload preset |
 
 ---
 
@@ -263,9 +301,10 @@ All 50+ color tokens are defined as CSS custom properties in `src/index.css`, en
 | **Role-based security rules** | Firestore rules enforce that only 'farmer' roles can create/edit products or farm data |
 | **Differentiated onboarding** | Tailored data collection paths for Farmers vs. Customers to keep user profiles lean and relevant |
 | **Deterministic chat IDs** | `uid1_uid2` (sorted) ensures each user pair has exactly one chat — no duplicates |
-| **Firebase Storage for images** | Products stored in `products/{userId}/{timestamp}_{fileName}` to prevent collisions |
+| **Cloudinary for images** | Products uploaded via unsigned preset; URLs stored in Firestore |
 | **Farmer gatekeeper (getUserData)** | Security rules read the user's `/users` doc at database level to verify `role == 'farmer'` before allowing product creation |
 | **Realtime DB for presence/typing** | Offloads high-frequency, transient state from Firestore to save costs and reduce latency |
+| **Dual-environment architecture** | Single codebase, two entry points — `EnvironmentContext` + `ServiceContext` route to mock or real services at build time |
 
 ---
 

@@ -1,12 +1,13 @@
 /**
- * UNIVERSAL ENTRY POINT
+ * DEMO ENTRY POINT
  * 
- * Detects the environment from VITE_ENVIRONMENT (set at build time via --mode)
- * and bootstraps the appropriate provider tree:
+ * This is the entry point for the demo build (terradirectf2c-demo.web.app).
+ * - No Firebase SDK is initialized
+ * - Pre-logged demo user (no login required)
+ * - All data is in-memory mock data from mockData.js
+ * - Writes update local state only (reset on reload)
  *
- *   demo       → DemoAuthProvider (pre-logged mock user, no Firebase)
- *   production → ProductionAuthProvider (real Firebase Auth)
- *   default    → reads from .env file (VITE_ENVIRONMENT)
+ * Build command: npm run build:demo
  */
 
 import React from 'react';
@@ -20,13 +21,8 @@ import { CartProvider } from './context/CartContext';
 import { ServiceProvider } from './context/ServiceContext';
 import './index.css';
 
-// Resolved at build time by Vite's define config, or from .env
-const environment = import.meta.env.VITE_ENVIRONMENT || 'production';
-const isDemo = environment === 'demo';
-
-// Demo mode banner component
+// Add a subtle demo banner
 function DemoBanner() {
-  if (!isDemo) return null;
   return (
     <div
       style={{
@@ -68,7 +64,7 @@ function DemoBanner() {
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <EnvironmentProvider environment={environment}>
+    <EnvironmentProvider environment="demo">
       <BrowserRouter>
         <ThemeProvider>
           <AuthProvider>

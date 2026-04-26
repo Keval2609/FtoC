@@ -1,6 +1,7 @@
 {
   "projects": {
     "default": "terradirect-3a4f6",
+    "demo": "terradirect-3a4f6",
     "staging": "terradirect-3a4f6"
   },
   "targets": {
@@ -15,6 +16,9 @@
       "hosting": {
         "marketplace": [
           "terradirectf2c"
+        ],
+        "demo": [
+          "terradirectf2c-demo"
         ]
       }
     }

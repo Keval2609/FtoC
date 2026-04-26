@@ -5,8 +5,15 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:demo": "vite --mode demo",
     "build": "vite build",
-    "preview": "vite preview"
+    "build:demo": "vite build --mode demo",
+    "build:production": "vite build --mode production",
+    "preview": "vite preview",
+    "preview:demo": "vite preview --outDir dist-demo",
+    "preview:production": "vite preview --outDir dist-prod",
+    "deploy:demo": "npm run build:demo && firebase deploy --only hosting:demo -P demo",
+    "deploy:production": "npm run build:production && firebase deploy --only hosting:marketplace -P default"
   },
   "dependencies": {
     "firebase": "^11.10.0",
