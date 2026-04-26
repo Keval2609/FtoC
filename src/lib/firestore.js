@@ -23,11 +23,6 @@ const useMock = import.meta.env.VITE_USE_MOCK_DATA === 'true';
 //  USER PROFILE
 // ═══════════════════════════════════════════════════
 
-/**
- * Create user profile document linked to Firebase Auth uid.
- * Called once during sign-up after role is selected.
- * Supports profileImage (Cloudinary URL) from db.js merge.
- */
 export async function createUserProfile(uid, data) {
   if (useMock) {
     const mockProfile = { uid, ...data, onboardingComplete: false };
@@ -39,14 +34,14 @@ export async function createUserProfile(uid, data) {
   const profileData = {
     email: data.email || '',
     displayName: data.displayName || '',
-    role: data.role, // 'farmer' or 'customer'
+    role: data.role,
     createdAt: Date.now(),
     onboardingComplete: false,
-    profileImage: data.profileImage || '',  // Cloudinary URL (from db.js merge)
+    profileImage: data.profileImage || '',
     ...(data.role === 'farmer' && {
       farmName: '',
       bio: '',
-      farmPhoto: '',   // Cloudinary URL
+      farmPhoto: '',
       location: null,
       rating: 0,
     }),
@@ -60,9 +55,6 @@ export async function createUserProfile(uid, data) {
   return { uid, ...profileData };
 }
 
-/**
- * Fetch a user profile by uid.
- */
 export async function getUserProfile(uid) {
   if (useMock) {
     const saved = localStorage.getItem('mockUserProfile');
@@ -82,13 +74,6 @@ export async function getUserProfile(uid) {
   return { uid: snap.id, ...snap.data() };
 }
 
-/**
- * Update user profile fields (partial merge).
- * Only these fields allowed by firestore.rules:
- * displayName, onboardingComplete, farmName, bio, location,
- * rating, savedFarms, deliveryAddress, phone, payoutMethod,
- * profileImage, farmPhoto
- */
 export async function updateUserProfile(uid, updates) {
   if (useMock) {
     const saved = localStorage.getItem('mockUserProfile');
@@ -101,10 +86,6 @@ export async function updateUserProfile(uid, updates) {
   await updateDoc(doc(db, 'users', uid), updates);
 }
 
-/**
- * Complete onboarding — saves role-specific profile + creates /farmers doc.
- * profileImage and farmPhoto are Cloudinary URLs.
- */
 export async function completeOnboarding(uid, role, profileData) {
   if (useMock) {
     const saved = localStorage.getItem('mockUserProfile');
@@ -114,13 +95,11 @@ export async function completeOnboarding(uid, role, profileData) {
     return;
   }
 
-  // Update /users doc
   await updateDoc(doc(db, 'users', uid), {
     ...profileData,
     onboardingComplete: true,
   });
 
-  // Create or update /farmers doc for farmer role
   if (role === 'farmer') {
     const farmerRef = doc(db, 'farmers', uid);
     const snap = await getDoc(farmerRef);
@@ -150,51 +129,71 @@ export async function completeOnboarding(uid, role, profileData) {
 export async function getFarmers(filters = {}) {
   if (useMock) return mockFarmers;
 
-  const ref = collection(db, 'farmers');
-  const constraints = [];
-  if (filters.verificationStatus) {
-    constraints.push(where('verificationStatus', '==', filters.verificationStatus));
+  try {
+    const ref = collection(db, 'farmers');
+    const constraints = [];
+    if (filters.verificationStatus) {
+      constraints.push(where('verificationStatus', '==', filters.verificationStatus));
+    }
+    const q = constraints.length > 0 ? query(ref, ...constraints) : ref;
+    const snap = await getDocs(q);
+    const farmers = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+
+    // If Firestore returns no farmers (e.g. empty collection during dev),
+    // fall back to mock data so the discovery page is never blank.
+    if (farmers.length === 0 && import.meta.env.DEV) {
+      console.warn('[TerraDirect] No farmers found in Firestore — using mock data as fallback');
+      return mockFarmers;
+    }
+
+    return farmers;
+  } catch (err) {
+    console.error('[TerraDirect] getFarmers error:', err);
+    // Return mock data on error so the UI is never broken
+    return mockFarmers;
   }
-  const q = constraints.length > 0 ? query(ref, ...constraints) : ref;
-  const snap = await getDocs(q);
-  return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
 }
 
 export async function getFarmerById(id) {
   if (useMock) return getMockFarmerById(id);
 
-  const snap = await getDoc(doc(db, 'farmers', id));
-  if (!snap.exists()) return null;
-  return { id: snap.id, ...snap.data() };
+  try {
+    const snap = await getDoc(doc(db, 'farmers', id));
+    if (!snap.exists()) {
+      // Fallback to mock data for known mock IDs (useful in dev)
+      return getMockFarmerById(id) || null;
+    }
+    return { id: snap.id, ...snap.data() };
+  } catch (err) {
+    console.error('[TerraDirect] getFarmerById error:', err);
+    return getMockFarmerById(id) || null;
+  }
 }
 
 // ═══════════════════════════════════════════════════
 //  PRODUCTS
 // ═══════════════════════════════════════════════════
 
-/**
- * Add product to global /products collection.
- * imageUrls MUST be Cloudinary URLs (1–5 required by firestore.rules).
- * sellerId must equal request.auth.uid.
- */
 export async function addProduct(productData) {
   if (useMock) {
     const mockId = 'prod-' + Date.now();
-    console.log('[MOCK] Product created:', { id: mockId, ...productData });
-    return { id: mockId, ...productData, createdAt: Date.now() };
+    // Persist to localStorage so dashboard can read it back
+    const key = `mockProducts_${productData.sellerId}`;
+    const existing = JSON.parse(localStorage.getItem(key) || '[]');
+    const newProduct = { id: mockId, ...productData, createdAt: Date.now() };
+    localStorage.setItem(key, JSON.stringify([newProduct, ...existing]));
+    console.log('[MOCK] Product created:', newProduct);
+    return newProduct;
   }
 
   const ref = collection(db, 'products');
   const docRef = await addDoc(ref, {
     ...productData,
-    createdAt: Date.now(),  // number — not serverTimestamp (rules validate as number)
+    createdAt: Date.now(),
   });
   return { id: docRef.id, ...productData };
 }
 
-/**
- * Get all products (marketplace).
- */
 export async function getAllProducts() {
   if (useMock) {
     return mockFarmers.flatMap((farmer) =>
@@ -206,27 +205,66 @@ export async function getAllProducts() {
     );
   }
 
-  const ref = collection(db, 'products');
-  const q = query(ref, orderBy('createdAt', 'desc'));
-  const snap = await getDocs(q);
-  return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+  try {
+    const ref = collection(db, 'products');
+    const q = query(ref, orderBy('createdAt', 'desc'));
+    const snap = await getDocs(q);
+    return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+  } catch (err) {
+    console.error('[TerraDirect] getAllProducts error:', err);
+    return [];
+  }
 }
 
 /**
- * FIXED: was querying /farmers/{id}/products subcollection (wrong).
- * Now queries global /products with sellerId filter (correct).
+ * Get products for a specific farmer.
+ * Falls back gracefully if the Firestore index is missing.
  */
 export async function getProductsByFarmer(farmerId) {
-  if (useMock) return getMockProductsByFarmer(farmerId);
+  if (useMock) {
+    // First check localStorage for products added during this session
+    const key = `mockProducts_${farmerId}`;
+    const stored = JSON.parse(localStorage.getItem(key) || '[]');
+    const staticMock = getMockProductsByFarmer(farmerId);
+    // Merge: stored products first, then static mock (deduped by id)
+    const storedIds = new Set(stored.map((p) => p.id));
+    const merged = [...stored, ...staticMock.filter((p) => !storedIds.has(p.id))];
+    return merged;
+  }
 
-  const ref = collection(db, 'products');
-  const q = query(
-    ref,
-    where('sellerId', '==', farmerId),
-    orderBy('createdAt', 'desc')
-  );
-  const snap = await getDocs(q);
-  return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+  try {
+    const ref = collection(db, 'products');
+    // Try with orderBy first (requires composite index)
+    const q = query(
+      ref,
+      where('sellerId', '==', farmerId),
+      orderBy('createdAt', 'desc')
+    );
+    const snap = await getDocs(q);
+    return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+  } catch (err) {
+    // If the composite index doesn't exist yet, fall back to a simpler query
+    if (err.code === 'failed-precondition' || err.message?.includes('index')) {
+      console.warn(
+        '[TerraDirect] Missing Firestore index for products query. ' +
+        'Create a composite index on: collection=products, fields=sellerId ASC, createdAt DESC. ' +
+        'Falling back to unordered query.'
+      );
+      try {
+        const ref = collection(db, 'products');
+        const q = query(ref, where('sellerId', '==', farmerId));
+        const snap = await getDocs(q);
+        const products = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+        // Sort client-side as fallback
+        return products.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+      } catch (fallbackErr) {
+        console.error('[TerraDirect] getProductsByFarmer fallback error:', fallbackErr);
+        return [];
+      }
+    }
+    console.error('[TerraDirect] getProductsByFarmer error:', err);
+    return [];
+  }
 }
 
 // Alias for dashboard usage
@@ -238,10 +276,16 @@ export const getMyProducts = getProductsByFarmer;
  */
 export function onMyProductsSnapshot(farmerId, callback) {
   if (useMock) {
-    const products = getMockProductsByFarmer(farmerId).map((p) => ({
+    // Return merged static + session-stored mock products
+    const key = `mockProducts_${farmerId}`;
+    const stored = JSON.parse(localStorage.getItem(key) || '[]');
+    const staticMock = getMockProductsByFarmer(farmerId);
+    const storedIds = new Set(stored.map((p) => p.id));
+    const merged = [...stored, ...staticMock.filter((p) => !storedIds.has(p.id))];
+    const products = merged.map((p) => ({
       ...p,
-      stock: 50,
-      status: 'in-stock',
+      stock: p.stock ?? 50,
+      status: (p.stock ?? 50) > 10 ? 'in-stock' : (p.stock ?? 50) > 0 ? 'low-stock' : 'out-of-stock',
     }));
     callback(products);
     return () => {};
@@ -254,26 +298,37 @@ export function onMyProductsSnapshot(farmerId, callback) {
     orderBy('createdAt', 'desc')
   );
 
-  return onSnapshot(q, (snap) => {
-    const products = snap.docs.map((d) => {
-      const data = d.data();
-      return {
-        id: d.id,
-        ...data,
-        // Normalize for InventoryTable component
-        subtitle: data.description ? data.description.slice(0, 60) : '',
-        imageUrl: data.imageUrls?.[0] || '',
-        priceUnit: data.unit,
-        status:
-          (data.stock ?? 0) > 10
-            ? 'in-stock'
-            : (data.stock ?? 0) > 0
-            ? 'low-stock'
-            : 'out-of-stock',
-      };
-    });
-    callback(products);
-  });
+  return onSnapshot(
+    q,
+    (snap) => {
+      const products = snap.docs.map((d) => {
+        const data = d.data();
+        return {
+          id: d.id,
+          ...data,
+          subtitle: data.description ? data.description.slice(0, 60) : '',
+          imageUrl: data.imageUrls?.[0] || '',
+          priceUnit: data.unit,
+          status:
+            (data.stock ?? 0) > 10
+              ? 'in-stock'
+              : (data.stock ?? 0) > 0
+              ? 'low-stock'
+              : 'out-of-stock',
+        };
+      });
+      callback(products);
+    },
+    (err) => {
+      // Index missing — fall back to simple query
+      if (err.code === 'failed-precondition' || err.message?.includes('index')) {
+        console.warn('[TerraDirect] onMyProductsSnapshot: missing index, using simple query');
+        getProductsByFarmer(farmerId).then(callback);
+      } else {
+        console.error('[TerraDirect] onMyProductsSnapshot error:', err);
+      }
+    }
+  );
 }
 
 export async function getProductById(id) {
@@ -289,6 +344,19 @@ export async function getProductById(id) {
 export async function updateProduct(productId, updates) {
   if (useMock) {
     console.log('[MOCK] Product updated:', { productId, ...updates });
+    // Update in localStorage
+    // We don't know the sellerId here, so search all mock product keys
+    for (const key of Object.keys(localStorage)) {
+      if (key.startsWith('mockProducts_')) {
+        const products = JSON.parse(localStorage.getItem(key) || '[]');
+        const idx = products.findIndex((p) => p.id === productId);
+        if (idx !== -1) {
+          products[idx] = { ...products[idx], ...updates };
+          localStorage.setItem(key, JSON.stringify(products));
+          break;
+        }
+      }
+    }
     return;
   }
   await updateDoc(doc(db, 'products', productId), updates);
@@ -297,6 +365,13 @@ export async function updateProduct(productId, updates) {
 export async function deleteProduct(productId) {
   if (useMock) {
     console.log('[MOCK] Product deleted:', productId);
+    for (const key of Object.keys(localStorage)) {
+      if (key.startsWith('mockProducts_')) {
+        const products = JSON.parse(localStorage.getItem(key) || '[]');
+        const filtered = products.filter((p) => p.id !== productId);
+        localStorage.setItem(key, JSON.stringify(filtered));
+      }
+    }
     return;
   }
   await deleteDoc(doc(db, 'products', productId));
@@ -306,16 +381,6 @@ export async function deleteProduct(productId) {
 //  ORDERS
 // ═══════════════════════════════════════════════════
 
-/**
- * Create order(s) from cart items.
- * Groups items by farmerId — one order doc per farmer.
- * Writes items as /orders/{id}/items subcollection.
- *
- * FIXED: uses Date.now() not serverTimestamp() — rules require createdAt is number.
- *
- * @param {object} orderData - { userId, contact, delivery }
- * @param {array}  cartItems - [{ id, farmerId, name, price, qty, imageUrls }]
- */
 export async function createOrder(orderData, cartItems = []) {
   if (useMock) {
     const mockOrder = { id: 'mock-order-' + Date.now(), ...orderData, status: 'pending' };
@@ -323,7 +388,6 @@ export async function createOrder(orderData, cartItems = []) {
     return mockOrder;
   }
 
-  // Group items by farmerId
   const farmerGroups = {};
   cartItems.forEach((item) => {
     const fid = item.farmerId || item.sellerId || 'unknown';
@@ -339,7 +403,6 @@ export async function createOrder(orderData, cartItems = []) {
       0
     );
 
-    // Create order doc with auto-ID
     const orderRef = doc(collection(db, 'orders'));
     const orderDoc = {
       userId: orderData.userId,
@@ -348,10 +411,9 @@ export async function createOrder(orderData, cartItems = []) {
       status: 'pending',
       contactInfo: orderData.contact || orderData.contactInfo || {},
       shippingAddress: orderData.delivery || orderData.shippingAddress || {},
-      createdAt: Date.now(),  // MUST be number — rules: data.createdAt is number
+      createdAt: Date.now(),
     };
 
-    // Write order + items atomically
     const batch = writeBatch(db);
     batch.set(orderRef, orderDoc);
 
@@ -370,12 +432,9 @@ export async function createOrder(orderData, cartItems = []) {
     createdOrders.push({ id: orderRef.id, ...orderDoc });
   }
 
-  return createdOrders[0]; // Return first for single-farmer compat
+  return createdOrders[0];
 }
 
-/**
- * Get all orders for a farmer (dashboard).
- */
 export async function getFarmerOrders(farmerId) {
   if (useMock) {
     return [
@@ -402,39 +461,47 @@ export async function getFarmerOrders(farmerId) {
     ];
   }
 
-  const ref = collection(db, 'orders');
-  const q = query(
-    ref,
-    where('farmerId', '==', farmerId),
-    orderBy('createdAt', 'desc')
-  );
-  const snap = await getDocs(q);
-  return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+  try {
+    const ref = collection(db, 'orders');
+    const q = query(
+      ref,
+      where('farmerId', '==', farmerId),
+      orderBy('createdAt', 'desc')
+    );
+    const snap = await getDocs(q);
+    return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+  } catch (err) {
+    if (err.code === 'failed-precondition') {
+      // Fallback without ordering
+      const ref = collection(db, 'orders');
+      const q = query(ref, where('farmerId', '==', farmerId));
+      const snap = await getDocs(q);
+      return snap.docs
+        .map((d) => ({ id: d.id, ...d.data() }))
+        .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+    }
+    throw err;
+  }
 }
 
-/**
- * Get all orders for a customer.
- */
 export async function getUserOrders(userId) {
-  if (useMock) {
+  if (useMock) return [];
+
+  try {
+    const ref = collection(db, 'orders');
+    const q = query(
+      ref,
+      where('userId', '==', userId),
+      orderBy('createdAt', 'desc')
+    );
+    const snap = await getDocs(q);
+    return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+  } catch (err) {
+    console.error('[TerraDirect] getUserOrders error:', err);
     return [];
   }
-
-  const ref = collection(db, 'orders');
-  const q = query(
-    ref,
-    where('userId', '==', userId),
-    orderBy('createdAt', 'desc')
-  );
-  const snap = await getDocs(q);
-  return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
 }
 
-/**
- * Update order status (farmer only — enforced by rules).
- * Rules only allow changing 'status' field.
- * Allowed transitions: pending → shipped → delivered | cancelled
- */
 export async function updateOrderStatus(orderId, newStatus) {
   const allowed = ['pending', 'shipped', 'delivered', 'cancelled'];
   if (!allowed.includes(newStatus)) throw new Error('Invalid status: ' + newStatus);
@@ -530,29 +597,34 @@ export async function getUserChats(uid) {
     ];
   }
 
-  const chatsRef = collection(db, 'chats');
-  const q = query(
-    chatsRef,
-    where('participants', 'array-contains', uid),
-    orderBy('updatedAt', 'desc')
-  );
-  const snap = await getDocs(q);
-  const chats = [];
+  try {
+    const chatsRef = collection(db, 'chats');
+    const q = query(
+      chatsRef,
+      where('participants', 'array-contains', uid),
+      orderBy('updatedAt', 'desc')
+    );
+    const snap = await getDocs(q);
+    const chats = [];
 
-  for (const d of snap.docs) {
-    const data = d.data();
-    const otherUid = data.participants.find((p) => p !== uid);
-    let otherUser = { uid: otherUid, displayName: 'User' };
-    try {
-      const profile = await getUserProfile(otherUid);
-      if (profile) otherUser = profile;
-    } catch {
-      // fallback
+    for (const d of snap.docs) {
+      const data = d.data();
+      const otherUid = data.participants.find((p) => p !== uid);
+      let otherUser = { uid: otherUid, displayName: 'User' };
+      try {
+        const profile = await getUserProfile(otherUid);
+        if (profile) otherUser = profile;
+      } catch {
+        // fallback
+      }
+      chats.push({ id: d.id, ...data, otherUser });
     }
-    chats.push({ id: d.id, ...data, otherUser });
-  }
 
-  return chats;
+    return chats;
+  } catch (err) {
+    console.error('[TerraDirect] getUserChats error:', err);
+    return [];
+  }
 }
 
 // ═══════════════════════════════════════════════════
