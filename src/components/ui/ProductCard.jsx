@@ -9,7 +9,7 @@ export default function ProductCard({ product, farmer }) {
   return (
     <div className="bg-surface-container-low rounded-lg overflow-hidden ambient-shadow ambient-shadow-hover border border-outline-variant/30 group">
       <LazyImage
-        src={product.imageUrl}
+        src={product.imageUrl || product.imageUrls?.[0]}
         alt={product.name}
         className="w-full aspect-square"
       />
