@@ -13,14 +13,14 @@
   <img src="https://img.shields.io/badge/Vite-6.0-646CFF?logo=vite&logoColor=white" alt="Vite" />
   <img src="https://img.shields.io/badge/Tailwind_CSS-3.4-06B6D4?logo=tailwindcss&logoColor=white" alt="Tailwind" />
   <img src="https://img.shields.io/badge/Firebase-11-FFCA28?logo=firebase&logoColor=black" alt="Firebase" />
-  <img src="https://img.shields.io/badge/PWA-Enabled-5A0FC8?logo=pwa&logoColor=white" alt="PWA" />
+
 </p>
 
 ---
 
 ## Overview
 
-TerraDirect is a mobile-first Progressive Web App that connects consumers directly with regenerative and natural farmers. It enables transparent discovery of farming practices, verification of organic certifications, and a streamlined checkout flow — all while ensuring farmers receive fair, direct compensation.
+TerraDirect is a mobile-first web application that connects consumers directly with regenerative and natural farmers. It enables transparent discovery of farming practices, verification of organic certifications, and a streamlined checkout flow — all while ensuring farmers receive fair, direct compensation.
 
 ### Why TerraDirect?
 
@@ -68,8 +68,10 @@ The conventional food supply chain is opaque. Consumers can't verify farming pra
 - **Strict Access Control**: Role-gated routes and Firestore security rules to prevent unauthorized access
 - Mock auth mode for rapid development (bypass Firebase setup)
 
-### 💬 Direct Messaging
+### 💬 Direct Messaging & Presence
 - Real-time 1-on-1 chat between customers and farmers
+- **Presence Tracking**: Real-time online/offline status using Firebase Realtime Database and `onDisconnect()`
+- **Typing Indicators**: Live "User is typing..." feedback in chat
 - Conversation list with last message preview and relative timestamps
 - Auto-scrolling message thread with time-stamped bubbles
 - Deterministic chat IDs (`uid1_uid2`) for deduplication
@@ -91,13 +93,6 @@ The conventional food supply chain is opaque. Consumers can't verify farming pra
 - Dual design token sets from Stitch design system
 - Smooth 300ms transition on all themed surfaces
 
-### 📱 PWA & Offline
-- Service worker with Workbox auto-update strategy
-- Image caching (CacheFirst for farmer images, 30-day expiry)
-- Font caching (StaleWhileRevalidate for Google Fonts)
-- Web app manifest for installability
-- Responsive from 320px mobile to 1280px desktop
-
 ---
 
 ## Tech Stack
@@ -107,8 +102,7 @@ The conventional food supply chain is opaque. Consumers can't verify farming pra
 | **Framework** | React 18.3 | Component UI with hooks |
 | **Build** | Vite 6 | Fast HMR, ESM-native bundling |
 | **Styling** | Tailwind CSS 3.4 | Utility-first with CSS custom properties |
-| **Backend** | Firebase | Auth, Firestore, Storage |
-| **PWA** | vite-plugin-pwa (Workbox) | Service workers, offline caching |
+| **Backend** | Firebase | Auth, Firestore, Realtime DB, Storage |
 | **Routing** | React Router DOM 6 | Client-side SPA routing |
 | **Fonts** | Google Fonts | Newsreader (serif), Work Sans (sans) |
 | **Icons** | Material Symbols Outlined | Consistent iconography |
@@ -121,7 +115,6 @@ The conventional food supply chain is opaque. Consumers can't verify farming pra
 d:\F2C\
 ├── public/
 │   ├── favicon.svg              # Brand favicon
-│   └── manifest.json            # PWA manifest
 ├── src/
 │   ├── components/
 │   │   ├── auth/                # GoogleSignInButton, ProtectedRoute
@@ -130,6 +123,8 @@ d:\F2C\
 │   │   ├── layout/              # AppShell (header + mobile nav)
 │   │   ├── profile/             # HeroSection, MethodsSection, ProductGrid, VerificationGallery
 │   │   └── ui/                  # Button, LazyImage, ThemeToggle, ProductCard, VerifiedBadge, TransparencyIndicator
+│   ├── hooks/
+│   │   └── usePresence.js       # Presence & typing indicator hooks
 │   ├── context/
 │   │   ├── AuthContext.jsx      # Firebase auth state + mock support
 │   │   ├── CartContext.jsx      # useReducer cart with localStorage persistence
@@ -161,12 +156,15 @@ d:\F2C\
 │   └── main.jsx                 # Provider tree entry point
 ├── .env                         # Local config (mock data enabled)
 ├── .env.example                 # Template for Firebase credentials
-├── firestore.rules              # Security rules for production
-├── index.html                   # HTML entry with font preconnects
+├── database.rules.json      # Realtime DB security rules
+├── firebase.json            # Firebase configuration
+├── firestore.rules          # Firestore security rules
+├── firestore.indexes.json   # Firestore indexes
+├── index.html               # HTML entry with font preconnects
 ├── package.json
 ├── postcss.config.js
 ├── tailwind.config.js           # 50+ semantic color tokens
-└── vite.config.js               # PWA, aliases, dev server config
+└── vite.config.js               # Aliases, dev server config
 ```
 
 ---
@@ -267,6 +265,7 @@ All 50+ color tokens are defined as CSS custom properties in `src/index.css`, en
 | **Deterministic chat IDs** | `uid1_uid2` (sorted) ensures each user pair has exactly one chat — no duplicates |
 | **Firebase Storage for images** | Products stored in `products/{userId}/{timestamp}_{fileName}` to prevent collisions |
 | **Farmer gatekeeper (getUserData)** | Security rules read the user's `/users` doc at database level to verify `role == 'farmer'` before allowing product creation |
+| **Realtime DB for presence/typing** | Offloads high-frequency, transient state from Firestore to save costs and reduce latency |
 
 ---
 
