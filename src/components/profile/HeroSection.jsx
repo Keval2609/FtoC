@@ -7,7 +7,7 @@ export default function HeroSection({ farmer }) {
     <section className="relative">
       {/* Hero Image */}
       <LazyImage
-        src={farmer.heroImageUrl}
+        src={farmer.heroImageUrl || farmer.imageUrl || 'https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&q=80&w=1200'}
         alt={`${farmer.name} landscape`}
         className="w-full h-64 sm:h-80 md:h-96"
       />
@@ -21,7 +21,7 @@ export default function HeroSection({ farmer }) {
           <div className="flex items-start gap-4 sm:gap-6">
             {/* Avatar */}
             <LazyImage
-              src={farmer.imageUrl}
+              src={farmer.imageUrl || farmer.heroImageUrl || 'https://images.unsplash.com/photo-1595856306509-0c6d7a421b8b?auto=format&fit=crop&q=80&w=200'}
               alt={farmer.ownerName}
               className="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-4 border-surface flex-shrink-0"
             />

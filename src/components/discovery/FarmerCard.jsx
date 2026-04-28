@@ -12,7 +12,7 @@ export default function FarmerCard({ farmer }) {
       {/* Image */}
       <div className="relative">
         <LazyImage
-          src={farmer.imageUrl}
+          src={farmer.imageUrl || farmer.heroImageUrl || 'https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&q=80&w=800'}
           alt={farmer.name}
           className="w-full aspect-[4/3]"
         />

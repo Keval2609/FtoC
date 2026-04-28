@@ -119,6 +119,7 @@ export async function updateFarmerProfile(uid, profileData) {
     };
     if (profileData.farmPhoto !== undefined) {
       farmerUpdates.heroImageUrl = profileData.farmPhoto;
+      farmerUpdates.imageUrl = profileData.farmPhoto;
     }
     await updateDoc(farmerRef, farmerUpdates);
   }
@@ -146,6 +147,8 @@ export async function completeOnboarding(uid, role, profileData) {
         userId: uid,
         farmName: profileData.farmName || '',
         story: profileData.bio || '',
+        heroImageUrl: profileData.farmPhoto || '',
+        imageUrl: profileData.farmPhoto || '',
         farmingMethods: [],
         trustBadges: [],
         verificationStatus: 'pending',

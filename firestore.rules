@@ -118,7 +118,7 @@ service cloud.firestore {
                     isFarmer(); // Only users with farmer role can create farmer profiles
       allow update: if isSignedIn() && isValidId(farmerId) && farmerId == request.auth.uid &&
                     isValidFarmerProfile(incoming()) &&
-                    incoming().diff(existing()).affectedKeys().hasOnly(['farmName', 'story', 'farmingMethods', 'trustBadges']) &&
+                    incoming().diff(existing()).affectedKeys().hasOnly(['farmName', 'story', 'farmingMethods', 'trustBadges', 'location', 'heroImageUrl', 'imageUrl']) &&
                     incoming().userId == existing().userId && incoming().createdAt == existing().createdAt && incoming().verificationStatus == existing().verificationStatus ||
                     isAdmin();
     }
