@@ -86,6 +86,44 @@ export async function updateUserProfile(uid, updates) {
   await updateDoc(doc(db, 'users', uid), updates);
 }
 
+export async function updateFarmerProfile(uid, profileData) {
+  if (useMock) {
+    const saved = localStorage.getItem('mockUserProfile');
+    const existing = saved ? JSON.parse(saved) : {};
+    const updated = { ...existing, ...profileData };
+    localStorage.setItem('mockUserProfile', JSON.stringify(updated));
+    return;
+  }
+
+  // Update users collection
+  const userUpdates = {
+    farmName: profileData.farmName,
+    bio: profileData.bio,
+    location: profileData.location,
+    payoutMethod: profileData.payoutMethod,
+  };
+  if (profileData.farmPhoto !== undefined) {
+    userUpdates.farmPhoto = profileData.farmPhoto;
+  }
+  await updateDoc(doc(db, 'users', uid), userUpdates);
+
+  // Update farmers collection
+  const farmerRef = doc(db, 'farmers', uid);
+  const snap = await getDoc(farmerRef);
+  if (snap.exists()) {
+    const farmerUpdates = {
+      name: profileData.farmName,
+      farmName: profileData.farmName,
+      story: profileData.bio,
+      location: profileData.location,
+    };
+    if (profileData.farmPhoto !== undefined) {
+      farmerUpdates.heroImageUrl = profileData.farmPhoto;
+    }
+    await updateDoc(farmerRef, farmerUpdates);
+  }
+}
+
 export async function completeOnboarding(uid, role, profileData) {
   if (useMock) {
     const saved = localStorage.getItem('mockUserProfile');

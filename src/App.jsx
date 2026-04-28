@@ -23,6 +23,7 @@ import FarmerDashboardPage from './pages/FarmerDashboardPage';
 import ChatListPage from './pages/ChatListPage';
 import ChatPage from './pages/ChatPage';
 import AddProductPage from './pages/AddProductPage';
+import EditFarmerProfilePage from './pages/EditFarmerProfilePage';
 
 import { useAuth } from './context/AuthContext';
 
@@ -101,6 +102,14 @@ export default function App() {
           element={
             <ProtectedRoute requiredRole="farmer">
               <FarmerDashboardPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/settings"
+          element={
+            <ProtectedRoute requiredRole="farmer">
+              <EditFarmerProfilePage />
             </ProtectedRoute>
           }
         />

@@ -5,12 +5,12 @@ const navItems = [
   { path: '/dashboard', icon: 'dashboard', label: 'Overview' },
   { path: '/dashboard/inventory', icon: 'inventory_2', label: 'Inventory' },
   { path: '/dashboard/orders', icon: 'shopping_basket', label: 'Orders' },
-  { path: '/farmer/sunrise-valley', icon: 'person', label: 'My Profile' },
+  { path: '/farmer/PROFILE_ID', icon: 'person', label: 'My Profile' },
 ];
 
 export default function DashboardSidebar({ farmName = 'Green Valley Farm' }) {
   const location = useLocation();
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
 
   const isActive = (path) => location.pathname === path;
 
@@ -37,11 +37,14 @@ export default function DashboardSidebar({ farmName = 'Green Valley Farm' }) {
       {/* Main Navigation */}
       <nav className="flex-1 px-3 space-y-0.5">
         {navItems.map((item) => {
-          const active = isActive(item.path);
+          const actualPath = item.path === '/farmer/PROFILE_ID' && user?.uid
+            ? `/farmer/${user.uid}`
+            : item.path;
+          const active = isActive(actualPath);
           return (
             <Link
               key={item.path}
-              to={item.path}
+              to={actualPath}
               className={`flex items-center gap-3 px-4 py-3 rounded-l-xl transition-all duration-200 group ${
                 active
                   ? 'bg-secondary-container text-on-secondary-container font-semibold border-r-4 border-primary'
@@ -77,7 +80,7 @@ export default function DashboardSidebar({ farmName = 'Green Valley Farm' }) {
 
         <div className="pt-4 border-t border-outline-variant/40 space-y-0.5">
           <Link
-            to="#"
+            to="/dashboard/settings"
             className="flex items-center gap-3 px-4 py-2.5 text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors rounded-xl text-sm"
           >
             <span className="material-symbols-outlined" style={{ fontSize: 20 }}>settings</span>
