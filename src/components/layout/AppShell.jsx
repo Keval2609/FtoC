@@ -14,7 +14,7 @@ export default function AppShell({ children }) {
     // Show Messages & Dashboard links only when signed in
     ...(user ? [
       { path: '/messages', icon: 'chat', label: 'Messages' },
-      { path: '/dashboard', icon: 'dashboard', label: 'Dashboard' },
+      ...(user.role === 'farmer' ? [{ path: '/dashboard', icon: 'dashboard', label: 'Dashboard' }] : []),
     ] : []),
   ];
 

@@ -17,7 +17,10 @@ import {
 import { db } from './firebase';
 import { mockFarmers, getMockFarmerById, getMockProductsByFarmer } from './mockData';
 
-const useMock = import.meta.env.VITE_USE_MOCK_DATA === 'true';
+// Use demo mode ONLY when explicitly set via VITE_ENVIRONMENT=demo
+// This ensures real Firebase auth users always get real Firestore data
+const isDemo = import.meta.env.VITE_ENVIRONMENT === 'demo';
+const useMock = isDemo || import.meta.env.VITE_USE_MOCK_DATA === 'true';
 
 // ═══════════════════════════════════════════════════
 //  USER PROFILE
@@ -143,21 +146,33 @@ export async function completeOnboarding(uid, role, profileData) {
     const farmerRef = doc(db, 'farmers', uid);
     const snap = await getDoc(farmerRef);
     if (!snap.exists()) {
+      // FIX: Save imageUrl + heroImageUrl so FarmerCard can display the photo
       await setDoc(farmerRef, {
         userId: uid,
         farmName: profileData.farmName || '',
         story: profileData.bio || '',
-        heroImageUrl: profileData.farmPhoto || '',
-        imageUrl: profileData.farmPhoto || '',
         farmingMethods: [],
         trustBadges: [],
         verificationStatus: 'pending',
         createdAt: Date.now(),
+        imageUrl: profileData.farmPhoto || '',
+        heroImageUrl: profileData.farmPhoto || '',
+        location: profileData.location || '',
+        ownerName: profileData.displayName || '',
+        directPercentage: 100,
+        distance: '',
+        primaryProducts: [],
       });
     } else {
       await updateDoc(farmerRef, {
         farmName: profileData.farmName || '',
         story: profileData.bio || '',
+        // Only update imageUrl if a new photo was provided
+        ...(profileData.farmPhoto && {
+          imageUrl: profileData.farmPhoto,
+          heroImageUrl: profileData.farmPhoto,
+        }),
+        location: profileData.location || '',
       });
     }
   }
@@ -178,19 +193,32 @@ export async function getFarmers(filters = {}) {
     }
     const q = constraints.length > 0 ? query(ref, ...constraints) : ref;
     const snap = await getDocs(q);
-    const farmers = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    const farmers = snap.docs.map((d) => {
+      const data = d.data();
+      return {
+        id: d.id,
+        ...data,
+        name: data.farmName || data.name || 'Unnamed Farm',
+        ownerName: data.ownerName || '',
+        primaryProducts: data.primaryProducts || [],
+        directPercentage: data.directPercentage || 100,
+        distance: data.distance || '',
+        verificationStatus: data.verificationStatus || 'pending',
+        imageUrl: data.imageUrl || '',
+        heroImageUrl: data.heroImageUrl || data.imageUrl || '',
+        location: data.location || '',
+        story: data.story || '',
+      };
+    });
 
-    // If Firestore returns no farmers (e.g. empty collection during dev),
-    // fall back to mock data so the discovery page is never blank.
     if (farmers.length === 0 && import.meta.env.DEV) {
-      console.warn('[TerraDirect] No farmers found in Firestore — using mock data as fallback');
+      console.warn('[TerraDirect] No farmers found in Firestore - using mock data as fallback');
       return mockFarmers;
     }
 
     return farmers;
   } catch (err) {
     console.error('[TerraDirect] getFarmers error:', err);
-    // Return mock data on error so the UI is never broken
     return mockFarmers;
   }
 }
@@ -201,10 +229,23 @@ export async function getFarmerById(id) {
   try {
     const snap = await getDoc(doc(db, 'farmers', id));
     if (!snap.exists()) {
-      // Fallback to mock data for known mock IDs (useful in dev)
       return getMockFarmerById(id) || null;
     }
-    return { id: snap.id, ...snap.data() };
+    const data = snap.data();
+    return {
+      id: snap.id,
+      ...data,
+      name: data.farmName || data.name || 'Unnamed Farm',
+      ownerName: data.ownerName || '',
+      primaryProducts: data.primaryProducts || [],
+      directPercentage: data.directPercentage || 100,
+      distance: data.distance || '',
+      verificationStatus: data.verificationStatus || 'pending',
+      imageUrl: data.imageUrl || '',
+      heroImageUrl: data.heroImageUrl || data.imageUrl || '',
+      location: data.location || '',
+      story: data.story || '',
+    };
   } catch (err) {
     console.error('[TerraDirect] getFarmerById error:', err);
     return getMockFarmerById(id) || null;
@@ -218,7 +259,6 @@ export async function getFarmerById(id) {
 export async function addProduct(productData) {
   if (useMock) {
     const mockId = 'prod-' + Date.now();
-    // Persist to localStorage so dashboard can read it back
     const key = `mockProducts_${productData.sellerId}`;
     const existing = JSON.parse(localStorage.getItem(key) || '[]');
     const newProduct = { id: mockId, ...productData, createdAt: Date.now() };
@@ -257,17 +297,11 @@ export async function getAllProducts() {
   }
 }
 
-/**
- * Get products for a specific farmer.
- * Falls back gracefully if the Firestore index is missing.
- */
 export async function getProductsByFarmer(farmerId) {
   if (useMock) {
-    // First check localStorage for products added during this session
     const key = `mockProducts_${farmerId}`;
     const stored = JSON.parse(localStorage.getItem(key) || '[]');
     const staticMock = getMockProductsByFarmer(farmerId);
-    // Merge: stored products first, then static mock (deduped by id)
     const storedIds = new Set(stored.map((p) => p.id));
     const merged = [...stored, ...staticMock.filter((p) => !storedIds.has(p.id))];
     return merged;
@@ -275,7 +309,6 @@ export async function getProductsByFarmer(farmerId) {
 
   try {
     const ref = collection(db, 'products');
-    // Try with orderBy first (requires composite index)
     const q = query(
       ref,
       where('sellerId', '==', farmerId),
@@ -284,19 +317,13 @@ export async function getProductsByFarmer(farmerId) {
     const snap = await getDocs(q);
     return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
   } catch (err) {
-    // If the composite index doesn't exist yet, fall back to a simpler query
     if (err.code === 'failed-precondition' || err.message?.includes('index')) {
-      console.warn(
-        '[TerraDirect] Missing Firestore index for products query. ' +
-        'Create a composite index on: collection=products, fields=sellerId ASC, createdAt DESC. ' +
-        'Falling back to unordered query.'
-      );
+      console.warn('[TerraDirect] Missing Firestore index for products query. Falling back to unordered query.');
       try {
         const ref = collection(db, 'products');
         const q = query(ref, where('sellerId', '==', farmerId));
         const snap = await getDocs(q);
         const products = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
-        // Sort client-side as fallback
         return products.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
       } catch (fallbackErr) {
         console.error('[TerraDirect] getProductsByFarmer fallback error:', fallbackErr);
@@ -308,16 +335,10 @@ export async function getProductsByFarmer(farmerId) {
   }
 }
 
-// Alias for dashboard usage
 export const getMyProducts = getProductsByFarmer;
 
-/**
- * Real-time listener for farmer's products (dashboard inventory).
- * Returns unsubscribe function — call in useEffect cleanup.
- */
 export function onMyProductsSnapshot(farmerId, callback) {
   if (useMock) {
-    // Return merged static + session-stored mock products
     const key = `mockProducts_${farmerId}`;
     const stored = JSON.parse(localStorage.getItem(key) || '[]');
     const staticMock = getMockProductsByFarmer(farmerId);
@@ -361,7 +382,6 @@ export function onMyProductsSnapshot(farmerId, callback) {
       callback(products);
     },
     (err) => {
-      // Index missing — fall back to simple query
       if (err.code === 'failed-precondition' || err.message?.includes('index')) {
         console.warn('[TerraDirect] onMyProductsSnapshot: missing index, using simple query');
         getProductsByFarmer(farmerId).then(callback);
@@ -385,8 +405,6 @@ export async function getProductById(id) {
 export async function updateProduct(productId, updates) {
   if (useMock) {
     console.log('[MOCK] Product updated:', { productId, ...updates });
-    // Update in localStorage
-    // We don't know the sellerId here, so search all mock product keys
     for (const key of Object.keys(localStorage)) {
       if (key.startsWith('mockProducts_')) {
         const products = JSON.parse(localStorage.getItem(key) || '[]');
@@ -513,7 +531,6 @@ export async function getFarmerOrders(farmerId) {
     return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
   } catch (err) {
     if (err.code === 'failed-precondition') {
-      // Fallback without ordering
       const ref = collection(db, 'orders');
       const q = query(ref, where('farmerId', '==', farmerId));
       const snap = await getDocs(q);
@@ -557,6 +574,8 @@ export async function updateOrderStatus(orderId, newStatus) {
 
 // ═══════════════════════════════════════════════════
 //  MESSAGING (Firestore)
+// FIX: Messaging always uses real Firestore when user is authenticated
+// Only falls back to mock in explicit demo/mock mode
 // ═══════════════════════════════════════════════════
 
 function getChatId(uid1, uid2) {
@@ -564,7 +583,8 @@ function getChatId(uid1, uid2) {
 }
 
 export async function getOrCreateChat(currentUid, otherUid) {
-  if (useMock) {
+  // Always use real Firestore for messaging — never mock for authenticated users
+  if (isDemo) {
     return {
       id: `${currentUid}_${otherUid}`,
       participants: [currentUid, otherUid],
@@ -589,7 +609,8 @@ export async function getOrCreateChat(currentUid, otherUid) {
 }
 
 export async function sendMessage(chatId, senderId, text) {
-  if (useMock) {
+  // Always use real Firestore for messaging
+  if (isDemo) {
     return { id: 'mock-msg-' + Date.now(), senderId, text, timestamp: Date.now() };
   }
 
@@ -609,7 +630,8 @@ export async function sendMessage(chatId, senderId, text) {
 }
 
 export function onMessagesSnapshot(chatId, callback) {
-  if (useMock) {
+  // Always use real Firestore for messaging
+  if (isDemo) {
     callback([
       { id: 'msg-1', senderId: 'mock-farmer', text: 'Hi! Thanks for your interest.', timestamp: Date.now() - 120000 },
       { id: 'msg-2', senderId: 'mock-user', text: 'Are the tomatoes available tomorrow?', timestamp: Date.now() - 60000 },
@@ -626,7 +648,7 @@ export function onMessagesSnapshot(chatId, callback) {
 }
 
 export async function getUserChats(uid) {
-  if (useMock) {
+  if (isDemo) {
     return [
       {
         id: 'mock-chat-1',
