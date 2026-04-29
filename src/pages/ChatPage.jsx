@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getOrCreateChat, sendMessage, onMessagesSnapshot, getUserProfile } from '../lib/firestore';
+import { usePresence, useSetPresence, useTypingIndicator, useChatTyping } from '../hooks/usePresence';
 
 /**
  * Format a timestamp to a readable time string.
@@ -44,6 +45,12 @@ export default function ChatPage() {
   const [loading, setLoading] = useState(true);
   const [otherUser, setOtherUser] = useState(null);
 
+  // Presence & Typing Hooks
+  useSetPresence(user?.uid);
+  const otherPresence = usePresence(farmerId);
+  const { setTyping } = useTypingIndicator(chat?.id, user?.uid);
+  const typingUsers = useChatTyping(chat?.id, user?.uid);
+
   // Initialize chat and fetch other user's info
   useEffect(() => {
     if (!user?.uid || !farmerId) return;
@@ -85,6 +92,7 @@ export default function ChatPage() {
     if (!text || !chat || sending) return;
 
     setInput('');
+    setTyping(false);
     setSending(true);
     try {
       await sendMessage(chat.id, user.uid, text);
@@ -127,9 +135,12 @@ export default function ChatPage() {
         </div>
 
         <div className="min-w-0 flex-1">
-          <p className="font-semibold text-on-surface text-sm truncate">
-            {otherUser?.farmName || otherUser?.displayName || 'Loading…'}
-          </p>
+          <div className="flex items-center gap-2">
+            <p className="font-semibold text-on-surface text-sm truncate">
+              {otherUser?.farmName || otherUser?.displayName || 'Loading…'}
+            </p>
+            <span className={`w-2 h-2 rounded-full ${otherPresence.online ? 'bg-green-500' : 'bg-gray-400'}`} title={otherPresence.online ? 'Online' : 'Offline'} />
+          </div>
           <p className="text-xs text-on-surface-variant capitalize">
             {otherUser?.role || ''}
           </p>
@@ -186,6 +197,18 @@ export default function ChatPage() {
             );
           })
         )}
+        {typingUsers.length > 0 && (
+          <div className="flex items-center gap-2 px-2 py-1">
+            <div className="flex gap-1">
+              <span className="w-1.5 h-1.5 bg-on-surface-variant/40 rounded-full animate-bounce [animation-delay:-0.3s]" />
+              <span className="w-1.5 h-1.5 bg-on-surface-variant/40 rounded-full animate-bounce [animation-delay:-0.15s]" />
+              <span className="w-1.5 h-1.5 bg-on-surface-variant/40 rounded-full animate-bounce" />
+            </div>
+            <p className="text-[11px] text-on-surface-variant italic font-medium">
+              {otherUser?.displayName || 'Someone'} is typing...
+            </p>
+          </div>
+        )}
         <div ref={messagesEndRef} />
       </div>
 
@@ -197,7 +220,10 @@ export default function ChatPage() {
         <input
           type="text"
           value={input}
-          onChange={(e) => setInput(e.target.value)}
+          onChange={(e) => {
+            setInput(e.target.value);
+            setTyping(e.target.value.length > 0);
+          }}
           placeholder="Type a message…"
           className="flex-1 bg-surface-container border border-outline-variant/50 rounded-full px-4 py-2.5 text-sm text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all"
           maxLength={2000}
