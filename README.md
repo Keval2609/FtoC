@@ -40,8 +40,10 @@ The conventional food supply chain is opaque. Consumers can't verify farming pra
 - Responsive bento grid of farmer cards with lazy-loaded images
 - Platform stats bar (verified farms count, direct percentage, avg delivery)
 
-### 👨‍🌾 Farmer Profiles
+### 👨‍🌾 Farmer Profiles & Management
 - Full-width hero with gradient overlay and farmer avatar
+- **Profile Editing**: Dedicated management interface for farmers to update farm name, bio, location, and payout methods
+- **Cover Photo Management**: Integrated Cloudinary upload for high-fidelity farm branding
 - Verified badge (stamp metaphor) or pending status indicator
 - Transparency indicator — animated bar showing direct-to-farmer percentage
 - Farming practices grid with Material icons
@@ -70,8 +72,8 @@ The conventional food supply chain is opaque. Consumers can't verify farming pra
 
 ### 💬 Direct Messaging & Presence
 - Real-time 1-on-1 chat between customers and farmers
-- **Presence Tracking**: Real-time online/offline status using Firebase Realtime Database and `onDisconnect()`
-- **Typing Indicators**: Live "User is typing..." feedback in chat
+- **Presence Tracking**: Real-time online/offline status using Firebase Realtime Database and `onDisconnect()` hooks
+- **Live Typing Indicators**: Visual feedback when the recipient is actively composing a message
 - Conversation list with last message preview and relative timestamps
 - Auto-scrolling message thread with time-stamped bubbles
 - Deterministic chat IDs (`uid1_uid2`) for deduplication
@@ -170,6 +172,7 @@ d:\F2C\
 │   │   ├── ChatPage.jsx           # Real-time 1-on-1 chat room
 │   │   ├── CheckoutPage.jsx       # Protected checkout with order submission
 │   │   ├── DiscoveryPage.jsx      # Search, filter, browse farms
+│   │   ├── EditFarmerProfilePage.jsx # Farmer profile and cover photo editing
 │   │   ├── FarmerDashboardPage.jsx# Inventory, orders, stats
 │   │   ├── FarmerProfilePage.jsx  # Farm story, practices, products, certs
 │   │   ├── FarmerSetupPage.jsx    # Farmer onboarding
@@ -259,16 +262,16 @@ The project uses mode-specific `.env` files:
 
 ## Design System
 
-TerraDirect uses a custom design system derived from Stitch with two distinct visual personas:
+TerraDirect uses a custom **Modern-Organic** design system derived from Stitch with two distinct visual personas:
 
 ### Light Mode — "Grounded Transparency"
 - **Palette:** Warm bone (#faf9f7) surfaces, Deep Forest Green (#061b0e) primary
-- **Feel:** Minimalist, tactile, matte-paper aesthetic
+- **Feel:** Minimalist, tactile, matte-paper aesthetic with glassmorphism effects
 - **Shadows:** Subtle ambient shadows with warm undertones
 
 ### Dark Mode — "Editorial Artisanal"
 - **Palette:** Stone-tinted blacks (#121412) with soft sage (#bccbb9) primary
-- **Feel:** Editorial, dramatic, moody night-market atmosphere
+- **Feel:** Editorial, dramatic, moody night-market atmosphere with premium glass overlays
 - **Shadows:** Deeper ambient shadows for depth
 
 ### Typography Scale
@@ -311,12 +314,13 @@ All 50+ color tokens are defined as CSS custom properties in `src/index.css`, en
 ## Roadmap
 
 - [x] **Phase 1** — Discovery, Profiles, Checkout
-- [ ] **Phase 2** — Role-Based Auth, Farmer Dashboard, Messaging (In Progress)
+- [x] **Phase 2** — Role-Based Auth, Farmer Dashboard, Messaging
   - [x] Step 1: Role-Based Authentication & Onboarding
   - [x] Step 2.1: Firestore Schema (Users Collection)
-  - [x] Step 2.2: Real-time Messaging System
+  - [x] Step 2.2: Real-time Messaging System (Presence + Typing)
   - [x] Step 3: Product Addition with Image Upload
-  - [x] Step 4: Farmer Gatekeeper Security Rules
+  - [x] Step 4: Farmer Profile Editing & Cover Photo Management
+  - [x] Step 5: Farmer Gatekeeper Security Rules
 - [ ] **Phase 3** — Real Payment Integration (Stripe), Order Tracking
 - [ ] **Phase 4** — Community Features (Removed/Deprioritized)
 - [ ] **Phase 5** — Mobile App (React Native), Push Notifications
