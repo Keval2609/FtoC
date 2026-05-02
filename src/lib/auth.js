@@ -13,8 +13,10 @@ import { auth } from './firebase';
 const googleProvider = new GoogleAuthProvider();
 
 export async function signUpWithEmail(email, password, displayName, role) {
+  if (!auth) throw new Error('Firebase Auth is not initialized. Check your configuration.');
   try {
     const result = await createUserWithEmailAndPassword(auth, email, password);
+
     await updateProfile(result.user, { displayName });
     return result.user;
   } catch (error) {
@@ -26,8 +28,10 @@ export async function signUpWithEmail(email, password, displayName, role) {
 }
 
 export async function signInWithEmail(email, password) {
+  if (!auth) throw new Error('Firebase Auth is not initialized. Check your configuration.');
   try {
     const result = await signInWithEmailAndPassword(auth, email, password);
+
     return result.user;
   } catch (error) {
     if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
@@ -38,7 +42,9 @@ export async function signInWithEmail(email, password) {
 }
 
 export async function signInWithGoogle() {
+  if (!auth) throw new Error('Firebase Auth is not initialized. Check your configuration.');
   const result = await signInWithPopup(auth, googleProvider);
+
   const additionalInfo = getAdditionalUserInfo(result);
   
   return {
@@ -48,9 +54,16 @@ export async function signInWithGoogle() {
 }
 
 export async function signOut() {
+  if (!auth) return;
   await firebaseSignOut(auth);
+
 }
 
 export function onAuthChange(callback) {
+  if (!auth) {
+    callback(null);
+    return () => {};
+  }
   return onAuthStateChanged(auth, callback);
 }
+

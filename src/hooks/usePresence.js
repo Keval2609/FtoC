@@ -17,12 +17,14 @@ import {
 } from 'firebase/database';
 import app from '../lib/firebase';
 
-const db = getDatabase(app);
+const db = app ? getDatabase(app) : null;
+
 
 // ── Set your own presence (call in AppShell or a top-level component) ────
 export function useSetPresence(uid) {
   useEffect(() => {
-    if (!uid) return;
+    if (!uid || !db) return;
+
 
     const presenceRef = ref(db, `presence/${uid}`);
     const connectedRef = ref(db, '.info/connected');
@@ -60,7 +62,8 @@ export function usePresence(uid) {
   const [presence, setPresence] = useState({ online: false, lastSeen: null });
 
   useEffect(() => {
-    if (!uid) return;
+    if (!uid || !db) return;
+
 
     const presenceRef = ref(db, `presence/${uid}`);
     const unsub = onValue(presenceRef, (snap) => {
@@ -78,7 +81,8 @@ export function usePresence(uid) {
 // ── Set typing indicator ──────────────────────────────────────────────────
 export function useTypingIndicator(chatId, uid) {
   const setTyping = (isTyping) => {
-    if (!chatId || !uid) return;
+    if (!chatId || !uid || !db) return;
+
     const typingRef = ref(db, `typing/${chatId}/${uid}`);
     set(typingRef, isTyping);
   };
@@ -91,7 +95,8 @@ export function useChatTyping(chatId, currentUid) {
   const [typingUsers, setTypingUsers] = useState([]);
 
   useEffect(() => {
-    if (!chatId) return;
+    if (!chatId || !db) return;
+
 
     const typingRef = ref(db, `typing/${chatId}`);
     const unsub = onValue(typingRef, (snap) => {
