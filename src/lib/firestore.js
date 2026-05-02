@@ -20,8 +20,7 @@ import { mockFarmers, getMockFarmerById, getMockProductsByFarmer } from './mockD
 // Use demo mode ONLY when explicitly set via VITE_ENVIRONMENT=demo
 // This ensures real Firebase auth users always get real Firestore data
 const isDemo = import.meta.env.VITE_ENVIRONMENT === 'demo';
-const useMock = isDemo || import.meta.env.VITE_USE_MOCK_DATA === 'true' || !db;
-
+const useMock = isDemo || import.meta.env.VITE_USE_MOCK_DATA === 'true';
 
 // ═══════════════════════════════════════════════════
 //  USER PROFILE

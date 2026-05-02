@@ -15,14 +15,10 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
-// Only initialize if we have a Project ID (not in demo mode)
-const hasConfig = !!firebaseConfig.projectId;
-
-const app = hasConfig ? initializeApp(firebaseConfig) : null;
-const perf = app ? getPerformance(app) : null;
-export const auth = app ? getAuth(app) : null;
-export const db = app ? getFirestore(app) : null;
-export const database = app ? getDatabase(app) : null;
+const app = initializeApp(firebaseConfig);
+const perf = getPerformance(app);
+export const auth = getAuth(app);
+export const db = getFirestore(app);
+export const database = getDatabase(app);
 export const provider = new GoogleAuthProvider();
 export default app;
-
